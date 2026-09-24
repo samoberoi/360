@@ -5886,6 +5886,18 @@ export type Database = {
         Args: { _candidate_id: string }
         Returns: string[]
       }
+      contract_register_directory: {
+        Args: never
+        Returns: {
+          customer_id: string
+          customer_name: string
+          unit_city: string
+          unit_code: string
+          unit_id: string
+          unit_name: string
+          unit_state: string
+        }[]
+      }
       current_user_assigned_guard_ids: { Args: never; Returns: string[] }
       current_user_branch_id: { Args: never; Returns: string }
       current_user_branch_scope_ids: { Args: never; Returns: string[] }
@@ -5970,6 +5982,23 @@ export type Database = {
         Args: never
         Returns: {
           user_id: string
+        }[]
+      }
+      get_missing_contract_designations: {
+        Args: never
+        Returns: {
+          candidate_code: string
+          candidate_id: string
+          contract_id: string
+          customer_name: string
+          designation_id: string
+          designation_name: string
+          employee_code: string
+          full_name: string
+          missing_since: string
+          unit_code: string
+          unit_id: string
+          unit_name: string
         }[]
       }
       get_onboarding_approver_user_ids: {
