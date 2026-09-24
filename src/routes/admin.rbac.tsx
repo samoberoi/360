@@ -42,9 +42,9 @@ import {
 export const Route = createFileRoute("/admin/rbac")({
   head: () => ({
     meta: [
-      { title: "Access Control | Radiant Guard Services" },
+      { title: "Access Control | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Manage role permissions across application modules." },
-      { property: "og:title", content: "Access Control | Radiant Guard Services" },
+      { property: "og:title", content: "Access Control | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Manage role permissions across application modules." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

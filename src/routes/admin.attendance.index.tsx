@@ -28,9 +28,9 @@ export const Route = createFileRoute("/admin/attendance/")({
   validateSearch: (search) => searchSchema.parse(search),
   head: () => ({
     meta: [
-      { title: "Attendance | Radiant Guard Services" },
+      { title: "Attendance | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Find units, select payroll periods, and manage attendance sheets." },
-      { property: "og:title", content: "Attendance | Radiant Guard Services" },
+      { property: "og:title", content: "Attendance | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Find units, select payroll periods, and manage attendance sheets." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

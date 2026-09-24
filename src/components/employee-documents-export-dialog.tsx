@@ -294,7 +294,7 @@ export function EmployeeDocumentsExportDialog({
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8);
         doc.setTextColor(...muted);
-        doc.text("Radiant Guard Services · Confidential — internal HR record.", M, fy);
+        doc.text("PLUS 360 FAHRENHEIT SOLUTIONS · Confidential — internal HR record.", M, fy);
         doc.text(`Page ${doc.getNumberOfPages()}`, pw - M, fy, { align: "right" });
         doc.setTextColor(0, 0, 0);
       };

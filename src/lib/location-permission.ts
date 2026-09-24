@@ -69,4 +69,4 @@ export async function checkLocationPermission(): Promise<LocationPermissionState
 }
 
 export const LOCATION_REQUIRED_MESSAGE =
-  "Location (GPS) must be turned on to mark attendance. Enable location for Radiant Guard and try again.";
+  "Location (GPS) must be turned on to mark attendance. Enable location for PLUS 360 and try again.";

@@ -1,4 +1,4 @@
-// Purchase Order PDF generator — mirrors the standard Radiant Guard PO format.
+// Purchase Order PDF generator — mirrors the standard PLUS 360 PO format.
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logoUrl from "@/assets/radiant-logo-v2.png";
@@ -38,7 +38,7 @@ export type POPdfData = {
 };
 
 const COMPANY = {
-  name: "Radiant Guard Services Pvt. Ltd.",
+  name: "PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD.",
   address: "Office No. 818, 8th Floor, Clover Hills Plaza, NIBM Road, Pune. 411048",
   phone: "02048622515",
   email: "info@radiantguards.com",

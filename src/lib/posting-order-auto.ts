@@ -105,7 +105,7 @@ async function loadSignatory(): Promise<{ name: string; designation: string }> {
     .maybeSingle();
   const company = ((data as unknown as { company_name?: string } | null)?.company_name ?? "").trim();
   return {
-    name: company ? `For ${company}` : "For Radiant Guard Services Pvt. Ltd.",
+    name: company ? `For ${company}` : "For PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD.",
     designation: "Authorised Signatory",
   };
 }

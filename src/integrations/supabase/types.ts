@@ -4496,6 +4496,39 @@ export type Database = {
           },
         ]
       }
+      public_holidays: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          holiday_day: number
+          holiday_month: number
+          id: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          holiday_day: number
+          holiday_month: number
+          id?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          holiday_day?: number
+          holiday_month?: number
+          id?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       rehire_request_events: {
         Row: {
           action: string

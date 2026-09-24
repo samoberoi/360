@@ -66,9 +66,9 @@ export const Route = createFileRoute("/admin/profile")({
   component: ProfilePage,
   head: () => ({
     meta: [
-      { title: "My Profile | Radiant Guard Services" },
+      { title: "My Profile | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "View your Radiant employee profile, posting, CTC, and documents." },
-      { property: "og:title", content: "My Profile | Radiant Guard Services" },
+      { property: "og:title", content: "My Profile | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "View your Radiant employee profile, posting, CTC, and documents." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -653,7 +653,7 @@ function ProfilePage() {
         if (rErr) throw rErr;
         res = data;
       } else if (profile?.role_key) {
-        // Non-billable employee: salary against Radiant Guard internal contract, keyed by role.
+        // Non-billable employee: salary against PLUS 360 internal contract, keyed by role.
         const { data: contracts, error: cErr } = await supabase
           .from("client_contracts")
           .select("id, contract_code, start_date, end_date, status, unit_id, record_type")

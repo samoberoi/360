@@ -33,9 +33,9 @@ import { DashboardShell } from "@/components/LiveFeed";
 export const Route = createFileRoute("/admin/employee-dashboard")({
   head: () => ({
     meta: [
-      { title: "My Dashboard | Radiant Guard Services" },
+      { title: "My Dashboard | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Personal attendance, duty, assignments, team, and workplace updates." },
-      { property: "og:title", content: "My Dashboard | Radiant Guard Services" },
+      { property: "og:title", content: "My Dashboard | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Personal attendance, duty, assignments, team, and workplace updates." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

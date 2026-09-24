@@ -10,7 +10,7 @@ import {
 import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
-import favicon from "../assets/radiant-logo-v2.png";
+import logoAsset from "../assets/plus-360-fahrenheit-logo.png.asset.json";
 import { Button } from "@/components/ui/button";
 import { ConfirmProvider } from "@/components/ConfirmProvider";
 import { ExportChooser } from "@/components/ExportChooser";
@@ -103,17 +103,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "format-detection", content: "telephone=no" },
       { name: "theme-color", content: "#ffffff" },
-      { title: "Radiant Guard Services" },
-      { name: "description", content: "Secure portal for Radiant Guard Services Pvt. Ltd." },
-      { name: "author", content: "Radiant Guard Services" },
-      { property: "og:title", content: "Radiant Guard Services" },
-      { property: "og:description", content: "Secure portal for Radiant Guard Services Pvt. Ltd." },
+      { title: "PLUS 360 FAHRENHEIT SOLUTIONS" },
+      { name: "description", content: "Secure portal for PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD." },
+      { name: "author", content: "PLUS 360 FAHRENHEIT SOLUTIONS" },
+      { property: "og:title", content: "PLUS 360 FAHRENHEIT SOLUTIONS" },
+      { property: "og:description", content: "Secure portal for PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@HyperRevamp" },
     ],
     links: [
-      { rel: "icon", type: "image/png", href: favicon },
+      { rel: "icon", type: "image/png", href: logoAsset.url },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

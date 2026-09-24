@@ -36,9 +36,9 @@ import { useBranches, useStates, type State } from "@/lib/admin-data";
 export const Route = createFileRoute("/admin/customers/state-manager")({
   head: () => ({
     meta: [
-      { title: "State Manager | Radiant Guard Services" },
+      { title: "State Manager | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Manage service states and branch mappings." },
-      { property: "og:title", content: "State Manager | Radiant Guard Services" },
+      { property: "og:title", content: "State Manager | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Manage service states and branch mappings." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

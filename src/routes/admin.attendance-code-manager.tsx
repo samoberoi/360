@@ -37,9 +37,9 @@ import {
 export const Route = createFileRoute("/admin/attendance-code-manager")({
   head: () => ({
     meta: [
-      { title: "Attendance Codes | Radiant Guard Services" },
+      { title: "Attendance Codes | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Configure attendance codes and their payroll behavior." },
-      { property: "og:title", content: "Attendance Codes | Radiant Guard Services" },
+      { property: "og:title", content: "Attendance Codes | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Configure attendance codes and their payroll behavior." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

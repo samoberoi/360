@@ -5,15 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Radiant Guard Services design tokens.
- * High-contrast brutalist palette: white + black + navy blue + yellow accent.
+ * PLUS 360 FAHRENHEIT SOLUTIONS design tokens.
+ * Paper-white surfaces, near-black ink, and a focused signal-blue accent.
  * All colors in oklch.
  */
 
 @theme inline {
-  /* Radiant brand blue — bright, bold identity blue (white + blue) */
-  --color-brand: #1877f2;
-  --color-brand-foreground: #ffffff;
+  --color-brand: var(--accent);
+  --color-brand-foreground: var(--accent-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -67,68 +66,65 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 1rem;
   --mobile-edge: 0.5rem;
   --mobile-dock-clearance: calc(4.75rem + env(safe-area-inset-bottom, 0px));
-  /* surfaces — soft neutral canvas, pure white cards (reference design language) */
-  --background: oklch(0.958 0.004 170);
-  --foreground: oklch(0.19 0.015 168);
+  /* Paper and ink: a crisp neutral canvas with high-contrast structure. */
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.19 0.015 168);
+  --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.19 0.015 168);
-  /* deep ink primary — the dark pill used for active nav / primary buttons */
-  --primary: oklch(0.22 0.022 168);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.145 0 0);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.945 0.006 170);
-  --secondary-foreground: oklch(0.22 0.02 168);
-  --muted: oklch(0.948 0.005 170);
-  --muted-foreground: oklch(0.52 0.012 170);
-  /* vivid blue accent — echoes the Radiant brand blue inside the app */
-  --accent: oklch(0.585 0.197 259);
+  --secondary: oklch(0.962 0 0);
+  --secondary-foreground: oklch(0.2 0 0);
+  --muted: oklch(0.962 0 0);
+  --muted-foreground: oklch(0.46 0 0);
+  --accent: oklch(0.575 0.222 264);
   --accent-foreground: oklch(0.99 0 0);
-  --accent-secondary: oklch(0.22 0.022 168);
-  --destructive: oklch(0.62 0.16 20);
+  --accent-secondary: oklch(0.68 0.16 258);
+  --destructive: oklch(0.58 0.22 27);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.905 0.005 170);
-  --input: oklch(0.905 0.005 170);
+  --border: oklch(0.915 0 0);
+  --input: oklch(0.915 0 0);
 
-  --ring: oklch(0.585 0.197 259);
-  --chart-1: oklch(0.585 0.197 259);
-  --chart-2: oklch(0.72 0.15 160);
-  --chart-3: oklch(0.75 0.15 85);
-  --chart-4: oklch(0.62 0.19 300);
-  --chart-5: oklch(0.65 0.2 25);
+  --ring: oklch(0.575 0.222 264);
+  --chart-1: oklch(0.575 0.222 264);
+  --chart-2: oklch(0.68 0.16 258);
+  --chart-3: oklch(0.145 0 0);
+  --chart-4: oklch(0.55 0 0);
+  --chart-5: oklch(0.82 0.06 260);
   --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.22 0.02 168);
-  --sidebar-primary: oklch(0.20 0.022 168);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.575 0.222 264);
   --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.955 0.005 170);
-  --sidebar-accent-foreground: oklch(0.22 0.02 168);
-  --sidebar-border: oklch(0.925 0.005 170);
-  --sidebar-ring: oklch(0.60 0.075 192);
-  --dock: oklch(0.12 0.006 168);
+  --sidebar-accent: oklch(0.965 0.012 264);
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border: oklch(0.925 0 0);
+  --sidebar-ring: oklch(0.575 0.222 264);
+  --dock: oklch(0.105 0 0);
   --dock-foreground: oklch(0.98 0 0);
 
   /* Theme-aware surfaces used by .glass, .tile, admin shell, etc. */
   --surface: 255 255 255;                 /* rgb triplet for translucent backgrounds */
   --surface-strong: 255 255 255;
-  --surface-hairline: 226 231 229;        /* hairline edge */
-  --surface-shadow: 17 34 30;             /* rgb for shadow ink */
-  --surface-glass-alpha: 0.96;
-  --surface-glass-strong-alpha: 1;
-  --surface-border-alpha: 0.9;
+  --surface-hairline: 255 255 255;
+  --surface-shadow: 13 13 13;
+  --surface-glass-alpha: 0.7;
+  --surface-glass-strong-alpha: 0.84;
+  --surface-border-alpha: 0.6;
 
-  /* Pastel tint palette taken from the reference dashboard cards:
-     soft lime, mint/teal, blush pink plus quiet neutrals. */
-  --tint-blue:    226 240 246;
-  --tint-indigo:  232 238 250;
-  --tint-emerald: 205 234 226;   /* mint */
-  --tint-amber:   238 244 205;   /* lime */
-  --tint-rose:    250 214 219;   /* blush */
-  --tint-violet:  238 234 250;
-  --tint-sky:     224 240 245;
-  --tint-slate:   240 242 241;
+  /* Quiet paper washes keep metrics distinct without competing with data. */
+  --tint-blue:    236 242 255;
+  --tint-indigo:  238 241 255;
+  --tint-emerald: 243 245 248;
+  --tint-amber:   246 245 242;
+  --tint-rose:    247 244 245;
+  --tint-violet:  241 242 250;
+  --tint-sky:     237 244 254;
+  --tint-slate:   244 245 247;
   --field-hero: oklch(0.99 0 0);
   --field-hero-muted: oklch(0.9 0.01 245);
   --field-hero-soft: oklch(1 0 0 / 14%);
@@ -174,53 +170,51 @@
   }
 }
 
-
-
 .dark {
-  --background: oklch(0.19 0.012 168);
+  --background: oklch(0.135 0 0);
   --foreground: oklch(0.98 0 0);
-  --card: oklch(0.235 0.014 168);
+  --card: oklch(0.175 0 0);
   --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.235 0.014 168);
+  --popover: oklch(0.175 0 0);
   --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.86 0.06 178);
-  --primary-foreground: oklch(0.18 0.02 168);
-  --secondary: oklch(0.29 0.014 168);
+  --primary: oklch(0.98 0 0);
+  --primary-foreground: oklch(0.15 0 0);
+  --secondary: oklch(0.22 0 0);
   --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.29 0.014 168);
-  --muted-foreground: oklch(0.8 0.01 168);
-  --accent: oklch(0.8 0.09 190);
-  --accent-foreground: oklch(0.16 0.02 168);
-  --accent-secondary: oklch(0.66 0.08 190);
-  --destructive: oklch(0.7 0.18 22);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.74 0 0);
+  --accent: oklch(0.68 0.19 262);
+  --accent-foreground: oklch(0.14 0 0);
+  --accent-secondary: oklch(0.78 0.12 258);
+  --destructive: oklch(0.7 0.22 27);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(1 0 0 / 16%);
-  --input: oklch(1 0 0 / 20%);
-  --ring: oklch(0.8 0.09 190);
-  --chart-1: oklch(0.82 0.1 168);
-  --chart-2: oklch(0.86 0.13 120);
-  --chart-3: oklch(0.82 0.09 15);
-  --chart-4: oklch(0.7 0.06 190);
-  --chart-5: oklch(0.75 0.05 240);
-  --sidebar: oklch(0.22 0.014 168);
+  --border: oklch(1 0 0 / 14%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.68 0.19 262);
+  --chart-1: oklch(0.68 0.19 262);
+  --chart-2: oklch(0.78 0.12 258);
+  --chart-3: oklch(0.95 0 0);
+  --chart-4: oklch(0.6 0 0);
+  --chart-5: oklch(0.4 0.05 260);
+  --sidebar: oklch(0.165 0 0);
   --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.86 0.06 178);
-  --sidebar-primary-foreground: oklch(0.18 0.02 168);
-  --sidebar-accent: oklch(0.3 0.014 168);
+  --sidebar-primary: oklch(0.68 0.19 262);
+  --sidebar-primary-foreground: oklch(0.14 0 0);
+  --sidebar-accent: oklch(0.24 0 0);
   --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(1 0 0 / 14%);
-  --sidebar-ring: oklch(0.8 0.09 190);
-  --dock: oklch(0.12 0.006 168);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.68 0.19 262);
+  --dock: oklch(0.105 0 0);
   --dock-foreground: oklch(0.98 0 0);
 
-  /* Dark theme surfaces — deep ink, lifted for readability */
-  --surface: 40 50 48;
-  --surface-strong: 52 63 60;
+  /* Dark theme surfaces — neutral ink, lifted for readability. */
+  --surface: 39 39 42;
+  --surface-strong: 52 52 56;
   --surface-hairline: 255 255 255;
   --surface-shadow: 0 0 0;
-  --surface-glass-alpha: 0.9;
-  --surface-glass-strong-alpha: 1;
-  --surface-border-alpha: 0.18;
+  --surface-glass-alpha: 0.72;
+  --surface-glass-strong-alpha: 0.88;
+  --surface-border-alpha: 0.22;
 }
 
 
@@ -303,17 +297,23 @@
   /* ============ Glassmorphism system (theme-aware) ============ */
   .glass {
     background: rgb(var(--surface) / var(--surface-glass-alpha));
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(22px) saturate(160%);
     border: 1px solid rgb(var(--surface-hairline) / var(--surface-border-alpha));
     border-radius: 24px;
-    box-shadow: 0 1px 2px rgb(var(--surface-shadow) / 0.04), 0 10px 28px -22px rgb(var(--surface-shadow) / 0.18);
+    box-shadow:
+      0 1px 0 0 rgb(var(--surface-hairline) / 0.22) inset,
+      0 1px 2px rgb(var(--surface-shadow) / 0.06),
+      0 12px 32px -16px rgb(var(--surface-shadow) / 0.28);
   }
   .glass-strong {
     background: rgb(var(--surface-strong) / var(--surface-glass-strong-alpha));
-    backdrop-filter: blur(12px);
-    border: 1px solid rgb(var(--surface-hairline) / var(--surface-border-alpha));
+    backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgb(var(--surface-hairline) / calc(var(--surface-border-alpha) + 0.08));
     border-radius: 24px;
-    box-shadow: 0 1px 2px rgb(var(--surface-shadow) / 0.05), 0 16px 36px -26px rgb(var(--surface-shadow) / 0.22);
+    box-shadow:
+      0 1px 0 0 rgb(var(--surface-hairline) / 0.28) inset,
+      0 2px 4px rgb(var(--surface-shadow) / 0.07),
+      0 24px 48px -20px rgb(var(--surface-shadow) / 0.32);
   }
   .glass-dark {
     background: color-mix(in oklab, oklch(0.18 0.03 260) 70%, transparent);
@@ -368,7 +368,7 @@
   }
 
   .card-elevated {
-    box-shadow: 0 1px 2px rgba(10,10,10,0.04), 0 8px 24px -12px rgba(10,10,10,0.08);
+    box-shadow: 0 1px 2px rgb(var(--surface-shadow) / 0.04), 0 8px 24px -12px rgb(var(--surface-shadow) / 0.08);
   }
 
   .tile {
@@ -380,8 +380,12 @@
     padding: var(--tile-pad, 1rem);
     border-radius: 24px;
     background: rgb(var(--surface) / var(--surface-glass-alpha));
+    backdrop-filter: blur(22px) saturate(160%);
     border: 1px solid rgb(var(--surface-hairline) / var(--surface-border-alpha));
-    box-shadow: 0 1px 2px rgb(var(--surface-shadow) / 0.04), 0 12px 30px -24px rgb(var(--surface-shadow) / 0.2);
+    box-shadow:
+      0 1px 0 rgb(var(--surface-hairline) / 0.18) inset,
+      0 1px 2px rgb(var(--surface-shadow) / 0.05),
+      0 12px 30px -18px rgb(var(--surface-shadow) / 0.22);
     transition: transform .2s ease, border-color .2s ease;
     color: var(--foreground);
   }
@@ -391,7 +395,7 @@
     border-color: color-mix(in oklab, var(--foreground) 16%, transparent);
     box-shadow: 0 18px 38px -26px rgb(var(--surface-shadow) / 0.32);
   }
-  /* Reference icon style: soft circular chip, quiet neutral fill, ink glyph. */
+  /* Signal-blue chips create one consistent visual anchor across summary cards. */
   .tile-icon {
     display: inline-flex;
     align-items: center;
@@ -399,13 +403,13 @@
     height: 2.25rem;
     width: 2.25rem;
     border-radius: 9999px;
-    background: color-mix(in oklab, var(--foreground) 6%, var(--card));
-    color: var(--foreground);
-    box-shadow: none;
+    background: color-mix(in oklab, var(--accent) 18%, var(--card));
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 24%, transparent);
   }
   .dark .tile-icon {
-    background: color-mix(in oklab, white 10%, transparent);
-    color: white;
+    background: color-mix(in oklab, var(--accent) 20%, transparent);
+    color: var(--accent);
   }
 
 

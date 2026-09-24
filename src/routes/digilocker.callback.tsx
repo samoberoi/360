@@ -4,7 +4,7 @@ import { ShieldCheck } from "lucide-react";
 export const Route = createFileRoute("/digilocker/callback")({
   head: () => ({
     meta: [
-      { title: "DigiLocker Verification Complete | Radiant Guard Services" },
+      { title: "DigiLocker Verification Complete | PLUS 360 FAHRENHEIT SOLUTIONS" },
       {
         name: "description",
         content: "DigiLocker consent completed. Verified Aadhaar details are being sent back to the onboarding form.",
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/digilocker/callback")({
       { property: "og:title", content: "DigiLocker Verification Complete" },
       {
         property: "og:description",
-        content: "DigiLocker consent completed for Radiant Guard Services candidate onboarding.",
+        content: "DigiLocker consent completed for PLUS 360 FAHRENHEIT SOLUTIONS candidate onboarding.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

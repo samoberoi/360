@@ -62,9 +62,9 @@ export const Route = createFileRoute("/admin/company-documents")({
   component: CompanyDocumentsPage,
   head: () => ({
     meta: [
-      { title: "Company Documents | Radiant Guard Services" },
+      { title: "Company Documents | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Configure company documents and employee communication templates." },
-      { property: "og:title", content: "Company Documents | Radiant Guard Services" },
+      { property: "og:title", content: "Company Documents | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Configure company documents and employee communication templates." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -74,7 +74,7 @@ export const Route = createFileRoute("/admin/company-documents")({
 
 const QK = ["admin", "company-document-templates"] as const;
 const MODULE = "Company Documents";
-const COMPANY_STAMP_URL = `https://radiant-guard-services.lovable.app${companyStampAsset.url}`;
+const COMPANY_STAMP_URL = companyStampAsset.url;
 
 function fmt(d: string) {
   try {

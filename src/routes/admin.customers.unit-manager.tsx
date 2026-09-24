@@ -77,9 +77,9 @@ import {
 export const Route = createFileRoute("/admin/customers/unit-manager")({
   head: () => ({
     meta: [
-      { title: "Clients | Radiant Guard Services" },
+      { title: "Clients | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Manage client locations, organization links, and deployment details." },
-      { property: "og:title", content: "Clients | Radiant Guard Services" },
+      { property: "og:title", content: "Clients | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Manage client locations, organization links, and deployment details." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

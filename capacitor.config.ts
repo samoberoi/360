@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 /**
- * Capacitor config for Radiant Guard Services.
+ * Capacitor config for PLUS 360 FAHRENHEIT SOLUTIONS.
  *
  * TanStack Start is server-rendered, so the native shell loads the hosted app
  * via `server.url` instead of bundling static assets. The iOS app intentionally
@@ -10,7 +10,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
  */
 const config: CapacitorConfig = {
   appId: "app.com.radiantguard",
-  appName: "Radiant Guard",
+  appName: "PLUS 360",
   webDir: "capacitor-web",
   server: {
     url: "https://radiant.hyperrevamp.com",

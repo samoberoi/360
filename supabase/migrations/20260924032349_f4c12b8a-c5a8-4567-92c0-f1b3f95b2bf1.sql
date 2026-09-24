@@ -1,0 +1,1 @@
+CREATE POLICY "No direct access to digilocker sessions" ON public.digilocker_sessions FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);

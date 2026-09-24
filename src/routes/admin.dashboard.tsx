@@ -224,9 +224,9 @@ function DashboardErrorState({ error }: { error: Error }) {
 export const Route = createFileRoute("/admin/dashboard")({
   head: () => ({
     meta: [
-      { title: "Leadership Dashboard | Radiant Guard Services" },
+      { title: "Leadership Dashboard | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Leadership overview across operations, attendance, payroll, and invoicing." },
-      { property: "og:title", content: "Leadership Dashboard | Radiant Guard Services" },
+      { property: "og:title", content: "Leadership Dashboard | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Leadership overview across operations, attendance, payroll, and invoicing." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

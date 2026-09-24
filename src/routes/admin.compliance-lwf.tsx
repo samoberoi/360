@@ -35,7 +35,7 @@ export const Route = createFileRoute("/admin/compliance-lwf")({
   }),
   head: () => ({
     meta: [
-      { title: "Labour Welfare Fund Register — Radiant Guard" },
+      { title: "Labour Welfare Fund Register — PLUS 360" },
       {
         name: "description",
         content:

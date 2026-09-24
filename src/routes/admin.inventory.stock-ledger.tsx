@@ -426,7 +426,7 @@ function StockLedgerPage() {
       byType.set(r.holder_type, cur);
     }
     const summary: (string | number)[][] = [
-      ["Radiant Guard Services — Stock Ledger (Debit / Credit Reconciliation)"],
+      ["PLUS 360 FAHRENHEIT SOLUTIONS — Stock Ledger (Debit / Credit Reconciliation)"],
       [`Period: ${fromDate}  →  ${toDate}`],
       [scopeLine],
       [`Generated: ${stamp}`],

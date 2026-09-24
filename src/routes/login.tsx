@@ -24,31 +24,33 @@ import {
   signInWithBiometric,
 } from "@/lib/biometric";
 import { markNativeAppSessionUnlocked } from "@/lib/native-app-lock";
-import logo from "@/assets/radiant-logo-v2.png";
+import logoAsset from "@/assets/plus-360-fahrenheit-logo.png.asset.json";
 import loginBg from "@/assets/login-bg.jpg";
+
+const logo = logoAsset.url;
 
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Sign in — Radiant Guard Services" },
+      { title: "Sign in — PLUS 360 FAHRENHEIT SOLUTIONS" },
       {
         name: "description",
         content:
-          "Sign in to Radiant Guard Services with your phone number and OTP.",
+          "Sign in to PLUS 360 FAHRENHEIT SOLUTIONS with your phone number and OTP.",
       },
-      { property: "og:title", content: "Sign in — Radiant Guard Services" },
+      { property: "og:title", content: "Sign in — PLUS 360 FAHRENHEIT SOLUTIONS" },
       {
         property: "og:description",
         content:
-          "Sign in to Radiant Guard Services with your phone number and OTP.",
+          "Sign in to PLUS 360 FAHRENHEIT SOLUTIONS with your phone number and OTP.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Sign in — Radiant Guard Services" },
+      { name: "twitter:title", content: "Sign in — PLUS 360 FAHRENHEIT SOLUTIONS" },
       {
         name: "twitter:description",
         content:
-          "Sign in to Radiant Guard Services with your phone number and OTP.",
+          "Sign in to PLUS 360 FAHRENHEIT SOLUTIONS with your phone number and OTP.",
       },
     ],
   }),
@@ -277,15 +279,15 @@ function LoginPage() {
             <div className="absolute inset-0 bg-slate-950/70" aria-hidden />
           )}
           <div className="relative flex flex-col items-center gap-6 [animation:login-splash-fade_0.7s_ease-out_both]">
-            <div className="grid h-20 w-20 place-items-center rounded-full bg-white shadow-2xl ring-1 ring-white/40">
-              <img src={logo} alt="Radiant Guard Services" className="h-12 w-12 object-contain" />
+            <div className="grid h-20 w-48 place-items-center rounded-xl bg-white px-4 shadow-2xl ring-1 ring-white/40">
+              <img src={logo} alt="PLUS 360 FAHRENHEIT SOLUTIONS" className="h-14 w-full object-contain" />
             </div>
             <div className="text-center">
-              <div className="font-display text-xl font-semibold tracking-tight text-white">
-                Radiant Guard
+              <div className="font-display text-lg font-medium text-white">
+                PLUS 360 FAHRENHEIT
               </div>
               <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/70">
-                Services Pvt. Ltd.
+                Solutions Pvt. Ltd.
               </div>
             </div>
             <div className="h-[3px] w-44 overflow-hidden rounded-full bg-white/20">
@@ -315,20 +317,12 @@ function LoginPage() {
             className="relative hidden flex-col px-6 pb-6 pt-6 sm:px-10 lg:flex lg:min-h-0 lg:flex-1 lg:px-14 lg:pb-10 lg:pt-10"
             style={{ animation: splashDone ? "login-brand-in 0.7s ease-out both" : "none", opacity: splashDone ? undefined : 0 }}
           >
-            <div className="inline-flex items-center gap-3 self-start rounded-[6px] bg-white px-3.5 py-2.5 shadow-md shadow-black/15 sm:gap-3.5 sm:px-4 sm:py-3">
+            <div className="inline-flex items-center self-start rounded-[6px] bg-white px-4 py-3 shadow-md shadow-black/15">
               <img
                 src={logo}
-                alt="Radiant Guard Services logo"
-                className="h-11 w-11 shrink-0 object-contain sm:h-12 sm:w-12"
+                alt="PLUS 360 FAHRENHEIT SOLUTIONS logo"
+                className="h-12 w-40 shrink-0 object-contain"
               />
-              <div>
-                <div className="font-display text-[15px] font-semibold leading-none tracking-tight text-foreground sm:text-base">
-                  Radiant Guard
-                </div>
-                <div className="mt-1 text-[8px] font-medium uppercase tracking-[0.16em] text-muted-foreground sm:text-[9px]">
-                  Services Pvt. Ltd.
-                </div>
-              </div>
             </div>
             <div className="flex flex-1 items-center">
               <div className="w-full max-w-xl">
@@ -364,8 +358,8 @@ function LoginPage() {
               <div className="flex flex-col items-center text-center">
                 <img
                   src={logo}
-                  alt="Radiant Guard Services"
-                  className="mb-4 h-12 w-12 object-contain lg:hidden"
+                  alt="PLUS 360 FAHRENHEIT SOLUTIONS"
+                  className="mb-5 h-14 w-44 object-contain lg:hidden"
                 />
                 <div className="mb-5 hidden h-20 w-20 place-items-center rounded-full bg-brand text-white shadow-lg shadow-brand/25 lg:grid">
                   <UserRound className="h-10 w-10" strokeWidth={1.75} />

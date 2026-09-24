@@ -7,9 +7,9 @@ import { RBAC_MODULES } from "@/lib/rbac-modules";
 export const Route = createFileRoute("/admin/control-center")({
   head: () => ({
     meta: [
-      { title: "Control Center | Radiant Guard Services" },
+      { title: "Control Center | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Manage company settings, operational rules, permissions, and workflows." },
-      { property: "og:title", content: "Control Center | Radiant Guard Services" },
+      { property: "og:title", content: "Control Center | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Manage company settings, operational rules, permissions, and workflows." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

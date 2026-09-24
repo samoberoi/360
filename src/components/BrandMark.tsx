@@ -1,4 +1,6 @@
-import logo from "@/assets/radiant-logo-v2.png";
+import logoAsset from "@/assets/plus-360-fahrenheit-logo.png.asset.json";
+
+const logo = logoAsset.url;
 
 type BrandMarkProps = {
   className?: string;
@@ -19,21 +21,21 @@ export function BrandMark({
       : "text-muted-foreground";
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex min-w-0 items-center gap-3 ${className}`}>
       <img
         src={logo}
-        alt="Radiant Guard Services Pvt. Ltd."
-        className="h-10 w-10 shrink-0 object-contain"
+        alt="PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD."
+        className={compact ? "h-9 w-12 shrink-0 object-contain" : "h-10 w-[6.5rem] shrink-0 object-contain"}
       />
       {!compact && (
-        <div className="leading-tight">
-          <div className={`font-display text-base font-bold tracking-tight ${titleClass}`}>
-            Radiant Guard
+        <div className="min-w-0 leading-tight">
+          <div className={`font-display text-sm font-medium ${titleClass}`}>
+            PLUS 360 FAHRENHEIT
           </div>
           <div
-            className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${subtitleClass}`}
+            className={`mt-0.5 text-[9px] font-medium uppercase ${subtitleClass}`}
           >
-            Services Pvt. Ltd.
+            Solutions Pvt. Ltd.
           </div>
         </div>
       )}

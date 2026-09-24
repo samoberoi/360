@@ -28,9 +28,9 @@ import {
 export const Route = createFileRoute("/admin/mis-manager")({
   head: () => ({
     meta: [
-      { title: "MIS Sheets | Radiant Guard Services" },
+      { title: "MIS Sheets | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Define the MIS sheet each organization receives, its columns and site values." },
-      { property: "og:title", content: "MIS Sheets | Radiant Guard Services" },
+      { property: "og:title", content: "MIS Sheets | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Define the MIS sheet each organization receives, its columns and site values." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
