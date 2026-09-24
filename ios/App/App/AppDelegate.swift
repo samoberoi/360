@@ -202,7 +202,7 @@ public class RadiantBiometricsPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @objc func authenticate(_ call: CAPPluginCall) {
-        let reason = call.getString("reason") ?? "Unlock Radiant Guard"
+        let reason = call.getString("reason") ?? "Unlock PLUS 360"
         let context = LAContext()
         context.localizedCancelTitle = "Cancel"
         context.localizedFallbackTitle = "Use Passcode"

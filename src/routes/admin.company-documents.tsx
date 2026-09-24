@@ -74,7 +74,7 @@ export const Route = createFileRoute("/admin/company-documents")({
 
 const QK = ["admin", "company-document-templates"] as const;
 const MODULE = "Company Documents";
-const COMPANY_STAMP_URL = `https://radiant-guard-services.lovable.app${companyStampAsset.url}`;
+const COMPANY_STAMP_URL = companyStampAsset.url;
 
 function fmt(d: string) {
   try {
