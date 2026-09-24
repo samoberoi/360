@@ -120,7 +120,7 @@ async function fetchDashboardCountsFallback(
         .lte("end_date", horizon)
         .order("end_date", { ascending: true }),
       supabase.from("vehicles").select("id", { count: "exact", head: true }),
-      supabase.from("inventory_items").select("id", { count: "exact", head: true }),
+      supabase.from("inv_items").select("id", { count: "exact", head: true }),
     ]);
 
   const buckets = {
