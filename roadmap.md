@@ -491,6 +491,6 @@
 ## PLUS 360 remix migration
 
 - [x] Apply PLUS 360 visual identity and logo without changing authentication or locked native notifications.
-- [ ] Add missing compatible business structures from Hypervioarr.
-- [ ] Import accessible clients, sites, contracts, employees, attendance, and configuration into this project's isolated backend.
+- [x] Add missing compatible business structures from Hypervioarr.
+- [ ] Import accessible clients, sites, contracts, employees, attendance, and configuration into this project's isolated backend. (Clients, sites, contracts and 40 workforce records copied; remaining detailed records pending.)
 - [ ] Validate imported counts and relationships, app checks, sign-in, and old-project isolation.
