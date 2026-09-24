@@ -451,6 +451,54 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_day_bases: {
+        Row: {
+          code: string
+          created_at: string
+          description: string
+          enabled: boolean
+          fixed_days: number | null
+          id: string
+          included_weekdays: number[] | null
+          is_default: boolean
+          method: string
+          name: string
+          sort_order: number
+          updated_at: string
+          weekly_off_day: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string
+          enabled?: boolean
+          fixed_days?: number | null
+          id?: string
+          included_weekdays?: number[] | null
+          is_default?: boolean
+          method: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+          weekly_off_day?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string
+          enabled?: boolean
+          fixed_days?: number | null
+          id?: string
+          included_weekdays?: number[] | null
+          is_default?: boolean
+          method?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+          weekly_off_day?: number | null
+        }
+        Relationships: []
+      }
       billing_types: {
         Row: {
           code: string | null
@@ -1123,6 +1171,7 @@ export type Database = {
       contract_resources: {
         Row: {
           benefits: Json
+          billing_day_base_id: string | null
           components: Json
           contract_id: string
           created_at: string
@@ -1141,6 +1190,7 @@ export type Database = {
         }
         Insert: {
           benefits?: Json
+          billing_day_base_id?: string | null
           components?: Json
           contract_id: string
           created_at?: string
@@ -1159,6 +1209,7 @@ export type Database = {
         }
         Update: {
           benefits?: Json
+          billing_day_base_id?: string | null
           components?: Json
           contract_id?: string
           created_at?: string
@@ -1176,6 +1227,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "contract_resources_billing_day_base_id_fkey"
+            columns: ["billing_day_base_id"]
+            isOneToOne: false
+            referencedRelation: "billing_day_bases"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "contract_resources_contract_id_fkey"
             columns: ["contract_id"]
