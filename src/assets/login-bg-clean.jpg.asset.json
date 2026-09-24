@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "5c53e26b-9432-440f-83da-e7f838110499",
-  "project_id": "dc741c55-be5a-40d9-b6e9-523fed099022",
-  "url": "/__l5e/assets-v1/5c53e26b-9432-440f-83da-e7f838110499/login-bg-clean.jpg",
-  "r2_key": "a/v1/dc741c55-be5a-40d9-b6e9-523fed099022/5c53e26b-9432-440f-83da-e7f838110499/login-bg-clean.jpg",
-  "original_filename": "login-bg-clean.jpg",
-  "size": 28007,
   "content_type": "image/jpeg",
-  "created_at": "2026-07-23T17:34:10Z"
+  "created_at": "2026-07-23T17:34:10Z",
+  "original_filename": "login-bg-clean.jpg",
+  "project_id": "17b6aaa6-fbb3-4432-add3-c51b6957b203",
+  "r2_key": "a/v1/17b6aaa6-fbb3-4432-add3-c51b6957b203/5c53e26b-9432-440f-83da-e7f838110499/login-bg-clean.jpg",
+  "size": 28007,
+  "url": "/__l5e/assets-v1/5c53e26b-9432-440f-83da-e7f838110499/login-bg-clean.jpg",
+  "version": 1
 }

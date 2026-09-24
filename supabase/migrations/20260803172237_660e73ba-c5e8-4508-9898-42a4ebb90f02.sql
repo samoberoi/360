@@ -1,1 +1,0 @@
-ALTER TABLE public.cost_components ADD COLUMN IF NOT EXISTS description text;

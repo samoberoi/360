@@ -1,1 +1,0 @@
-UPDATE public.candidates SET status = 'active' WHERE status = 'approved';

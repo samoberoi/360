@@ -1,2 +1,0 @@
-UPDATE public.rehire_requests SET current_step_order = 3, status = 'pending', completed_at = NULL WHERE id = '4f1629db-f484-40dd-ab50-8944b7e24e9b';
-DELETE FROM public.notifications WHERE entity_type = 'rehire_request' AND entity_id = '4f1629db-f484-40dd-ab50-8944b7e24e9b' AND type = 'rehire_request_pending' AND title ILIKE '%HR Enablement%';

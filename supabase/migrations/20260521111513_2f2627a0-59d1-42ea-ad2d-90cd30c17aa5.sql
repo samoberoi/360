@@ -1,1 +1,0 @@
-ALTER TABLE public.client_contracts ADD COLUMN IF NOT EXISTS esic_branch_id uuid;

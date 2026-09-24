@@ -1,1 +1,0 @@
-ALTER TABLE public.candidates ALTER COLUMN role_key DROP NOT NULL;

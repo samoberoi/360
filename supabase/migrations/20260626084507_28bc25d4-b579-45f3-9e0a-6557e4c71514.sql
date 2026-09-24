@@ -1,1 +1,0 @@
-ALTER TABLE public.payroll_day_bases ADD COLUMN IF NOT EXISTS included_weekdays smallint[];

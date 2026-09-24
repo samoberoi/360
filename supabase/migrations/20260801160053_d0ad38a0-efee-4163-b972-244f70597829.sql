@@ -1,2 +1,0 @@
-ALTER TABLE public.company_document_templates DROP CONSTRAINT IF EXISTS company_document_templates_doc_type_check;
-ALTER TABLE public.company_document_templates ADD CONSTRAINT company_document_templates_doc_type_check CHECK (doc_type = ANY (ARRAY['nda'::text,'appointment_letter'::text,'form_vii'::text,'company_stamp'::text,'id_card'::text,'posting_order'::text]));

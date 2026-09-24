@@ -1,6 +1,0 @@
-
-ALTER TABLE public.vehicles
-  ADD COLUMN IF NOT EXISTS engine_number text NOT NULL DEFAULT '',
-  ADD COLUMN IF NOT EXISTS chassis_number text NOT NULL DEFAULT '',
-  ADD COLUMN IF NOT EXISTS fuel_type text NOT NULL DEFAULT '',
-  ADD COLUMN IF NOT EXISTS owner text NOT NULL DEFAULT '';

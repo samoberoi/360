@@ -1,2 +1,0 @@
-ALTER TABLE public.company_document_templates DROP CONSTRAINT IF EXISTS company_document_templates_doc_type_check;
-ALTER TABLE public.company_document_templates ADD CONSTRAINT company_document_templates_doc_type_check CHECK (doc_type IN ('nda','appointment_letter','form_vii','company_stamp','id_card'));

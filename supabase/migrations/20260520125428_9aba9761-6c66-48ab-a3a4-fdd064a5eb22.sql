@@ -1,1 +1,0 @@
-UPDATE public.vehicle_fuel_entries SET payment_mode='PetroCard' WHERE payment_mode='Fuel Card';

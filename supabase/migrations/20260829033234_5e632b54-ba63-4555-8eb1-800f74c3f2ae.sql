@@ -1,1 +1,0 @@
-ALTER TABLE public.units ADD COLUMN IF NOT EXISTS is_billable boolean NOT NULL DEFAULT true;

@@ -1,1 +1,0 @@
-ALTER TABLE public.candidates ADD COLUMN IF NOT EXISTS role_key text NOT NULL DEFAULT '';

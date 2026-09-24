@@ -1,1 +1,0 @@
-ALTER TABLE public.designations ADD COLUMN billable boolean NOT NULL DEFAULT false;

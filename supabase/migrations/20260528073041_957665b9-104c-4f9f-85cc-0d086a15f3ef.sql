@@ -1,1 +1,0 @@
-ALTER TABLE public.vehicles ADD COLUMN IF NOT EXISTS service_interval_km integer NOT NULL DEFAULT 5000;

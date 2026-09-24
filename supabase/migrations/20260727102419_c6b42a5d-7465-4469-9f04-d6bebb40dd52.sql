@@ -1,1 +1,0 @@
-ALTER TABLE public.self_attendance_punches ADD COLUMN IF NOT EXISTS distance_km numeric;

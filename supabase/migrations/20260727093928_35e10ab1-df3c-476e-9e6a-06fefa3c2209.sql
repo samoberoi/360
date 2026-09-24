@@ -1,2 +1,0 @@
-ALTER TABLE public.field_visit_requests DROP CONSTRAINT field_visit_requests_status_check;
-ALTER TABLE public.field_visit_requests ADD CONSTRAINT field_visit_requests_status_check CHECK (status = ANY (ARRAY['pending'::text, 'acknowledged'::text, 'in_progress'::text, 'completed'::text, 'cancelled'::text]));

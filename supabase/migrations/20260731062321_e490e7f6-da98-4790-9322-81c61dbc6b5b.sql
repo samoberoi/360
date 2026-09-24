@@ -1,2 +1,0 @@
-ALTER TABLE public.employee_signed_documents DROP CONSTRAINT employee_signed_documents_doc_type_check;
-ALTER TABLE public.employee_signed_documents ADD CONSTRAINT employee_signed_documents_doc_type_check CHECK (doc_type = ANY (ARRAY['nda'::text,'appointment_letter'::text,'form_vii'::text,'id_card'::text,'company_stamp'::text]));

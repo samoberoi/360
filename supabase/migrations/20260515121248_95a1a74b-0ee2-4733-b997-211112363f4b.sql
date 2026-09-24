@@ -1,1 +1,0 @@
-ALTER TABLE public.contract_resources ADD COLUMN IF NOT EXISTS deductions jsonb NOT NULL DEFAULT '[]'::jsonb;

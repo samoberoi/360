@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "de428422-b314-4b6d-811b-f955dd1350db",
-  "project_id": "dc741c55-be5a-40d9-b6e9-523fed099022",
-  "url": "/__l5e/assets-v1/de428422-b314-4b6d-811b-f955dd1350db/radiant-logo.png",
-  "r2_key": "a/v1/dc741c55-be5a-40d9-b6e9-523fed099022/de428422-b314-4b6d-811b-f955dd1350db/radiant-logo.png",
-  "original_filename": "radiant-logo.png",
-  "size": 1252950,
   "content_type": "image/png",
-  "created_at": "2026-08-01T16:10:41Z"
+  "created_at": "2026-08-01T16:10:41Z",
+  "original_filename": "radiant-logo.png",
+  "project_id": "17b6aaa6-fbb3-4432-add3-c51b6957b203",
+  "r2_key": "a/v1/17b6aaa6-fbb3-4432-add3-c51b6957b203/de428422-b314-4b6d-811b-f955dd1350db/radiant-logo.png",
+  "size": 1252950,
+  "url": "/__l5e/assets-v1/de428422-b314-4b6d-811b-f955dd1350db/radiant-logo.png",
+  "version": 1
 }

@@ -1,1 +1,0 @@
-ALTER TABLE public.units ADD COLUMN IF NOT EXISTS enable_lwf boolean NOT NULL DEFAULT false;
