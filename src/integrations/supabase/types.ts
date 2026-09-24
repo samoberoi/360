@@ -343,6 +343,68 @@ export type Database = {
           },
         ]
       }
+      attendance_scan_jobs: {
+        Row: {
+          created_by: string | null
+          error: string | null
+          estimate_seconds: number | null
+          eta_seconds: number | null
+          finished_at: string | null
+          heartbeat_at: string
+          id: string
+          kind: string
+          period_end: string
+          period_start: string
+          progress: number
+          started_at: string
+          status: string
+          summary: string | null
+          unit_id: string
+        }
+        Insert: {
+          created_by?: string | null
+          error?: string | null
+          estimate_seconds?: number | null
+          eta_seconds?: number | null
+          finished_at?: string | null
+          heartbeat_at?: string
+          id?: string
+          kind?: string
+          period_end: string
+          period_start: string
+          progress?: number
+          started_at?: string
+          status?: string
+          summary?: string | null
+          unit_id: string
+        }
+        Update: {
+          created_by?: string | null
+          error?: string | null
+          estimate_seconds?: number | null
+          eta_seconds?: number | null
+          finished_at?: string | null
+          heartbeat_at?: string
+          id?: string
+          kind?: string
+          period_end?: string
+          period_start?: string
+          progress?: number
+          started_at?: string
+          status?: string
+          summary?: string | null
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_scan_jobs_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       attendance_sheet_versions: {
         Row: {
           approved_at: string | null
