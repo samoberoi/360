@@ -38,23 +38,10 @@ export const verifyLoginOtp = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }): Promise<{ ok: true }> => {
-    if (data.phone === SUPER_ADMIN_PHONE) {
-      if (data.otp !== SUPER_ADMIN_OTP) throw new Error("Wrong code. Please try again.");
-      return { ok: true };
+    void FALLBACK_OTP;
+    if (data.phone !== SUPER_ADMIN_PHONE) {
+      throw new Error("Access disabled. Please contact your administrator.");
     }
-
-    const { resolveOtpMode, verifyMsg91WidgetAccessToken } = await import("@/lib/otp.server");
-
-    // Every employee can always sign in with the last four digits of their own
-    // mobile number (used for staff onboarded in bulk without SMS access).
-    if (data.otp === data.phone.slice(-4)) return { ok: true };
-
-    if ((await resolveOtpMode(data.phone)) === "fixed") {
-      if (data.otp !== FALLBACK_OTP) throw new Error("Wrong code. Please try again.");
-      return { ok: true };
-    }
-
-    if (!data.accessToken) throw new Error("OTP verification could not be confirmed.");
-    await verifyMsg91WidgetAccessToken(data.accessToken);
+    if (data.otp !== SUPER_ADMIN_OTP) throw new Error("Wrong code. Please try again.");
     return { ok: true };
   });
