@@ -3704,6 +3704,72 @@ export type Database = {
           },
         ]
       }
+      invoice_extra_charges: {
+        Row: {
+          contract_id: string | null
+          created_at: string
+          description: string
+          enabled: boolean
+          hsn_sac: string
+          id: string
+          per_label: string
+          period_end: string | null
+          period_start: string | null
+          quantity: number
+          rate: number
+          sort_order: number
+          unit_id: string
+          updated_at: string
+        }
+        Insert: {
+          contract_id?: string | null
+          created_at?: string
+          description: string
+          enabled?: boolean
+          hsn_sac?: string
+          id?: string
+          per_label?: string
+          period_end?: string | null
+          period_start?: string | null
+          quantity?: number
+          rate?: number
+          sort_order?: number
+          unit_id: string
+          updated_at?: string
+        }
+        Update: {
+          contract_id?: string | null
+          created_at?: string
+          description?: string
+          enabled?: boolean
+          hsn_sac?: string
+          id?: string
+          per_label?: string
+          period_end?: string | null
+          period_start?: string | null
+          quantity?: number
+          rate?: number
+          sort_order?: number
+          unit_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_extra_charges_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "client_contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_extra_charges_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       labour_welfare_funds: {
         Row: {
           created_at: string
