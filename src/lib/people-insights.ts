@@ -133,7 +133,10 @@ export function usePeopleInsights(options?: { roleKeys?: readonly string[] }) {
         p_limit: 200,
         p_role_keys: roleKeys,
       } as never);
-      if (error) throw error;
+      if (error) {
+        if (error.code === "PGRST202") return {};
+        throw error;
+      }
       return ((data ?? {}) as unknown) as InsightsPayload;
     },
   });
