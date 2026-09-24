@@ -223,7 +223,7 @@ export async function generateReportPdf(input: ReportInput): Promise<void> {
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8);
       doc.setTextColor(...muted);
-      doc.text("Radiant Guard Services · Confidential — for client use only.", margin, y);
+      doc.text("PLUS 360 FAHRENHEIT SOLUTIONS · Confidential — for client use only.", margin, y);
       const pageNum = doc.getNumberOfPages();
       doc.text(`Page ${pageNum}`, pageW - margin, y, { align: "right" });
     },

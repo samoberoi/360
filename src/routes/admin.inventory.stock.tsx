@@ -219,7 +219,7 @@ function StockPage() {
     }
 
     const summaryAOA: (string | number)[][] = [
-      ["Radiant Guard Services — Stock Report"],
+      ["PLUS 360 FAHRENHEIT SOLUTIONS — Stock Report"],
       [`Generated: ${today}`],
       [],
       ["Bucket", "Active Holders", "Holders With Stock", "Line Items", "Total Qty"],

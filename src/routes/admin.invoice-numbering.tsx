@@ -36,9 +36,9 @@ import {
 export const Route = createFileRoute("/admin/invoice-numbering")({
   head: () => ({
     meta: [
-      { title: "Invoice Numbering | Radiant Guard Services" },
+      { title: "Invoice Numbering | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "State-wise invoice number series, client codes and the issued number register." },
-      { property: "og:title", content: "Invoice Numbering | Radiant Guard Services" },
+      { property: "og:title", content: "Invoice Numbering | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "State-wise invoice number series, client codes and the issued number register." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

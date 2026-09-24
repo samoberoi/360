@@ -4,16 +4,16 @@ import { useState } from 'react'
 export const Route = createFileRoute('/request-data-deletion')({
   head: () => ({
     meta: [
-      { title: 'Request Data Deletion — Radiant Guard Services' },
+      { title: 'Request Data Deletion — PLUS 360 FAHRENHEIT SOLUTIONS' },
       {
         name: 'description',
         content:
-          'Request deletion of your personal data held by Radiant Guard Services Pvt. Ltd. Submit the form and our team will process your request within 30 days.',
+          'Request deletion of your personal data held by PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD. Submit the form and our team will process your request within 30 days.',
       },
-      { property: 'og:title', content: 'Request Data Deletion — Radiant Guard Services' },
+      { property: 'og:title', content: 'Request Data Deletion — PLUS 360 FAHRENHEIT SOLUTIONS' },
       {
         property: 'og:description',
-        content: 'Submit a request to delete your personal data held by Radiant Guard Services Pvt. Ltd.',
+        content: 'Submit a request to delete your personal data held by PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD.',
       },
       { property: 'og:type', content: 'website' },
     ],
@@ -59,7 +59,7 @@ function RequestDataDeletionPage() {
         Request Data Deletion
       </h1>
       <p className="mt-4 text-muted-foreground leading-relaxed">
-        Radiant Guard Services Pvt. Ltd. respects your privacy under the Digital Personal Data
+        PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD. respects your privacy under the Digital Personal Data
         Protection Act, 2023. Use this form to request deletion of the personal data we hold about
         you (for example, if you are a guard, field officer, or client contact whose details are
         stored in our system).
@@ -94,7 +94,7 @@ function RequestDataDeletionPage() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-foreground"
-              placeholder="As registered with Radiant Guard"
+              placeholder="As registered with PLUS 360"
             />
           </div>
           <div>

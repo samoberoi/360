@@ -33,7 +33,7 @@ export const Route = createFileRoute("/admin/compliance-pt")({
   }),
   head: () => ({
     meta: [
-      { title: "Professional Tax Register — Radiant Guard" },
+      { title: "Professional Tax Register — PLUS 360" },
       {
         name: "description",
         content:

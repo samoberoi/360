@@ -131,9 +131,9 @@ export const Route = createFileRoute("/admin/candidates/$id/details")({
   }),
   head: () => ({
     meta: [
-      { title: "Employee Profile | Radiant Guard Services" },
+      { title: "Employee Profile | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Review and update employee onboarding, compliance, and assignment details." },
-      { property: "og:title", content: "Employee Profile | Radiant Guard Services" },
+      { property: "og:title", content: "Employee Profile | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Review and update employee onboarding, compliance, and assignment details." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

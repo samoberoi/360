@@ -118,12 +118,12 @@ export const Route = createFileRoute("/admin/attendance/$unitId")({
   validateSearch: (s) => searchSchema.parse(s),
   head: () => ({
     meta: [
-      { title: "Mark Attendance | Radiant Guard Services" },
+      { title: "Mark Attendance | PLUS 360 FAHRENHEIT SOLUTIONS" },
       {
         name: "description",
         content: "Mark and review employee attendance for a selected unit and payroll period.",
       },
-      { property: "og:title", content: "Mark Attendance | Radiant Guard Services" },
+      { property: "og:title", content: "Mark Attendance | PLUS 360 FAHRENHEIT SOLUTIONS" },
       {
         property: "og:description",
         content: "Mark and review employee attendance for a selected unit and payroll period.",
@@ -164,7 +164,7 @@ type OcrRowSummary = {
 };
 
 const SERVICE_PROVIDER = {
-  name: "Radiant Guard Services Pvt. Ltd.",
+  name: "PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD.",
   address: "Office No. 818, 8th Floor, Clover Hills Plaza, NIBM Road, Pune. 411048",
 };
 

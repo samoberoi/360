@@ -3,17 +3,17 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 export const Route = createFileRoute('/privacypolicy')({
   head: () => ({
     meta: [
-      { title: 'Privacy Policy — Radiant Guard Services' },
+      { title: 'Privacy Policy — PLUS 360 FAHRENHEIT SOLUTIONS' },
       {
         name: 'description',
         content:
-          'How Radiant Guard Services Pvt. Ltd. collects, uses, stores and protects personal data in the Radiant Guard workforce app, including location, camera and notification data.',
+          'How PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD. collects, uses, stores and protects personal data in the PLUS 360 workforce app, including location, camera and notification data.',
       },
-      { property: 'og:title', content: 'Privacy Policy — Radiant Guard Services' },
+      { property: 'og:title', content: 'Privacy Policy — PLUS 360 FAHRENHEIT SOLUTIONS' },
       {
         property: 'og:description',
         content:
-          'Privacy Policy for the Radiant Guard workforce app: data we collect, why we collect it, how it is shared, retained and deleted.',
+          'Privacy Policy for the PLUS 360 workforce app: data we collect, why we collect it, how it is shared, retained and deleted.',
       },
       { property: 'og:type', content: 'website' },
       { name: 'twitter:card', content: 'summary' },
@@ -38,16 +38,16 @@ function PrivacyPolicyPage() {
       <h1 className="text-3xl font-semibold tracking-tight text-foreground">Privacy Policy</h1>
       <p className="mt-3 text-sm text-muted-foreground">Last updated: 16 September 2026</p>
       <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-        This Privacy Policy explains how Radiant Guard Services Pvt. Ltd. (&ldquo;Radiant Guard&rdquo;,
+        This Privacy Policy explains how PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD. (&ldquo;PLUS 360&rdquo;,
         &ldquo;we&rdquo;, &ldquo;us&rdquo;) collects, uses, shares, stores and protects personal data
-        in the Radiant Guard mobile application and web portal (the &ldquo;App&rdquo;). The App is a
-        private workforce-management tool used by Radiant Guard employees, field officers and
+        in the PLUS 360 mobile application and web portal (the &ldquo;App&rdquo;). The App is a
+        private workforce-management tool used by PLUS 360 employees, field officers and
         authorised client contacts. It is not intended for use by children.
       </p>
 
       <Section title="Who is responsible for your data">
         <p>
-          Radiant Guard Services Pvt. Ltd., Pune, Maharashtra, India, is the data fiduciary. For any
+          PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD., Pune, Maharashtra, India, is the data fiduciary. For any
           privacy question or request, write to{' '}
           <a className="text-primary underline" href="mailto:info@radiantguards.com">
             info@radiantguards.com
@@ -121,7 +121,7 @@ function PrivacyPolicyPage() {
           We do not sell personal data and we do not use it for advertising. Data is shared only with:
         </p>
         <ul className="list-disc space-y-2 pl-5">
-          <li>Authorised Radiant Guard personnel on a need-to-know basis.</li>
+          <li>Authorised PLUS 360 personnel on a need-to-know basis.</li>
           <li>
             Client organisations, limited to deployment and attendance information for guards posted
             at their sites.
@@ -189,7 +189,7 @@ function PrivacyPolicyPage() {
 
       <Section title="Contact">
         <p>
-          Radiant Guard Services Pvt. Ltd., Pune, Maharashtra, India ·{' '}
+          PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD., Pune, Maharashtra, India ·{' '}
           <a className="text-primary underline" href="mailto:info@radiantguards.com">
             info@radiantguards.com
           </a>

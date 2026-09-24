@@ -62,9 +62,9 @@ const SALUTATIONS = ["Mr.", "Mrs.", "Ms.", "Dr.", "Mx."];
 export const Route = createFileRoute("/admin/customers/customer-manager")({
   head: () => ({
     meta: [
-      { title: "Organizations | Radiant Guard Services" },
+      { title: "Organizations | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Manage organizations and their client locations." },
-      { property: "og:title", content: "Organizations | Radiant Guard Services" },
+      { property: "og:title", content: "Organizations | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Manage organizations and their client locations." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

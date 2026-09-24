@@ -63,7 +63,7 @@ export function NativeAppLock() {
       }
 
       logNativeEvent("biometric", "app lock required", { reason });
-      setMessage("Face ID is required to unlock Radiant Guard.");
+      setMessage("Face ID is required to unlock PLUS 360.");
       setMode("locked");
       return true;
     },
@@ -80,7 +80,7 @@ export function NativeAppLock() {
         const savedPhone = await signInWithBiometric();
         if (!savedPhone) {
           logNativeEvent("biometric", "app unlock cancelled", { reason });
-          setMessage("Face ID is required to unlock Radiant Guard.");
+          setMessage("Face ID is required to unlock PLUS 360.");
           setMode("locked");
           return;
         }
@@ -108,7 +108,7 @@ export function NativeAppLock() {
           reason,
           error: err instanceof Error ? err.message : String(err),
         });
-        setMessage("Face ID is required to unlock Radiant Guard.");
+        setMessage("Face ID is required to unlock PLUS 360.");
         setMode("locked");
       } finally {
         setBusy(false);
@@ -223,7 +223,7 @@ export function NativeAppLock() {
             <Fingerprint className="h-9 w-9 text-accent" />
           )}
         </div>
-        <h1 className="mt-6 text-xl font-semibold tracking-tight">Radiant Guard locked</h1>
+        <h1 className="mt-6 text-xl font-semibold tracking-tight">PLUS 360 locked</h1>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">{message}</p>
         <div className="mt-7 space-y-3">
           <Button

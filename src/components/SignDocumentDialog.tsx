@@ -165,7 +165,7 @@ export function SignDocumentDialog({
                 <SignaturePad value={signature} onChange={setSignature} />
               </div>
               <div className="grid gap-2">
-                <Label>Employer Signature (for Radiant Guard)</Label>
+                <Label>Employer Signature (for PLUS 360)</Label>
                 <SignaturePad value={companySignature} onChange={setCompanySignature} />
               </div>
             </div>

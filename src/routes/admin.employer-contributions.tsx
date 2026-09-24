@@ -16,9 +16,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/admin/employer-contributions")({
   head: () => ({
     meta: [
-      { title: "Employer Contributions — Radiant Guard Payroll" },
+      { title: "Employer Contributions — PLUS 360 Payroll" },
       { name: "description", content: "Employer-side statutory and benefit contributions parked per payroll run." },
-      { property: "og:title", content: "Employer Contributions — Radiant Guard Payroll" },
+      { property: "og:title", content: "Employer Contributions — PLUS 360 Payroll" },
       { property: "og:description", content: "Employer-side statutory and benefit contributions parked per payroll run." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

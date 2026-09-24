@@ -914,12 +914,12 @@ export const Route = createFileRoute("/admin/employees")({
   }),
   head: () => ({
     meta: [
-      { title: "Employees and Candidates | Radiant Guard Services" },
+      { title: "Employees and Candidates | PLUS 360 FAHRENHEIT SOLUTIONS" },
       {
         name: "description",
         content: "Onboard candidates and manage employee records and assignments.",
       },
-      { property: "og:title", content: "Employees and Candidates | Radiant Guard Services" },
+      { property: "og:title", content: "Employees and Candidates | PLUS 360 FAHRENHEIT SOLUTIONS" },
       {
         property: "og:description",
         content: "Onboard candidates and manage employee records and assignments.",
@@ -3776,7 +3776,7 @@ function EmployeesPage() {
           }
 
           const firstName = (c.full_name || "").split(" ")[0] || "there";
-          const welcomeTitle = `Welcome to Radiant Guard Services${empCode ? ` — ${empCode}` : ""}`;
+          const welcomeTitle = `Welcome to PLUS 360 FAHRENHEIT SOLUTIONS${empCode ? ` — ${empCode}` : ""}`;
           const welcomeLines = [
             `Hi ${firstName}, we're thrilled to have you on board!`,
             "",
@@ -7685,7 +7685,7 @@ function CandidateWizard({
       if (form.unit_ids.length === 0)
         return failValidation(
           isEmployeeMode
-            ? "Pick a Radiant Guard Services unit at the top of this form (e.g. Corporate Office (Pune - HO))"
+            ? "Pick a PLUS 360 FAHRENHEIT SOLUTIONS unit at the top of this form (e.g. Corporate Office (Pune - HO))"
             : "At least one unit must be mapped before saving (Deployment section)",
         );
       if (!form.permanent_district.trim())

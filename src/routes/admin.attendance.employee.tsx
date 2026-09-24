@@ -20,9 +20,9 @@ import { useOperationsFocus, OPS_PEOPLE_ROLE_KEYS } from "@/lib/ops-scope";
 export const Route = createFileRoute("/admin/attendance/employee")({
   head: () => ({
     meta: [
-      { title: "Employee Attendance | Radiant Guard Services" },
+      { title: "Employee Attendance | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Search employees and review attendance across assigned clients." },
-      { property: "og:title", content: "Employee Attendance | Radiant Guard Services" },
+      { property: "og:title", content: "Employee Attendance | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Search employees and review attendance across assigned clients." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

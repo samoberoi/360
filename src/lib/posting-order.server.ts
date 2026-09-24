@@ -10,7 +10,7 @@ export async function sendEmailViaResend(input: {
 
   const from =
     process.env["POSTING_ORDER_FROM"] ||
-    "Radiant Guard Services <onboarding@resend.dev>";
+    "PLUS 360 FAHRENHEIT SOLUTIONS <onboarding@resend.dev>";
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
