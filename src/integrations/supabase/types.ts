@@ -5974,6 +5974,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_attendance_charter_units: { Args: never; Returns: Json }
       get_candidate_id_by_user_id: {
         Args: { _user_id: string }
         Returns: string
