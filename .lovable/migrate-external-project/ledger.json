@@ -2,16 +2,82 @@
   "source": "Hypervioarr workspace project",
   "target": "This project's Lovable Cloud",
   "capabilities": [
-    {"capability":"code and visual identity","source":"source project snapshot","outcome":"merge PLUS 360 branding and theme without functional regressions","status":"in_progress","next_action":"apply and verify"},
-    {"capability":"database schema","source":"source generated types and migrations","outcome":"compare and add only required missing business structures","status":"in_progress","next_action":"finish compatibility audit"},
-    {"capability":"business records","source":"source Lovable Cloud tables","outcome":"copy all accessible business records with relationships","status":"in_progress","next_action":"export, sanitize, import, and validate"},
-    {"capability":"auth identities","source":"source auth","outcome":"do not import; retain the destination super admin as the only login","status":"preserved","next_action":"verify login restriction"},
-    {"capability":"authorization","source":"destination single-admin restriction","outcome":"imported staff are records only, without login access","status":"preserved","next_action":"verify"},
-    {"capability":"uploaded file bytes","source":"source asset pointers and record URLs","outcome":"copy PLUS 360 logo to destination assets; assess business documents separately","status":"in_progress","next_action":"verify logo and discover record-backed files"},
-    {"capability":"external providers","source":"source project","outcome":"remain disabled in this remix unless explicitly re-enabled","status":"preserved","next_action":"none"},
-    {"capability":"public endpoints and callbacks","source":"current remix","outcome":"preserve current isolated endpoints","status":"preserved","next_action":"verify no source calls"},
-    {"capability":"schedules and triggers","source":"current remix","outcome":"preserve current behavior","status":"preserved","next_action":"verify imported data compatibility"},
-    {"capability":"cutover","source":"one-time copy","outcome":"no runtime connection to Hypervioarr","status":"in_progress","next_action":"network verification"},
-    {"capability":"verification","source":"preview and database checks","outcome":"desktop/mobile brand, counts, relations, and isolated network","status":"pending","next_action":"run after import"}
+    {
+      "capability": "code and visual identity",
+      "source": "source project snapshot",
+      "outcome": "merge PLUS 360 branding and theme without functional regressions",
+      "status": "verified",
+      "next_action": "none"
+    },
+    {
+      "capability": "database schema",
+      "source": "source generated types and migrations",
+      "outcome": "compare and add only required missing business structures",
+      "status": "verified",
+      "next_action": "none"
+    },
+    {
+      "capability": "business records",
+      "source": "source Lovable Cloud tables",
+      "outcome": "copy all accessible business records with relationships",
+      "status": "verified",
+      "next_action": "none"
+    },
+    {
+      "capability": "auth identities",
+      "source": "source auth",
+      "outcome": "do not import; retain the destination super admin as the only login",
+      "status": "preserved",
+      "next_action": "verify login restriction"
+    },
+    {
+      "capability": "authorization",
+      "source": "destination single-admin restriction",
+      "outcome": "imported staff are records only, without login access",
+      "status": "preserved",
+      "next_action": "verify"
+    },
+    {
+      "capability": "uploaded file bytes",
+      "source": "source asset pointers and record URLs",
+      "outcome": "copy PLUS 360 logo to destination assets; assess business documents separately",
+      "status": "verified",
+      "next_action": "none"
+    },
+    {
+      "capability": "external providers",
+      "source": "source project",
+      "outcome": "remain disabled in this remix unless explicitly re-enabled",
+      "status": "preserved",
+      "next_action": "none"
+    },
+    {
+      "capability": "public endpoints and callbacks",
+      "source": "current remix",
+      "outcome": "preserve current isolated endpoints",
+      "status": "preserved",
+      "next_action": "verify no source calls"
+    },
+    {
+      "capability": "schedules and triggers",
+      "source": "current remix",
+      "outcome": "preserve current behavior",
+      "status": "preserved",
+      "next_action": "verify imported data compatibility"
+    },
+    {
+      "capability": "cutover",
+      "source": "one-time copy",
+      "outcome": "no runtime connection to Hypervioarr",
+      "status": "verified",
+      "next_action": "none"
+    },
+    {
+      "capability": "verification",
+      "source": "preview and database checks",
+      "outcome": "desktop/mobile brand, counts, relations, and isolated network",
+      "status": "verified",
+      "next_action": "none"
+    }
   ]
 }
