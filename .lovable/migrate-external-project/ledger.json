@@ -27,15 +27,15 @@
       "capability": "auth identities",
       "source": "source auth",
       "outcome": "do not import; retain the destination super admin as the only login",
-      "status": "preserved",
-      "next_action": "verify login restriction"
+      "status": "verified",
+      "next_action": "none"
     },
     {
       "capability": "authorization",
       "source": "destination single-admin restriction",
       "outcome": "imported staff are records only, without login access",
-      "status": "preserved",
-      "next_action": "verify"
+      "status": "verified",
+      "next_action": "none"
     },
     {
       "capability": "uploaded file bytes",
@@ -55,15 +55,15 @@
       "capability": "public endpoints and callbacks",
       "source": "current remix",
       "outcome": "preserve current isolated endpoints",
-      "status": "preserved",
-      "next_action": "verify no source calls"
+      "status": "verified",
+      "next_action": "none"
     },
     {
       "capability": "schedules and triggers",
       "source": "current remix",
       "outcome": "preserve current behavior",
-      "status": "preserved",
-      "next_action": "verify imported data compatibility"
+      "status": "verified",
+      "next_action": "none"
     },
     {
       "capability": "cutover",
