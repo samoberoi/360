@@ -15,7 +15,7 @@ import { AttendanceOcrInputSchema, MigrationSheetInputSchema } from "@/lib/sheet
 
 const VITE_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const VITE_SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
-const LOVABLE_BRIDGE_ORIGIN = "https://project--dc741c55-be5a-40d9-b6e9-523fed099022-dev.lovable.app";
+const LOVABLE_BRIDGE_ORIGIN = "https://project--17b6aaa6-fbb3-4432-add3-c51b6957b203-dev.lovable.app";
 const SHEET_OCR_PATH = "/api/public/sheet-ocr";
 
 const RequestSchema = z.discriminatedUnion("action", [

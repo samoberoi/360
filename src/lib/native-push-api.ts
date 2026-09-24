@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { logNativeEvent } from "./native";
 
-const LOVABLE_NATIVE_API_ORIGIN = "https://project--dc741c55-be5a-40d9-b6e9-523fed099022-dev.lovable.app";
+const LOVABLE_NATIVE_API_ORIGIN = "https://project--17b6aaa6-fbb3-4432-add3-c51b6957b203-dev.lovable.app";
 const NATIVE_PUSH_API_PATH = "/api/public/native/push";
 
 export type NativePushRegistrationStatus = {
