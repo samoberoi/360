@@ -1,4 +1,10 @@
 {
+  "name": "PLUS 360 FAHRENHEIT SOLUTIONS",
+  "short_name": "PLUS 360",
+  "description": "Secure workforce operations portal for PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD.",
+  "display": "standalone",
+  "start_url": "/",
+  "theme_color": "#2563eb",
   "background_color": "#ffffff",
   "icons": [
     {

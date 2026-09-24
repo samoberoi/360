@@ -8,10 +8,10 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/welcome")({
   head: () => ({
     meta: [
-      { title: "Welcome — Radiant Guard Services" },
+      { title: "Welcome — PLUS 360 FAHRENHEIT SOLUTIONS" },
       {
         name: "description",
-        content: "Your Radiant Guard Services command center.",
+        content: "Your PLUS 360 FAHRENHEIT SOLUTIONS command center.",
       },
     ],
   }),
@@ -55,7 +55,7 @@ function WelcomePage() {
           </span>
 
           <h1 className="mt-5 font-display text-2xl font-bold tracking-tight text-foreground sm:text-2xl">
-            Welcome to <span className="text-gradient-accent">Radiant</span>
+            Welcome to <span className="text-gradient-accent">PLUS 360</span>
           </h1>
 
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
@@ -79,7 +79,7 @@ function WelcomePage() {
         </div>
 
         <p className="mt-6 text-center text-xs uppercase tracking-[0.25em] text-muted-foreground">
-          Radiant Guard Services Pvt. Ltd.
+          PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD.
         </p>
       </div>
     </div>

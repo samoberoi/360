@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>Radiant Guard</string>
+		<string>PLUS 360</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -48,17 +48,17 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Use Face ID to sign in to Radiant Guard quickly and securely.</string>
+	<string>Use Face ID to sign in to PLUS 360 quickly and securely.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Radiant Guard captures your live GPS location when you check in or check out for attendance.</string>
+	<string>PLUS 360 captures your live GPS location when you check in or check out for attendance.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Radiant Guard captures your live GPS location when you check in or check out for attendance.</string>
+	<string>PLUS 360 captures your live GPS location when you check in or check out for attendance.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Radiant Guard uses the camera to capture client photos during site visits.</string>
+	<string>PLUS 360 uses the camera to capture client photos during site visits.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Radiant Guard needs photo access to attach a client photo to your site visit report.</string>
+	<string>PLUS 360 needs photo access to attach a client photo to your site visit report.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Radiant Guard may save captured client photos to your library.</string>
+	<string>PLUS 360 may save captured client photos to your library.</string>
 
 	<key>UIBackgroundModes</key>
 	<array>
