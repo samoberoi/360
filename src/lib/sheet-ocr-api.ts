@@ -7,7 +7,7 @@ import type {
   MigrationSheetResult,
 } from "./sheet-ocr-types";
 
-const LOVABLE_BRIDGE_ORIGIN = "https://project--dc741c55-be5a-40d9-b6e9-523fed099022-dev.lovable.app";
+const LOVABLE_BRIDGE_ORIGIN = "https://project--17b6aaa6-fbb3-4432-add3-c51b6957b203-dev.lovable.app";
 const SHEET_OCR_PATH = "/api/public/sheet-ocr";
 
 function urls() {
