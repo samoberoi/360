@@ -2272,6 +2272,104 @@ export type Database = {
           },
         ]
       }
+      final_invoice_units: {
+        Row: {
+          created_at: string
+          final_invoice_id: string
+          id: string
+          period_end: string
+          period_start: string
+          unit_id: string
+        }
+        Insert: {
+          created_at?: string
+          final_invoice_id: string
+          id?: string
+          period_end: string
+          period_start: string
+          unit_id: string
+        }
+        Update: {
+          created_at?: string
+          final_invoice_id?: string
+          id?: string
+          period_end?: string
+          period_start?: string
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "final_invoice_units_final_invoice_id_fkey"
+            columns: ["final_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "final_invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      final_invoices: {
+        Row: {
+          billing_state: string | null
+          client_token: string | null
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          fiscal_year: string
+          id: string
+          invoice_date: string
+          invoice_no: string
+          month_code: string
+          party_name: string | null
+          period_end: string
+          period_start: string
+          sequence: number
+          state_code: string
+          tax_total: number | null
+          taxable_value: number | null
+          total_value: number | null
+        }
+        Insert: {
+          billing_state?: string | null
+          client_token?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          fiscal_year: string
+          id?: string
+          invoice_date: string
+          invoice_no: string
+          month_code: string
+          party_name?: string | null
+          period_end: string
+          period_start: string
+          sequence: number
+          state_code: string
+          tax_total?: number | null
+          taxable_value?: number | null
+          total_value?: number | null
+        }
+        Update: {
+          billing_state?: string | null
+          client_token?: string | null
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          fiscal_year?: string
+          id?: string
+          invoice_date?: string
+          invoice_no?: string
+          month_code?: string
+          party_name?: string | null
+          period_end?: string
+          period_start?: string
+          sequence?: number
+          state_code?: string
+          tax_total?: number | null
+          taxable_value?: number | null
+          total_value?: number | null
+        }
+        Relationships: []
+      }
       indian_states: {
         Row: {
           code: string
@@ -3778,6 +3876,141 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      invoice_number_client_tokens: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          enabled: boolean
+          id: string
+          sample_party_name: string | null
+          state_code: string
+          token: string
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          enabled?: boolean
+          id?: string
+          sample_party_name?: string | null
+          state_code: string
+          token: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          enabled?: boolean
+          id?: string
+          sample_party_name?: string | null
+          state_code?: string
+          token?: string
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      invoice_number_registry: {
+        Row: {
+          client_token: string | null
+          created_at: string
+          created_by: string | null
+          fiscal_year: string
+          id: string
+          invoice_no: string
+          irn_date_text: string | null
+          irn_number: string | null
+          issued_on: string | null
+          month_code: string
+          party_name: string | null
+          remarks: string | null
+          sequence: number
+          source: string
+          state_code: string
+          unit_id: string | null
+        }
+        Insert: {
+          client_token?: string | null
+          created_at?: string
+          created_by?: string | null
+          fiscal_year: string
+          id?: string
+          invoice_no: string
+          irn_date_text?: string | null
+          irn_number?: string | null
+          issued_on?: string | null
+          month_code: string
+          party_name?: string | null
+          remarks?: string | null
+          sequence: number
+          source?: string
+          state_code: string
+          unit_id?: string | null
+        }
+        Update: {
+          client_token?: string | null
+          created_at?: string
+          created_by?: string | null
+          fiscal_year?: string
+          id?: string
+          invoice_no?: string
+          irn_date_text?: string | null
+          irn_number?: string | null
+          issued_on?: string | null
+          month_code?: string
+          party_name?: string | null
+          remarks?: string | null
+          sequence?: number
+          source?: string
+          state_code?: string
+          unit_id?: string | null
+        }
+        Relationships: []
+      }
+      invoice_number_series: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          fiscal_year: string
+          id: string
+          last_sequence: number
+          notes: string | null
+          number_prefix: string | null
+          seq_padding: number
+          state_code: string
+          state_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          fiscal_year: string
+          id?: string
+          last_sequence?: number
+          notes?: string | null
+          number_prefix?: string | null
+          seq_padding?: number
+          state_code: string
+          state_name?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          fiscal_year?: string
+          id?: string
+          last_sequence?: number
+          notes?: string | null
+          number_prefix?: string | null
+          seq_padding?: number
+          state_code?: string
+          state_name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       labour_welfare_funds: {
         Row: {
@@ -5873,9 +6106,37 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      invoice_number_month_counts: {
+        Row: {
+          first_sequence: number | null
+          fiscal_year: string | null
+          invoice_count: number | null
+          last_sequence: number | null
+          month_code: string | null
+          month_order: number | null
+          state_code: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      _inv_fy: { Args: { _d: string }; Returns: string }
+      _inv_mc: { Args: { _d: string }; Returns: string }
+      allocate_invoice_number: {
+        Args: {
+          _client_token?: string
+          _invoice_date: string
+          _party_name?: string
+          _state_code: string
+          _unit_id?: string
+        }
+        Returns: {
+          fiscal_year: string
+          invoice_no: string
+          month_code: string
+          sequence: number
+        }[]
+      }
       apply_fpl_master_fill: {
         Args: { _id: string; p: Json }
         Returns: undefined
@@ -5885,6 +6146,15 @@ export type Database = {
       candidate_branch_ids: {
         Args: { _candidate_id: string }
         Returns: string[]
+      }
+      capture_unit_coordinates: {
+        Args: {
+          _accuracy?: number
+          _lat: number
+          _lng: number
+          _unit_id: string
+        }
+        Returns: boolean
       }
       contract_register_directory: {
         Args: never
@@ -5915,6 +6185,7 @@ export type Database = {
         Args: { _candidate_id: string; _unit_id: string }
         Returns: boolean
       }
+      current_user_can_manage_invoices: { Args: never; Returns: boolean }
       current_user_can_manage_unit_scope_assignment: {
         Args: { _unit_id: string }
         Returns: boolean
@@ -5968,6 +6239,29 @@ export type Database = {
           unit_id: string
         }[]
       }
+      generate_final_invoice: {
+        Args: {
+          _billing_state: string
+          _client_token?: string
+          _customer_id?: string
+          _invoice_date: string
+          _party_name?: string
+          _period_end: string
+          _period_start: string
+          _tax_total?: number
+          _taxable_value?: number
+          _total_value?: number
+          _unit_ids: string[]
+        }
+        Returns: {
+          final_invoice_id: string
+          fiscal_year: string
+          invoice_no: string
+          month_code: string
+          sequence: number
+          state_code: string
+        }[]
+      }
       get_admin_user_ids: {
         Args: never
         Returns: {
@@ -5997,6 +6291,51 @@ export type Database = {
           employee_code: string
           full_name: string
           missing_since: string
+          unit_code: string
+          unit_id: string
+          unit_name: string
+        }[]
+      }
+      get_my_assigned_units: {
+        Args: never
+        Returns: {
+          code: string
+          designation_id: string
+          id: string
+          is_primary: boolean
+          latitude: number
+          longitude: number
+          name: string
+          shift_end_time: string
+          shift_start_time: string
+          site_address: string
+        }[]
+      }
+      get_my_field_scope: {
+        Args: never
+        Returns: {
+          address: string
+          branch_id: string
+          branch_name: string
+          customer_name: string
+          is_primary: boolean
+          latitude: number
+          longitude: number
+          unit_code: string
+          unit_id: string
+          unit_name: string
+        }[]
+      }
+      get_my_field_scope_fresh: {
+        Args: never
+        Returns: {
+          address: string
+          branch_id: string
+          branch_name: string
+          customer_name: string
+          is_primary: boolean
+          latitude: number
+          longitude: number
           unit_code: string
           unit_id: string
           unit_name: string
@@ -6086,6 +6425,29 @@ export type Database = {
         }[]
       }
       nextval: { Args: { sequence_name: string }; Returns: number }
+      peek_invoice_number: {
+        Args: {
+          _client_token?: string
+          _invoice_date: string
+          _state_code: string
+        }
+        Returns: {
+          fiscal_year: string
+          invoice_no: string
+          month_code: string
+          next_sequence: number
+        }[]
+      }
+      people_insights: {
+        Args: {
+          p_days?: number
+          p_limit?: number
+          p_role_keys?: string[]
+          p_sixty?: boolean
+          p_unit_ids?: string[]
+        }
+        Returns: Json
+      }
       register_device_push_token: {
         Args: { _platform?: string; _token: string }
         Returns: {
