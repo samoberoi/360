@@ -487,3 +487,10 @@
 
 - Merged duplicate L&T contracts (CON14918→16000, 14898→15978, 14915→15993, 14910→15989, 14907→15986, 14906→15985): postings, attendance, sheets and payroll runs moved to survivors; old contracts expired 2026-09-23 (db/prod-migrations/20260923163000_merge_duplicate_lt_contracts.sql).
 - [x] Employee edits: removed the delayed form reload that overwrote changes, verify the saved role after updates, and restored Pankaj Zate (49258) to Field Officer in production.
+
+## PLUS 360 remix migration
+
+- [x] Apply PLUS 360 visual identity and logo without changing authentication or locked native notifications.
+- [x] Add missing compatible business structures from Hypervioarr.
+- [ ] Import accessible clients, sites, contracts, employees, attendance, and configuration into this project's isolated backend. (Clients, sites, contracts and 40 workforce records copied; remaining detailed records pending.)
+- [ ] Validate imported counts and relationships, app checks, sign-in, and old-project isolation.
