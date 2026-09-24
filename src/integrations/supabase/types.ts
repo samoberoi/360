@@ -408,6 +408,9 @@ export type Database = {
           status: string
           submitted_at: string | null
           submitted_by: string | null
+          tally_invoice_name: string | null
+          tally_invoice_path: string | null
+          tally_invoice_uploaded_at: string | null
           unit_id: string
           updated_at: string
         }
@@ -427,6 +430,9 @@ export type Database = {
           status?: string
           submitted_at?: string | null
           submitted_by?: string | null
+          tally_invoice_name?: string | null
+          tally_invoice_path?: string | null
+          tally_invoice_uploaded_at?: string | null
           unit_id: string
           updated_at?: string
         }
@@ -446,6 +452,9 @@ export type Database = {
           status?: string
           submitted_at?: string | null
           submitted_by?: string | null
+          tally_invoice_name?: string | null
+          tally_invoice_path?: string | null
+          tally_invoice_uploaded_at?: string | null
           unit_id?: string
           updated_at?: string
         }
@@ -3833,6 +3842,146 @@ export type Database = {
         }
         Relationships: []
       }
+      mis_template_columns: {
+        Row: {
+          client_attribute: boolean
+          created_at: string
+          enabled: boolean
+          header: string
+          id: string
+          sort_order: number
+          source: string
+          system_key: string | null
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          client_attribute?: boolean
+          created_at?: string
+          enabled?: boolean
+          header: string
+          id?: string
+          sort_order?: number
+          source?: string
+          system_key?: string | null
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          client_attribute?: boolean
+          created_at?: string
+          enabled?: boolean
+          header?: string
+          id?: string
+          sort_order?: number
+          source?: string
+          system_key?: string | null
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mis_template_columns_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "mis_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mis_templates: {
+        Row: {
+          created_at: string
+          customer_id: string
+          enabled: boolean
+          id: string
+          mis_applicable: boolean
+          name: string
+          row_grain: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          enabled?: boolean
+          id?: string
+          mis_applicable?: boolean
+          name: string
+          row_grain?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          enabled?: boolean
+          id?: string
+          mis_applicable?: boolean
+          name?: string
+          row_grain?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mis_templates_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mis_unit_values: {
+        Row: {
+          column_id: string
+          created_at: string
+          id: string
+          template_id: string
+          unit_id: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          column_id: string
+          created_at?: string
+          id?: string
+          template_id: string
+          unit_id: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          column_id?: string
+          created_at?: string
+          id?: string
+          template_id?: string
+          unit_id?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mis_unit_values_column_id_fkey"
+            columns: ["column_id"]
+            isOneToOne: false
+            referencedRelation: "mis_template_columns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mis_unit_values_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "mis_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mis_unit_values_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           actor_id: string | null
@@ -5135,7 +5284,11 @@ export type Database = {
           nearby_hospital_mobile: string
           nearby_hospital_name: string
           onboarding_date: string | null
+          paid_weekly_off: boolean
           pan_number: string
+          ph_day_value: number | null
+          ph_enabled: boolean
+          ph_multiplier: number
           recruitment_fee_amount: number
           recruitment_fee_enabled: boolean
           reporting_officers: Json
@@ -5199,7 +5352,11 @@ export type Database = {
           nearby_hospital_mobile?: string
           nearby_hospital_name?: string
           onboarding_date?: string | null
+          paid_weekly_off?: boolean
           pan_number?: string
+          ph_day_value?: number | null
+          ph_enabled?: boolean
+          ph_multiplier?: number
           recruitment_fee_amount?: number
           recruitment_fee_enabled?: boolean
           reporting_officers?: Json
@@ -5263,7 +5420,11 @@ export type Database = {
           nearby_hospital_mobile?: string
           nearby_hospital_name?: string
           onboarding_date?: string | null
+          paid_weekly_off?: boolean
           pan_number?: string
+          ph_day_value?: number | null
+          ph_enabled?: boolean
+          ph_multiplier?: number
           recruitment_fee_amount?: number
           recruitment_fee_enabled?: boolean
           reporting_officers?: Json
