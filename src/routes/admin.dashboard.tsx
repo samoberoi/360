@@ -95,6 +95,59 @@ type StatusCounts = {
   processed: number;
 };
 
+function isMissingDatabaseFunction(error: { code?: string } | null) {
+  return error?.code === "PGRST202";
+}
+
+async function fetchDashboardCountsFallback(
+  today: string,
+  horizon: string,
+): Promise<DashboardCounts> {
+  const [orgs, units, employees, activeContracts, expiringContracts, vehicles, items] =
+    await Promise.all([
+      supabase.from("customers").select("id", { count: "exact", head: true }),
+      supabase.from("units").select("id", { count: "exact", head: true }),
+      supabase.from("candidates").select("id", { count: "exact", head: true }),
+      supabase
+        .from("client_contracts")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active"),
+      supabase
+        .from("client_contracts")
+        .select("id,contract_code,end_date,unit_id,status")
+        .eq("status", "active")
+        .gte("end_date", today)
+        .lte("end_date", horizon)
+        .order("end_date", { ascending: true }),
+      supabase.from("vehicles").select("id", { count: "exact", head: true }),
+      supabase.from("inventory_items").select("id", { count: "exact", head: true }),
+    ]);
+
+  const buckets = {
+    approved: 0,
+    pending: 0,
+    draft: 0,
+    rejected: 0,
+    open: 0,
+    processed: 0,
+  };
+  return {
+    orgs: orgs.error ? 0 : (orgs.count ?? 0),
+    units: units.error ? 0 : (units.count ?? 0),
+    employees: employees.error ? 0 : (employees.count ?? 0),
+    contractsActive: activeContracts.error ? 0 : (activeContracts.count ?? 0),
+    contractsExpiring: expiringContracts.error
+      ? []
+      : (((expiringContracts.data ?? []) as unknown) as ContractExpiringRow[]),
+    vehicles: vehicles.error ? 0 : (vehicles.count ?? 0),
+    fuelTotal: 0,
+    items: items.error ? 0 : (items.count ?? 0),
+    sheetCounts: { ...buckets },
+    runCounts: { ...buckets },
+    invoiceCounts: { ...buckets },
+  };
+}
+
 const DASHBOARD_COUNTS_SNAPSHOT = "radiant:dashboard-counts:v2";
 
 function readDashboardCountsSnapshot(key: string): DashboardCounts | undefined {
@@ -311,7 +364,15 @@ function DashboardPage() {
           p_horizon: sixtyStr,
         } as never,
       );
-      if (error) throw error;
+      if (error) {
+        if (!isMissingDatabaseFunction(error)) throw error;
+        const fallback = await fetchDashboardCountsFallback(todayStr, sixtyStr);
+        writeDashboardCountsSnapshot(
+          `${year}-${month}-${periodSelection.selectedKey}`,
+          fallback,
+        );
+        return fallback;
+      }
 
       const lifecycleResult =
         can("attendance") || can("payroll") || can("invoice")
@@ -456,7 +517,15 @@ function DashboardPage() {
           p_att_end: attendanceEnd,
         } as never,
       );
-      if (error) throw error;
+      if (error) {
+        if (isMissingDatabaseFunction(error)) {
+          return {
+            pnlRows: [] as PnLRow[],
+            pnlTotals: { contract: 0, invoice: 0, payroll: 0 },
+          };
+        }
+        throw error;
+      }
 
       type UnitRow = {
         unit_id: string;

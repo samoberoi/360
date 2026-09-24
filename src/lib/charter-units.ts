@@ -140,6 +140,7 @@ export async function fetchCharterUnits(): Promise<CharterPageData> {
   if (error) {
     const cached = readSnapshot();
     if (cached) return cached;
+    if (error.code === "PGRST202") return buildPageData([]);
     throw error;
   }
   const payload = (data ?? {}) as { units?: CharterUnitRow[] };
