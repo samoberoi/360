@@ -229,6 +229,13 @@
 - [ ] Create and verify manual unit attendance guide.
 - [ ] Create and verify employee unit reassignment guide.
 
+## Dashboard end-to-end audit
+
+- [x] Verify every headline tile against saved data and its destination.
+- [x] Verify Attendance, Payroll, Invoicing, and finance period calculations.
+- [x] Fix dashboard permission failures and silent zero fallbacks.
+- [x] Verify desktop and mobile layouts, dialogs, filters, and exports.
+
 ## Finance dashboard loading
 
 - [ ] Remove the production dashboard timeout for Finance without widening RBAC access.

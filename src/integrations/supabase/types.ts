@@ -6309,6 +6309,10 @@ export type Database = {
         }
         Returns: Json
       }
+      dashboard_pnl_inputs: {
+        Args: { p_att_end: string; p_end: string; p_start: string }
+        Returns: Json
+      }
       ensure_annual_gpaip_deductions: { Args: never; Returns: number }
       find_rehire_candidate_by_aadhaar: {
         Args: { _aadhaar: string }
