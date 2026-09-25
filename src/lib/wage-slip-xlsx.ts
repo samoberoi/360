@@ -38,8 +38,12 @@ export async function downloadWageSlipsXlsx(slips: WageSlipData[], filename: str
       { s: { r: 6, c: 1 }, e: { r: 6, c: 3 } },
       { s: { r: 15, c: 1 }, e: { r: 15, c: 3 } },
     ];
-    sheet["!cols"] = [{ wch: 22 }, { wch: 26 }, { wch: 22 }, { wch: 24 }];
-    sheet["!rows"] = rows.map((_, row) => ({ hpt: row === 0 ? 28 : row === 1 ? 24 : 20 }));
+    sheet["!cols"] = [{ wch: 22 }, { wch: 34 }, { wch: 20 }, { wch: 26 }];
+    sheet["!rows"] = rows.map((_, row) => ({
+      hpt: row === 0 ? 28 : row === 1 ? 24 : row === 4 || row === 6 ? 34 : 20,
+    }));
+    sheet["!margins"] = { left: 0.3, right: 0.3, top: 0.45, bottom: 0.45, header: 0.2, footer: 0.2 };
+    sheet["!pageSetup"] = { orientation: "landscape", fitToWidth: 1, fitToHeight: 1 };
 
     const border = {
       top: { style: "thin", color: { rgb: "CBD5E1" } },
@@ -59,7 +63,7 @@ export async function downloadWageSlipsXlsx(slips: WageSlipData[], filename: str
         cell.s = {
           font: {
             name: "Arial",
-            sz: isTitle ? 15 : isSubtitle ? 13 : 10,
+            sz: isTitle ? 14 : isSubtitle ? 13 : 10,
             bold: isTitle || isSubtitle || isHeader || isTotal || col % 2 === 0,
             color: { rgb: isTitle || isHeader ? "FFFFFF" : "111827" },
           },
