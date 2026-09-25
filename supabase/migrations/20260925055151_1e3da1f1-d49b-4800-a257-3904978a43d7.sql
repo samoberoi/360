@@ -1,0 +1,1 @@
+ALTER TABLE public.units ADD COLUMN IF NOT EXISTS zone text, ADD COLUMN IF NOT EXISTS branch_sap_code text; NOTIFY pgrst, 'reload schema';
