@@ -24,10 +24,8 @@ import {
   signInWithBiometric,
 } from "@/lib/biometric";
 import { markNativeAppSessionUnlocked } from "@/lib/native-app-lock";
-import logoAsset from "@/assets/plus-360-fahrenheit-logo.png.asset.json";
+import logo from "@/assets/plus-360-fahrenheit-logo.png";
 import loginBg from "@/assets/login-bg.jpg";
-
-const logo = logoAsset.url;
 
 export const Route = createFileRoute("/login")({
   head: () => ({

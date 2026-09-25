@@ -1,6 +1,4 @@
-import logoAsset from "@/assets/plus-360-fahrenheit-logo.png.asset.json";
-
-const logo = logoAsset.url;
+import logo from "@/assets/plus-360-fahrenheit-logo.png";
 
 type BrandMarkProps = {
   className?: string;
