@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, Download, CheckCircle2, XCircle, Send, ChevronDown, ChevronUp, Banknote, PauseCircle, PlayCircle, FileText, Loader2 } from "lucide-react";
+import { ChevronLeft, Download, CheckCircle2, XCircle, Send, ChevronDown, ChevronUp, Banknote, PauseCircle, PlayCircle, FileSpreadsheet, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -54,7 +54,8 @@ import {
 import { setAmendmentStatus, fetchAttendanceVersions, fetchLiveSnapshot, diffAttendance } from "@/lib/attendance-versions";
 
 import { fetchAttendanceEntriesForPeriod } from "@/lib/attendance-fetch";
-import { downloadWageSlipPdf, type WageSlipData } from "@/lib/company-documents";
+import type { WageSlipData } from "@/lib/company-documents";
+import { downloadWageSlipsXlsx } from "@/lib/wage-slip-xlsx";
 import { DataPagination, usePagination } from "@/components/DataPagination";
 
 const searchSchema = z.object({
@@ -351,9 +352,6 @@ function PayrollUnitPage() {
       return next;
     });
   };
-
-  const [processOpen, setProcessOpen] = useState(false);
-  const [holdReason, setHoldReason] = useState("");
 
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
@@ -1019,10 +1017,9 @@ function PayrollUnitPage() {
   // ---- Form XVI wage slips -------------------------------------------------
   const [slipBusy, setSlipBusy] = useState<string | null>(null);
 
-  // The wage slip is the document handed to the employee for what was ACTUALLY
-  // paid in this period. Once a run is processed the paid figures are frozen in
-  // the v1 snapshot — a later attendance amendment is settled as an
-  // arrear/recovery in the NEXT payroll, so it must NOT rewrite this slip.
+  // The salary slip is the document handed to the employee for what was
+  // approved in this period. Approved figures are frozen in the v1 snapshot;
+  // a later attendance amendment is settled in the next payroll.
   const buildSlip = (r: (typeof rows)[number]): WageSlipData => {
     const paid = snapshots
       .filter((s) => s.candidate_id === r.id)
@@ -1078,9 +1075,12 @@ function PayrollUnitPage() {
     if (!r.wages) return;
     setSlipBusy(r.rowKey);
     try {
-      await downloadWageSlipPdf(buildSlip(r));
+      await downloadWageSlipsXlsx(
+        [buildSlip(r)],
+        `salary-slip-${r.employeeCode || r.name}-${start}-${end}`,
+      );
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not generate wage slip");
+      toast.error(e instanceof Error ? e.message : "Could not generate salary slip");
     } finally {
       setSlipBusy(null);
     }
@@ -1091,12 +1091,13 @@ function PayrollUnitPage() {
     if (list.length === 0) return;
     setSlipBusy("__all__");
     try {
-      for (const r of list) {
-        await downloadWageSlipPdf(buildSlip(r));
-      }
-      toast.success(`${list.length} wage slip(s) downloaded`);
+      await downloadWageSlipsXlsx(
+        list.map(buildSlip),
+        `salary-slips-${unit?.code ?? unitId}-${start}-${end}`,
+      );
+      toast.success(`${list.length} salary slips downloaded in one Excel workbook`);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not generate wage slips");
+      toast.error(e instanceof Error ? e.message : "Could not generate salary slips");
     } finally {
       setSlipBusy(null);
     }
@@ -1266,7 +1267,8 @@ function PayrollUnitPage() {
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed to process amendment"),
   });
 
-  // Process payroll: park every computed money line into its permanent ledger.
+  // Approval immediately parks every computed money line into its permanent
+  // ledger and freezes the salary-slip snapshot. There is no second process step.
   const processRun = useMutation({
     mutationFn: async () => {
       if (!run?.id) throw new Error("Payroll run not found");
@@ -1280,7 +1282,6 @@ function PayrollUnitPage() {
         periodEnd: end,
         rows: payloadRows,
         heldCandidateIds: Array.from(holdDraft),
-        holdReason,
         version: sheetVersion,
 
       });
@@ -1294,7 +1295,6 @@ function PayrollUnitPage() {
       return result;
     },
     onSuccess: (res) => {
-      setProcessOpen(false);
       queryClient.invalidateQueries({ queryKey: runQK });
       queryClient.invalidateQueries({ queryKey: holdsQK });
       queryClient.invalidateQueries({ queryKey: snapshotsQK });
@@ -1303,15 +1303,23 @@ function PayrollUnitPage() {
       queryClient.invalidateQueries({ queryKey: ["admin", "deductions"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "additions"] });
       toast.success(
-        `Payroll processed — ${res.processed} employee${res.processed === 1 ? "" : "s"} paid (${fmtINR(res.netTotal)}). ` +
+        `Payroll approved — ${res.processed} employee${res.processed === 1 ? "" : "s"} finalized (${fmtINR(res.netTotal)}). ` +
           `${res.deductionRows} deduction, ${res.employerRows} employer contribution and ${res.additionRows} add-on lines posted.` +
-          (res.held ? ` ${res.held} on hold.` : "") +
-          " Bank disbursement is not integrated yet — mark the transfer in your bank portal.",
+          (res.held ? ` ${res.held} on hold.` : ""),
         { duration: 8000 },
       );
     },
-    onError: (e: unknown) => toast.error(asError(e, "Failed to process payroll").message, { duration: 12000 }),
+    onError: (e: unknown) => toast.error(asError(e, "Failed to finalize payroll approval").message, { duration: 12000 }),
   });
+
+  const approveImmediately = async () => {
+    try {
+      if (runStatus === "submitted") await transitionRun.mutateAsync({ status: "approved" });
+      await processRun.mutateAsync();
+    } catch {
+      // Each mutation displays its own specific error.
+    }
+  };
 
   useEffect(() => {
     if (!highlightCandidate || rows.length === 0) return;
@@ -1704,8 +1712,8 @@ function PayrollUnitPage() {
               onClick={downloadAllSlips}
               disabled={isLoading || rows.length === 0 || slipBusy !== null}
             >
-              {slipBusy === "__all__" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileText className="mr-1.5 h-4 w-4" />}
-              Wage slips
+               {slipBusy === "__all__" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileSpreadsheet className="mr-1.5 h-4 w-4" />}
+               All salary slips (Excel)
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={exportCsv} disabled={isLoading || rows.length === 0}>
@@ -1774,8 +1782,8 @@ function PayrollUnitPage() {
             {runStatus === "submitted" && "Submitted — awaiting approval"}
             {runStatus === "approved" && (
               isProcessed
-                ? <><CheckCircle2 className="h-3.5 w-3.5" /> Processed</>
-                : <><CheckCircle2 className="h-3.5 w-3.5" /> Approved — awaiting processing</>
+                ? <><CheckCircle2 className="h-3.5 w-3.5" /> Approved</>
+                : <><CheckCircle2 className="h-3.5 w-3.5" /> Approval incomplete</>
             )}
             {runStatus === "rejected" && <><XCircle className="h-3.5 w-3.5" /> Rejected</>}
           </span>
@@ -1794,8 +1802,8 @@ function PayrollUnitPage() {
           )}
           {runStatus === "submitted" && canApprove && (
             <>
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => transitionRun.mutate({ status: "approved" })} disabled={transitionRun.isPending}>
-                <CheckCircle2 className="mr-1.5 h-4 w-4" /> Approve
+              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => void approveImmediately()} disabled={transitionRun.isPending || processRun.isPending || rows.length === 0}>
+                {processRun.isPending ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-1.5 h-4 w-4" />} Approve
               </Button>
               <Button size="sm" variant="destructive" onClick={() => setRejectOpen(true)} disabled={transitionRun.isPending}>
                 <XCircle className="mr-1.5 h-4 w-4" /> Reject
@@ -1806,23 +1814,13 @@ function PayrollUnitPage() {
             <span className="text-xs text-muted-foreground">Awaiting leadership approval</span>
           )}
           {runStatus === "approved" && !isProcessed && (
-            <>
-              {holdDraft.size > 0 && (
-                <span className="text-xs font-medium text-amber-700">{holdDraft.size} on hold</span>
-              )}
-              <Button
-                size="sm"
-                className="bg-violet-600 hover:bg-violet-700"
-                onClick={() => setProcessOpen(true)}
-                disabled={processRun.isPending || rows.length === 0}
-              >
-                <Banknote className="mr-1.5 h-4 w-4" /> Process Payroll
-              </Button>
-            </>
+            <Button size="sm" onClick={() => void approveImmediately()} disabled={processRun.isPending || rows.length === 0}>
+              {processRun.isPending ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-1.5 h-4 w-4" />} Complete approval
+            </Button>
           )}
           {isProcessed && !amendmentPending && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
-              <CheckCircle2 className="h-3.5 w-3.5" /> Payroll processed
+              <CheckCircle2 className="h-3.5 w-3.5" /> Payroll approved
               {lastSnapshotVersion > 1 ? ` · v${lastSnapshotVersion}` : ""}
               {run?.payroll_processed_at ? ` · ${new Date(run.payroll_processed_at).toLocaleDateString("en-IN")}` : ""}
             </span>
@@ -1953,46 +1951,6 @@ function PayrollUnitPage() {
       </Dialog>
 
 
-      <Dialog open={processOpen} onOpenChange={setProcessOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Process payroll</DialogTitle>
-            <DialogDescription>
-              Attendance and payroll are approved and locked. Processing posts every line to its ledger.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2 rounded-2xl border border-border/60 bg-muted/30 p-3 text-sm">
-            <ProcessLineItem label="Employees to be paid" value={String(rows.filter((r) => r.wages && !holdDraft.has(r.id)).length)} />
-            <ProcessLineItem label="On hold (excluded)" value={String(holdDraft.size)} />
-            <ProcessLineItem label="Deductions → Deductions ledger" value={fmtINR(totals.deductions)} />
-            <ProcessLineItem label="Employer contributions → Employer Contributions" value={fmtINR(totals.employerContrib)} />
-            <ProcessLineItem label="Net payable" value={fmtINR(totals.net)} strong />
-          </div>
-          {holdDraft.size > 0 && (
-            <Textarea
-              value={holdReason}
-              onChange={(e) => setHoldReason(e.target.value)}
-              placeholder="Reason for holding the excluded employees…"
-              rows={2}
-            />
-          )}
-          <p className="text-xs text-muted-foreground">
-            Bank disbursement is not integrated yet — record the actual transfer in your bank portal. Salary slips for
-            this unit will show <span className="font-semibold text-foreground">Paid</span> once processed.
-          </p>
-          <div className="flex justify-end gap-2 pt-1">
-            <Button variant="ghost" onClick={() => setProcessOpen(false)}>Cancel</Button>
-            <Button
-              className="bg-violet-600 hover:bg-violet-700"
-              onClick={() => processRun.mutate()}
-              disabled={processRun.isPending}
-            >
-              {processRun.isPending ? "Processing…" : "Process payroll"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
@@ -2121,13 +2079,13 @@ function PayrollUnitPage() {
                           type="button"
                           variant="outline"
                           size="icon"
-                          title="Download Form XVI wage slip"
-                          aria-label={`Download wage slip for ${r.name}`}
+                          title="Download salary slip in Excel"
+                          aria-label={`Download salary slip for ${r.name} in Excel`}
                           onClick={() => downloadSlip(r)}
                           disabled={slipBusy !== null}
                           className="h-7 w-7 text-muted-foreground"
                         >
-                          {slipBusy === r.rowKey ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
+                          {slipBusy === r.rowKey ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileSpreadsheet className="h-3.5 w-3.5" />}
                         </Button>
                       )}
                     </div>
@@ -3002,11 +2960,3 @@ function SummaryCell({ label, value, tone }: { label: string; value: number; ton
 
 
 
-function ProcessLineItem({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="text-muted-foreground">{label}</span>
-      <span className={cn("tabular-nums", strong ? "text-base font-semibold" : "font-medium")}>{value}</span>
-    </div>
-  );
-}

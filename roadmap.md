@@ -282,6 +282,14 @@
 - [x] Add Payroll Open and Payroll Processed filtering beside search.
 - [x] Validate filtering before pagination and run TypeScript checks.
 
+## Immediate payroll approval and salary slips
+
+- [x] Remove the separate Process Payroll action and dialog.
+- [x] Make Approve immediately finalize the payroll for salary-slip availability.
+- [x] Add one-click Excel download for all salary slips in a payroll run.
+- [x] Add per-employee Excel salary-slip download.
+- [x] Verify approval and both download paths in the signed-in payroll screen.
+
 ## CLI3851 invoice percentage explanation
 
 - [x] Confirm the values behind the displayed 87% and explain the calculation without changing data.
