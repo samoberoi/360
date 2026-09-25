@@ -87,6 +87,8 @@ function cleanLedgerName(raw: string | null | undefined): string {
 
 const ESI_COMPONENT_RE = /\besi(c)?\b/i;
 const PT_COMPONENT_RE = /\bprofessional\s*tax\b|\bpt\b/i;
+const EMPLOYEE_STATUTORY_RE = /\b(e)?pf\b|provident\s*fund|\besi(c)?\b|professional\s*tax|\bpt\b|\blwf\b|labour\s*welfare/i;
+const EMPLOYER_STATUTORY_RE = /\b(epf|pf|provident|eps|pension|esi(c)?|lwf|labour\s*welfare)\b/i;
 const isEsiItem = (item: { name?: unknown }) => ESI_COMPONENT_RE.test(String(item.name ?? ""));
 const isPtItem = (item: { name?: unknown }) => PT_COMPONENT_RE.test(String(item.name ?? ""));
 const contractTotalAmount = (item: { name?: unknown; amount?: unknown }) =>
@@ -886,18 +888,21 @@ function PayrollUnitPage() {
           });
           Object.assign(wages, applyPtToWageComputation(wages, ptResolved.amount));
         } else if (wages) {
-          // PT is a once-a-month statutory deduction per employee. Secondary
-          // lines (e.g. extra-duty-only designation rows) must never charge it
-          // again — the primary line already carries it.
-          const stripped = wages.deductions.filter((d) => !PT_COMPONENT_RE.test(d.name));
-          if (stripped.length !== wages.deductions.length) {
-            const totalDeductions = Math.round(stripped.reduce((s, d) => s + d.amount, 0) * 100) / 100;
-            Object.assign(wages, {
-              deductions: stripped,
-              totalDeductions,
-              netPay: Math.max(0, Math.round((wages.earnedGross - totalDeductions) * 100) / 100),
-            });
-          }
+          // EPF, ESI, PT and LWF are monthly employee-level charges. A person
+          // may have secondary designation lines, but these charges belong on
+          // the primary line once — never once per designation.
+          const deductions = wages.deductions.filter((d) => !EMPLOYEE_STATUTORY_RE.test(d.name));
+          const employerContributions = wages.employerContributions.filter((d) => !EMPLOYER_STATUTORY_RE.test(d.name));
+          const totalDeductions = Math.round(deductions.reduce((s, d) => s + d.amount, 0) * 100) / 100;
+          const totalEmployerContributions = Math.round(employerContributions.reduce((s, d) => s + d.amount, 0) * 100) / 100;
+          Object.assign(wages, {
+            deductions,
+            employerContributions,
+            totalDeductions,
+            totalEmployerContributions,
+            netPay: Math.max(0, Math.round((wages.earnedGross - totalDeductions) * 100) / 100),
+            employerCost: Math.round((wages.earnedGross + totalEmployerContributions) * 100) / 100,
+          });
         }
 
 
@@ -950,6 +955,19 @@ function PayrollUnitPage() {
           const wAny = wages as unknown as { additions?: { name: string; amount: number }[] };
           if (Array.isArray(wAny.additions)) {
             wAny.additions = mergeByCanonicalName(wAny.additions);
+          }
+          // A roster row with no paid attendance and no payable earning must
+          // never receive fixed statutory deductions or employer charges.
+          if (totals.tDays <= 0 && wages.earnedGross <= 0) {
+            wages.components = wages.components.filter((line) => Math.abs(Number(line.amount) || 0) >= 0.005);
+            wages.deductions = [];
+            wages.employerContributions = [];
+            Object.assign(wages, {
+              totalDeductions: 0,
+              totalEmployerContributions: 0,
+              netPay: 0,
+              employerCost: 0,
+            });
           }
         }
 
