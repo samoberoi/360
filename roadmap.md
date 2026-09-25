@@ -2,7 +2,7 @@
 
 ## PLUS 360 company settings
 
-- [ ] Diagnose why Company Settings shows no organization details.
+- [x] Diagnose why Company Settings shows no organization details.
 - [ ] Restore the saved PLUS 360 company details and verify the page.
 
 ## State-based GST branches and invoicing

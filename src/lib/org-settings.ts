@@ -31,10 +31,11 @@ export function useOrgSettings() {
     queryKey: ["org_settings"],
     staleTime: 60_000,
     queryFn: async (): Promise<OrgSettings | null> => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("org_settings" as never)
         .select("*")
         .maybeSingle();
+      if (error) throw error;
       return (data as unknown) as OrgSettings | null;
     },
   });

@@ -16,9 +16,9 @@ export const Route = createFileRoute("/admin/org-settings")({
   component: OrgSettingsPage,
   head: () => ({
     meta: [
-      { title: "Company Settings | Radiant Control Center" },
+      { title: "Company Settings | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { name: "description", content: "Manage company, statutory, bank, and invoice settings." },
-      { property: "og:title", content: "Company Settings | Radiant Control Center" },
+      { property: "og:title", content: "Company Settings | PLUS 360 FAHRENHEIT SOLUTIONS" },
       { property: "og:description", content: "Manage company, statutory, bank, and invoice settings." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
