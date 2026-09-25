@@ -4830,25 +4830,25 @@ function MusterRollPage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={9 + dayCount} className="p-4 text-slate-500">
+                  <td colSpan={10 + dayCount} className="p-4 text-slate-500">
                     Loading roster…
                   </td>
                 </tr>
               ) : rosterError ? (
                 <tr>
-                  <td colSpan={9 + dayCount} className="p-6 text-red-600">
+                  <td colSpan={10 + dayCount} className="p-6 text-red-600">
                     Failed to load mapped employees for this unit.
                   </td>
                 </tr>
               ) : musterRows.length === 0 ? (
                 <tr>
-                  <td colSpan={9 + dayCount} className="p-6 text-slate-500">
+                  <td colSpan={10 + dayCount} className="p-6 text-slate-500">
                     No active security guards are mapped to this unit.
                   </td>
                 </tr>
               ) : visibleMusterRows.length === 0 ? (
                 <tr>
-                  <td colSpan={9 + dayCount} className="p-6 text-slate-500">
+                  <td colSpan={10 + dayCount} className="p-6 text-slate-500">
                     No rows match &ldquo;{musterQuery}&rdquo;.
                   </td>
                 </tr>
