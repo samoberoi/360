@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -1753,76 +1754,97 @@ function PayrollUnitPage() {
 
   return (
     <div className="space-y-4 p-4 sm:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
-          to="/admin/payroll"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
-        >
-          <ChevronLeft className="h-4 w-4" /> Back to payroll units
-        </Link>
-        <div className="flex items-center gap-2">
-          {isProcessed && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => void downloadAllSlips("pdf")}
-              disabled={isLoading || rows.length === 0 || slipBusy !== null}
-            >
-               {slipBusy === "__all__:pdf" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileText className="mr-1.5 h-4 w-4" />}
-               All slips PDF
-            </Button>
-          )}
-          {isProcessed && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => void downloadAllSlips("xlsx")}
-              disabled={isLoading || rows.length === 0 || slipBusy !== null}
-            >
-               {slipBusy === "__all__:xlsx" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileSpreadsheet className="mr-1.5 h-4 w-4" />}
-               All slips Excel
-            </Button>
-          )}
-          <Button variant="outline" size="sm" onClick={exportCsv} disabled={isLoading || rows.length === 0}>
-            <Download className="mr-1.5 h-4 w-4" />
-            {isLoading ? "Loading…" : "Export"}
-          </Button>
-        </div>
+      <Link
+        to="/admin/payroll"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+      >
+        <ChevronLeft className="h-4 w-4" /> Back to payroll units
+      </Link>
 
-      </div>
-
-
-      <div className="rounded-3xl border border-border/70 bg-card p-5 shadow-sm">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
+      <div className="rounded-3xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0">
             <div className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Payroll computation</div>
             <h1 className="mt-1 text-2xl font-semibold text-foreground">{unit?.name || unit?.code || "Client"}</h1>
             <div className="mt-1 text-sm text-muted-foreground">
-              {unit?.customer_name} · Period {fmtPretty(start)} – {fmtPretty(end)}
+              {unit?.customer_name} · {fmtPretty(start)} – {fmtPretty(end)}
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            {sheet?.status === "approved" && (
-              <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
-                Attendance approved
-              </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold",
+              runStatus === "draft" && "bg-muted text-muted-foreground",
+              runStatus === "submitted" && "bg-amber-100 text-amber-800",
+              runStatus === "approved" && (isProcessed ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"),
+              runStatus === "rejected" && "bg-rose-100 text-rose-800",
+            )}>
+              {runStatus === "draft" && "Draft"}
+              {runStatus === "submitted" && "Awaiting approval"}
+              {runStatus === "approved" && (
+                <>
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  {isProcessed ? "Approved" : "Approval incomplete"}
+                  {isProcessed && lastSnapshotVersion > 1 ? ` · v${lastSnapshotVersion}` : ""}
+                  {isProcessed && run?.payroll_processed_at ? ` · ${new Date(run.payroll_processed_at).toLocaleDateString("en-IN")}` : ""}
+                </>
+              )}
+              {runStatus === "rejected" && <><XCircle className="h-3.5 w-3.5" /> Rejected</>}
+            </span>
+            {sheet?.status === "approved" && (runStatus === "draft" || runStatus === "rejected") && (
+              <Button size="sm" onClick={() => transitionRun.mutate({ status: "submitted" })} disabled={transitionRun.isPending}>
+                <Send className="mr-1.5 h-4 w-4" /> Submit for approval
+              </Button>
             )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                queryClient.invalidateQueries({ queryKey: ["payroll-register-compute", unitId, start, end] });
-                queryClient.invalidateQueries({ queryKey: ["admin", "additions"] });
-                queryClient.invalidateQueries({ queryKey: ["admin", "deductions"] });
-                queryClient.invalidateQueries({ queryKey: ["admin", "allowance-types"] });
-                queryClient.invalidateQueries({ queryKey: ["admin", "cost-components"] });
-                toast.success("Recalculating from latest contract, attendance, additions and deductions");
-              }}
-            >
-              Recalculate
-            </Button>
+            {runStatus === "submitted" && canApprove && (
+              <>
+                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => void approveImmediately()} disabled={transitionRun.isPending || processRun.isPending || rows.length === 0}>
+                  {processRun.isPending ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-1.5 h-4 w-4" />} Approve
+                </Button>
+                <Button size="sm" variant="destructive" onClick={() => setRejectOpen(true)} disabled={transitionRun.isPending}>
+                  <XCircle className="mr-1.5 h-4 w-4" /> Reject
+                </Button>
+              </>
+            )}
+            {runStatus === "approved" && !isProcessed && (
+              <Button size="sm" onClick={() => void approveImmediately()} disabled={processRun.isPending || rows.length === 0}>
+                {processRun.isPending ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-1.5 h-4 w-4" />} Complete approval
+              </Button>
+            )}
+            {amendmentPending && (
+              <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700" onClick={() => setAmendReviewOpen(true)} disabled={processAmendment.isPending || rows.length === 0}>
+                <Banknote className="mr-1.5 h-4 w-4" /> Process amendment v{sheetVersion}
+              </Button>
+            )}
+            {isProcessed && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm" disabled={isLoading || rows.length === 0 || slipBusy !== null}>
+                    {slipBusy?.startsWith("__all__") ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Download className="mr-1.5 h-4 w-4" />}
+                    All payslips
+                    <ChevronDown className="ml-1.5 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => void downloadAllSlips("pdf")}>
+                    <FileText className="mr-2 h-4 w-4" /> PDF
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => void downloadAllSlips("xlsx")}>
+                    <FileSpreadsheet className="mr-2 h-4 w-4" /> Excel
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
+        {runStatus === "rejected" && run?.rejection_reason && (
+          <p className="mt-2 text-xs text-rose-700">Rejection reason: {run.rejection_reason}</p>
+        )}
+        {sheet?.status !== "approved" && (
+          <p className="mt-2 text-xs text-amber-700">Approve attendance first to submit payroll.</p>
+        )}
+        {runStatus === "submitted" && !canApprove && (
+          <p className="mt-2 text-xs text-muted-foreground">Awaiting leadership approval.</p>
+        )}
 
         <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-5">
           <Stat label="Earned gross" value={fmtINR(totals.earnedGross)} />
@@ -1830,78 +1852,6 @@ function PayrollUnitPage() {
           <Stat label="Net pay" value={fmtINR(totals.net)} tone="emerald" />
           <Stat label="Employer contrib" value={fmtINR(totals.employerContrib)} onClick={() => scrollToSection("payroll-employer-contrib-section")} />
           <Stat label="Total employer cost" value={fmtINR(totals.employerCost)} tone="amber" />
-        </div>
-
-      </div>
-
-      {/* Payroll approval workflow */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 bg-card p-3">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Payroll status</span>
-          <span className={cn(
-            "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold",
-            runStatus === "draft" && "bg-slate-100 text-slate-700",
-            runStatus === "submitted" && "bg-amber-100 text-amber-800",
-            runStatus === "approved" && (isProcessed ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"),
-            runStatus === "rejected" && "bg-rose-100 text-rose-800",
-          )}>
-            {runStatus === "draft" && "Draft"}
-            {runStatus === "submitted" && "Submitted — awaiting approval"}
-            {runStatus === "approved" && (
-              isProcessed
-                ? <><CheckCircle2 className="h-3.5 w-3.5" /> Approved</>
-                : <><CheckCircle2 className="h-3.5 w-3.5" /> Approval incomplete</>
-            )}
-            {runStatus === "rejected" && <><XCircle className="h-3.5 w-3.5" /> Rejected</>}
-          </span>
-          {runStatus === "rejected" && run?.rejection_reason && (
-            <span className="text-xs text-rose-700">Reason: {run.rejection_reason}</span>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {sheet?.status !== "approved" && (
-            <span className="text-xs text-amber-700">Approve attendance first to submit payroll.</span>
-          )}
-          {sheet?.status === "approved" && (runStatus === "draft" || runStatus === "rejected") && (
-            <Button size="sm" onClick={() => transitionRun.mutate({ status: "submitted" })} disabled={transitionRun.isPending}>
-              <Send className="mr-1.5 h-4 w-4" /> Submit for Approval
-            </Button>
-          )}
-          {runStatus === "submitted" && canApprove && (
-            <>
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={() => void approveImmediately()} disabled={transitionRun.isPending || processRun.isPending || rows.length === 0}>
-                {processRun.isPending ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-1.5 h-4 w-4" />} Approve
-              </Button>
-              <Button size="sm" variant="destructive" onClick={() => setRejectOpen(true)} disabled={transitionRun.isPending}>
-                <XCircle className="mr-1.5 h-4 w-4" /> Reject
-              </Button>
-            </>
-          )}
-          {runStatus === "submitted" && !canApprove && (
-            <span className="text-xs text-muted-foreground">Awaiting leadership approval</span>
-          )}
-          {runStatus === "approved" && !isProcessed && (
-            <Button size="sm" onClick={() => void approveImmediately()} disabled={processRun.isPending || rows.length === 0}>
-              {processRun.isPending ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-1.5 h-4 w-4" />} Complete approval
-            </Button>
-          )}
-          {isProcessed && !amendmentPending && (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
-              <CheckCircle2 className="h-3.5 w-3.5" /> Payroll approved
-              {lastSnapshotVersion > 1 ? ` · v${lastSnapshotVersion}` : ""}
-              {run?.payroll_processed_at ? ` · ${new Date(run.payroll_processed_at).toLocaleDateString("en-IN")}` : ""}
-            </span>
-          )}
-          {amendmentPending && (
-            <Button
-              size="sm"
-              className="bg-indigo-600 hover:bg-indigo-700"
-              onClick={() => setAmendReviewOpen(true)}
-              disabled={processAmendment.isPending || rows.length === 0}
-            >
-              <Banknote className="mr-1.5 h-4 w-4" /> Review &amp; process amendment v{sheetVersion}
-            </Button>
-          )}
         </div>
       </div>
 
