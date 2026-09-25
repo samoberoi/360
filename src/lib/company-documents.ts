@@ -49,7 +49,7 @@ export const COMPANY_DOCUMENT_TYPES: DocType[] = [
 
 /** CDN URL of the official company stamp (with authorised signature). */
 export const COMPANY_STAMP_URL =
-  "/__l5e/assets-v1/87ea9ec6-0ff1-4c65-8122-abc676b013d3/company-stamp.png";
+  "/__l5e/assets-v1/f9b47279-da8e-4e85-a8fd-f05e0bdab12d/plus-360-fahrenheit-logo.png";
 
 /** CDN URL of the company logo used on the ID card (replaceable in the template). */
 export const COMPANY_LOGO_URL =
@@ -1853,7 +1853,7 @@ export async function downloadWageSlipsPdf(slips: WageSlipData[], fileName: stri
       const scale = Math.min(1, pageH / naturalH);
       const width = pageW * scale;
       const height = naturalH * scale;
-      doc.addImage(canvas.toDataURL("image/png"), "PNG", (pageW - width) / 2, 0, width, height);
+      doc.addImage(canvas.toDataURL("image/jpeg", 0.88), "JPEG", (pageW - width) / 2, 0, width, height, undefined, "FAST");
     }
     doc.save(fileName.toLowerCase().endsWith(".pdf") ? fileName : `${fileName}.pdf`);
   } finally {

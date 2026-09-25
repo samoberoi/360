@@ -1121,6 +1121,11 @@ function PayrollUnitPage() {
       return true;
     });
   };
+  const hasPayableSlip = (r: (typeof rows)[number]) => {
+    if (!r.wages) return false;
+    const slip = buildSlip(r);
+    return slip.grossWages > 0 || slip.netWages > 0;
+  };
 
   const downloadSlip = async (r: (typeof rows)[number], kind: "xlsx" | "pdf") => {
     if (!r.wages) return;
@@ -2136,7 +2141,7 @@ function PayrollUnitPage() {
                   <td className="px-4 py-3 font-medium">
                     <div className="flex items-center gap-2">
                       <span>{r.name}</span>
-                      {r.wages && isProcessed && (
+                      {isProcessed && hasPayableSlip(r) && (
                         <Button
                           type="button"
                           variant="outline"
@@ -2150,7 +2155,7 @@ function PayrollUnitPage() {
                           {slipBusy === `${r.rowKey}:pdf` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
                         </Button>
                       )}
-                      {r.wages && isProcessed && (
+                      {isProcessed && hasPayableSlip(r) && (
                         <Button
                           type="button"
                           variant="outline"
