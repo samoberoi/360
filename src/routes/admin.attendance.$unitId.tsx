@@ -1387,6 +1387,7 @@ function MusterRollPage() {
   } | null>(null);
   const [mapQuery, setMapQuery] = useState("");
   const [mapSaving, setMapSaving] = useState(false);
+  const [pendingMapId, setPendingMapId] = useState<string | null>(null);
 
   const currentRole = useCurrentUserRole();
   const restrictMapToOwnPeople = currentRole.isFieldOfficer;
@@ -1474,28 +1475,38 @@ function MusterRollPage() {
 
   const rosterIds = useMemo(() => new Set((employees ?? []).map((e) => e.id)), [employees]);
 
-  const mapEmployeeToSlot = async (cand: {
-    id: string;
-    full_name: string;
-    designation_id: string | null;
-  }) => {
+  const mapEmployeeToSlot = async (
+    cand: {
+      id: string;
+      full_name: string;
+      designation_id: string | null;
+    },
+    kind: "regular" | "reliever",
+  ) => {
     if (!mapSlot) return;
     setMapSaving(true);
     try {
-      // A guard holds exactly ONE primary posting. If he has no primary unit yet,
-      // filling a contracted slot here deploys him properly (full attendance).
-      // If he is already posted elsewhere, he can only stand in as a reliever (ED).
-      const { data: existingLinks, error: linkError } = await supabase
-        .from("candidate_units")
-        .select("unit_id, is_primary, is_reliever")
-        .eq("candidate_id", cand.id);
-      if (linkError) throw linkError;
-      const hasPrimaryElsewhere = ((existingLinks ?? []) as Array<{
-        unit_id: string;
-        is_primary?: boolean | null;
-        is_reliever?: boolean | null;
-      }>).some((l) => l.unit_id !== unitId && l.is_primary === true && l.is_reliever !== true);
-      const asReliever = hasPrimaryElsewhere;
+      const asReliever = kind === "reliever";
+      if (!asReliever) {
+        const { data: existingLinks, error: linkError } = await supabase
+          .from("candidate_units")
+          .select("unit_id, is_primary, is_reliever")
+          .eq("candidate_id", cand.id);
+        if (linkError) throw linkError;
+        const elsewhere = ((existingLinks ?? []) as Array<{
+          unit_id: string;
+          is_primary?: boolean | null;
+          is_reliever?: boolean | null;
+        }>).some((l) => l.unit_id !== unitId && l.is_primary === true && l.is_reliever !== true);
+        if (
+          elsewhere &&
+          !window.confirm(
+            `${cand.full_name} is already a regular employee at another site. Add as regular here anyway?`,
+          )
+        ) {
+          return;
+        }
+      }
 
       const { error } = await supabase.from("candidate_units").upsert(
         {
@@ -5354,24 +5365,47 @@ function MusterRollPage() {
             ) : (
               (mapResults ?? []).map((c) => {
                 const already = rosterIds.has(c.id);
+                const picking = pendingMapId === c.id;
                 return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    disabled={already || mapSaving}
-                    onClick={() => mapEmployeeToSlot(c)}
-                    className="flex w-full items-center justify-between gap-3 rounded-md border border-border px-3 py-2 text-left transition hover:border-primary hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <span className="min-w-0">
-                      <span className="block truncate text-sm font-medium">{c.full_name}</span>
-                      <span className="block truncate text-[11px] text-muted-foreground">
-                        {c.employee_code} · {c.designation} · DOJ {c.doj || "—"}
+                  <div key={c.id} className="rounded-md border border-border">
+                    <button
+                      type="button"
+                      disabled={already || mapSaving}
+                      onClick={() => setPendingMapId(picking ? null : c.id)}
+                      className="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-medium">{c.full_name}</span>
+                        <span className="block truncate text-[11px] text-muted-foreground">
+                          {c.employee_code} · {c.designation} · DOJ {c.doj || "—"}
+                        </span>
                       </span>
-                    </span>
-                    <span className="shrink-0 text-[11px] font-medium text-primary">
-                      {already ? "On roster" : "Add"}
-                    </span>
-                  </button>
+                      <span className="shrink-0 text-[11px] font-medium text-primary">
+                        {already ? "On roster" : "Add"}
+                      </span>
+                    </button>
+                    {picking && !already && (
+                      <div className="flex items-center gap-2 border-t border-border px-3 py-2">
+                        <span className="text-[11px] text-muted-foreground">Add as:</span>
+                        <button
+                          type="button"
+                          disabled={mapSaving}
+                          onClick={() => mapEmployeeToSlot(c, "regular")}
+                          className="rounded-md bg-primary px-3 py-1 text-xs font-medium text-primary-foreground disabled:opacity-50"
+                        >
+                          Regular
+                        </button>
+                        <button
+                          type="button"
+                          disabled={mapSaving}
+                          onClick={() => mapEmployeeToSlot(c, "reliever")}
+                          className="rounded-md border border-border px-3 py-1 text-xs font-medium disabled:opacity-50"
+                        >
+                          Reliever (R)
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 );
               })
             )}
