@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { resolvePayrollDayCount } from "@/lib/payroll-days";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import { MultiSelectFilter } from "@/components/MultiSelectFilter";
@@ -4281,6 +4282,8 @@ function ResourcesSection({
     () => new Map(rolesList.map((r) => [r.key, r])),
     [rolesList],
   );
+  const billingDayBasesList = useBillingDayBases();
+  const payrollDayBasesList = usePayrollDayBases();
 
   /** Monthly client billing (wages + employer cost lines) and the four
    *  payroll-period billing rates: 31/30/29/28 days use 27/26/25/24 duties. */
@@ -4318,18 +4321,38 @@ function ResourcesSection({
   }, [payrollWindow]);
   const currentPayrollPeriodDays = currentPayrollPeriod.totalDays;
   const billingRateScenarios = useMemo(() => {
-    const scenarios = [
-      { calendarDays: 31, billingDays: 27 },
-      { calendarDays: 30, billingDays: 26 },
-      { calendarDays: 29, billingDays: 25 },
-      { calendarDays: 28, billingDays: 24 },
-    ];
+    const scenarios = [31, 30, 29, 28].map((calendarDays) => {
+      // Sample dates for weekday-based rules, starting at the current period start.
+      const [y, m, d] = currentPayrollPeriod.start.split("-").map(Number);
+      const dates = Array.from({ length: calendarDays }, (_, i) => {
+        const dt = new Date(y, (m ?? 1) - 1, (d ?? 1) + i);
+        return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+      });
+      return { calendarDays, dates };
+    });
     return scenarios.sort((a, b) => {
       if (a.calendarDays === currentPayrollPeriodDays) return -1;
       if (b.calendarDays === currentPayrollPeriodDays) return 1;
       return b.calendarDays - a.calendarDays;
     });
-  }, [currentPayrollPeriodDays]);
+  }, [currentPayrollPeriodDays, currentPayrollPeriod.start]);
+  const divisorFor = (idx: number, dates: string[]) => {
+    const r = resources[idx];
+    const base =
+      billingDayBasesList.find((b) => b.id === r?.billingDayBaseId) ??
+      payrollDayBasesList.find((b) => b.id === r?.payrollDayBaseId) ??
+      null;
+    const n = resolvePayrollDayCount(base, dates, { clampToPeriod: false });
+    return n && n > 0 ? n : Math.max(1, dates.length - 4);
+  };
+  const baseNameFor = (idx: number) => {
+    const r = resources[idx];
+    return (
+      billingDayBasesList.find((b) => b.id === r?.billingDayBaseId)?.name ??
+      payrollDayBasesList.find((b) => b.id === r?.payrollDayBaseId)?.name ??
+      null
+    );
+  };
   const fmtRate = (n: number) =>
     `₹${n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -4358,7 +4381,7 @@ function ResourcesSection({
                     <span className="min-w-0 truncate text-sm font-medium text-foreground">
                     {d.label}
                       <span className="ml-1.5 text-[11px] font-normal text-muted-foreground">
-                        {d.shiftHours}h
+                        {d.shiftHours}h{baseNameFor(i) ? ` · ${baseNameFor(i)}` : ""}
                       </span>
                     </span>
                     <span className="shrink-0 text-[11px] text-muted-foreground">
@@ -4368,9 +4391,11 @@ function ResourcesSection({
                   <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
                     {billingRateScenarios.map((scenario) => {
                       const isCurrent = scenario.calendarDays === currentPayrollPeriodDays;
+                      const billingDays = divisorFor(i, scenario.dates);
+                      const shown = Math.round(billingDays * 10000) / 10000;
                       return (
                         <div
-                          key={scenario.billingDays}
+                          key={scenario.calendarDays}
                           className={cn(
                             "rounded-md border px-2 py-1.5",
                             isCurrent
@@ -4383,10 +4408,10 @@ function ResourcesSection({
                             {isCurrent ? <span className="font-medium text-accent">Current</span> : null}
                           </div>
                           <div className="mt-0.5 text-sm font-semibold text-foreground">
-                            {fmtRate(d.monthly / scenario.billingDays)}
+                            {fmtRate(d.monthly / billingDays)}
                           </div>
                           <div className="text-[10px] text-muted-foreground">
-                            ÷ {scenario.billingDays} billing days
+                            ÷ {shown} billing days
                           </div>
                         </div>
                       );
