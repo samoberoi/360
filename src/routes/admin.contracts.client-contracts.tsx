@@ -4281,6 +4281,8 @@ function ResourcesSection({
     () => new Map(rolesList.map((r) => [r.key, r])),
     [rolesList],
   );
+  const billingDayBasesList = useBillingDayBases();
+  const payrollDayBasesList = usePayrollDayBases();
 
   /** Monthly client billing (wages + employer cost lines) and the four
    *  payroll-period billing rates: 31/30/29/28 days use 27/26/25/24 duties. */
@@ -4318,18 +4320,38 @@ function ResourcesSection({
   }, [payrollWindow]);
   const currentPayrollPeriodDays = currentPayrollPeriod.totalDays;
   const billingRateScenarios = useMemo(() => {
-    const scenarios = [
-      { calendarDays: 31, billingDays: 27 },
-      { calendarDays: 30, billingDays: 26 },
-      { calendarDays: 29, billingDays: 25 },
-      { calendarDays: 28, billingDays: 24 },
-    ];
+    const scenarios = [31, 30, 29, 28].map((calendarDays) => {
+      // Sample dates for weekday-based rules, starting at the current period start.
+      const [y, m, d] = currentPayrollPeriod.start.split("-").map(Number);
+      const dates = Array.from({ length: calendarDays }, (_, i) => {
+        const dt = new Date(y, (m ?? 1) - 1, (d ?? 1) + i);
+        return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+      });
+      return { calendarDays, dates };
+    });
     return scenarios.sort((a, b) => {
       if (a.calendarDays === currentPayrollPeriodDays) return -1;
       if (b.calendarDays === currentPayrollPeriodDays) return 1;
       return b.calendarDays - a.calendarDays;
     });
-  }, [currentPayrollPeriodDays]);
+  }, [currentPayrollPeriodDays, currentPayrollPeriod.start]);
+  const divisorFor = (idx: number, dates: string[]) => {
+    const r = resources[idx];
+    const base =
+      billingDayBasesList.find((b) => b.id === r?.billingDayBaseId) ??
+      payrollDayBasesList.find((b) => b.id === r?.payrollDayBaseId) ??
+      null;
+    const n = resolvePayrollDayCount(base, dates, { clampToPeriod: false });
+    return n && n > 0 ? n : Math.max(1, dates.length - 4);
+  };
+  const baseNameFor = (idx: number) => {
+    const r = resources[idx];
+    return (
+      billingDayBasesList.find((b) => b.id === r?.billingDayBaseId)?.name ??
+      payrollDayBasesList.find((b) => b.id === r?.payrollDayBaseId)?.name ??
+      null
+    );
+  };
   const fmtRate = (n: number) =>
     `₹${n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
