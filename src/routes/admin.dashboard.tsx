@@ -694,6 +694,7 @@ function DashboardPage() {
             otHours: otDays,
             otDays,
             phDays,
+            woDays: 0,
             otherPaidDays,
             tDays: round2(pDays + phDays + otDays),
           };
