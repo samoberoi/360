@@ -1,5 +1,10 @@
 # Mobile app UI re-review
 
+## PLUS 360 company settings
+
+- [ ] Diagnose why Company Settings shows no organization details.
+- [ ] Restore the saved PLUS 360 company details and verify the page.
+
 ## State-based GST branches and invoicing
 
 - [x] Extract and verify Maharashtra, Telangana, Karnataka, Goa, and Gujarat GST certificates.
