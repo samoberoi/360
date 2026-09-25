@@ -3363,8 +3363,13 @@ function MusterRollPage() {
         phCount += phValue;
         continue;
       }
-      // Weekly off is not a payable duty — it must never inflate the payable total.
-      if (e.code === "WO" || e.code === "W") continue;
+      // Weekly off counts toward the roster total (WO is a paid rest day).
+      if (e.code === "WO" || e.code === "W") {
+        const woValue =
+          c.day_value == null || Number.isNaN(Number(c.day_value)) ? 1 : Number(c.day_value);
+        woDays += woValue;
+        continue;
+      }
       const dayValue =
         c.day_value == null || Number.isNaN(Number(c.day_value)) ? 1 : Number(c.day_value);
       if (c.counts_as_present) pDays += dayValue;
