@@ -139,12 +139,23 @@ export function computeAttendanceTotals(
     if (e.code === "PH") {
       // Value of one Paid Holiday duty: the unit's own setting when present,
       // else the PH code's day_value from Attendance Code settings.
-      const codeValue = c.day_value == null || Number.isNaN(Number(c.day_value)) ? 1 : Number(c.day_value);
+      // A configured day_value of 0 still means one calendar day off — count
+      // it as 1 so PH days are payable, matching the attendance sheet totals.
+      const raw = c.day_value == null || Number.isNaN(Number(c.day_value)) ? 1 : Number(c.day_value);
+      const codeValue = raw > 0 ? raw : 1;
       phCount += phOverride != null ? phOverride : codeValue;
       continue;
     }
 
-    // Fractional day contribution: HD = 0.5, full-day codes = 1, WO/A/etc = 0.
+    if (e.code === "WO") {
+      // Weekly off is a paid rest day: one cell = one day, regardless of the
+      // code's stored day_value (0 in settings means "not worked", not "unpaid").
+      const raw = c.day_value == null || Number.isNaN(Number(c.day_value)) ? 1 : Number(c.day_value);
+      woCount += raw > 0 ? raw : 1;
+      continue;
+    }
+
+    // Fractional day contribution: HD = 0.5, full-day codes = 1, A/etc = 0.
     // Default to 1 for legacy rows that don't have day_value populated.
     const dv = c.day_value == null || Number.isNaN(Number(c.day_value)) ? 1 : Number(c.day_value);
     if (c.counts_as_present) pDays += dv;
@@ -152,14 +163,15 @@ export function computeAttendanceTotals(
   }
 
   const phDays = round2(phCount + unitPhDays);
+  const woDays = round2(woCount);
 
   const otDays = Math.round(otDaysSum * 100) / 100;
   const otHours = otDays;
-  // Total PAID days = present + paid holiday (double) + extra duty ONLY.
+  // Total PAID days = present + paid holiday + weekly off + extra duty.
   // Other "paid" attendance codes (leave etc.) are tracked but do NOT add
   // payable days and must never inflate earnings or contributions.
-  const tDays = round2(pDays) + phDays + otDays;
-  return { pDays: round2(pDays), otHours, otDays, phDays, otherPaidDays: round2(otherPaidDays), tDays };
+  const tDays = round2(pDays) + phDays + woDays + otDays;
+  return { pDays: round2(pDays), otHours, otDays, phDays, woDays, otherPaidDays: round2(otherPaidDays), tDays };
 }
 
 export type FixedCalcMethod = "flat" | "per_duty";
