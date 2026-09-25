@@ -3354,12 +3354,14 @@ function MusterRollPage() {
 
       if (e.code === "PH") {
         // Unit setting first, else the PH day value from Attendance Code settings.
+        // A zero/blank value in the code master still counts one PH day per cell.
+        const codeVal = Number(c.day_value);
         const phValue =
-          unitPhDayValue != null
+          unitPhDayValue != null && unitPhDayValue > 0
             ? unitPhDayValue
-            : c.day_value == null || Number.isNaN(Number(c.day_value))
-              ? 1
-              : Number(c.day_value);
+            : !Number.isNaN(codeVal) && codeVal > 0
+              ? codeVal
+              : 1;
         phCount += phValue;
         continue;
       }
