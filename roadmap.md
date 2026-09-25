@@ -231,10 +231,10 @@
 
 ## Dashboard end-to-end audit
 
-- [ ] Verify every headline tile against saved data and its destination.
-- [ ] Verify Attendance, Payroll, Invoicing, and finance period calculations.
-- [ ] Fix dashboard permission failures and silent zero fallbacks.
-- [ ] Verify desktop and mobile layouts, dialogs, filters, and exports.
+- [x] Verify every headline tile against saved data and its destination.
+- [x] Verify Attendance, Payroll, Invoicing, and finance period calculations.
+- [x] Fix dashboard permission failures and silent zero fallbacks.
+- [x] Verify desktop and mobile layouts, dialogs, filters, and exports.
 
 ## Finance dashboard loading
 
