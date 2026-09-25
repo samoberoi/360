@@ -288,7 +288,7 @@
 - [x] Make Approve immediately finalize the payroll for salary-slip availability.
 - [x] Add one-click Excel download for all salary slips in a payroll run.
 - [x] Add per-employee Excel salary-slip download.
-- [ ] Verify approval and both download paths in the signed-in payroll screen.
+- [x] Verify approval and both download paths in the signed-in payroll screen.
 
 ## CLI3851 invoice percentage explanation
 
