@@ -38,7 +38,7 @@ export async function downloadWageSlipsXlsx(slips: WageSlipData[], filename: str
       { s: { r: 6, c: 1 }, e: { r: 6, c: 3 } },
       { s: { r: 15, c: 1 }, e: { r: 15, c: 3 } },
     ];
-    sheet["!cols"] = [{ wch: 22 }, { wch: 34 }, { wch: 20 }, { wch: 26 }];
+    sheet["!cols"] = [{ wch: 18 }, { wch: 24 }, { wch: 18 }, { wch: 18 }];
     sheet["!rows"] = rows.map((_, row) => ({
       hpt: row === 0 ? 28 : row === 1 ? 24 : row === 4 || row === 6 ? 34 : 20,
     }));
@@ -63,7 +63,7 @@ export async function downloadWageSlipsXlsx(slips: WageSlipData[], filename: str
         cell.s = {
           font: {
             name: "Arial",
-            sz: isTitle ? 14 : isSubtitle ? 13 : 10,
+            sz: isTitle ? 12 : isSubtitle ? 12 : 9,
             bold: isTitle || isSubtitle || isHeader || isTotal || col % 2 === 0,
             color: { rgb: isTitle || isHeader ? "FFFFFF" : "111827" },
           },
