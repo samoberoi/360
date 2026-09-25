@@ -715,7 +715,7 @@ function ProfilePage() {
       // Default slip: assume full attendance (tDays = baseDays)
       // First call with tDays=0 to resolve baseDays, then recompute.
       const probe = computeWages(
-        { pDays: 0, otHours: 0, otDays: 0, phDays: 0, otherPaidDays: 0, tDays: 0 },
+        { pDays: 0, otHours: 0, otDays: 0, phDays: 0, woDays: 0, otherPaidDays: 0, tDays: 0 },
         resourceLike,
         periodDayCount,
       );
