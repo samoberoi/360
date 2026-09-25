@@ -1544,6 +1544,7 @@ function MusterRollPage() {
       );
       setMapSlot(null);
       setMapQuery("");
+      setPendingMapId(null);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to map employee");
     } finally {
