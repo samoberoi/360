@@ -4380,7 +4380,7 @@ function ResourcesSection({
                     <span className="min-w-0 truncate text-sm font-medium text-foreground">
                     {d.label}
                       <span className="ml-1.5 text-[11px] font-normal text-muted-foreground">
-                        {d.shiftHours}h
+                        {d.shiftHours}h{baseNameFor(i) ? ` · ${baseNameFor(i)}` : ""}
                       </span>
                     </span>
                     <span className="shrink-0 text-[11px] text-muted-foreground">
@@ -4390,9 +4390,11 @@ function ResourcesSection({
                   <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
                     {billingRateScenarios.map((scenario) => {
                       const isCurrent = scenario.calendarDays === currentPayrollPeriodDays;
+                      const billingDays = divisorFor(i, scenario.dates);
+                      const shown = Math.round(billingDays * 10000) / 10000;
                       return (
                         <div
-                          key={scenario.billingDays}
+                          key={scenario.calendarDays}
                           className={cn(
                             "rounded-md border px-2 py-1.5",
                             isCurrent
@@ -4405,10 +4407,10 @@ function ResourcesSection({
                             {isCurrent ? <span className="font-medium text-accent">Current</span> : null}
                           </div>
                           <div className="mt-0.5 text-sm font-semibold text-foreground">
-                            {fmtRate(d.monthly / scenario.billingDays)}
+                            {fmtRate(d.monthly / billingDays)}
                           </div>
                           <div className="text-[10px] text-muted-foreground">
-                            ÷ {scenario.billingDays} billing days
+                            ÷ {shown} billing days
                           </div>
                         </div>
                       );
