@@ -4776,14 +4776,17 @@ function MusterRollPage() {
                   <br />
                   Days
                 </th>
+                <th className="border border-slate-400 p-1 align-middle" rowSpan={2}>
+                  WO
+                  <br />
+                  Days
+                </th>
                 <th
                   className="border border-slate-400 p-1 align-middle"
                   rowSpan={2}
-                  title="Total paid days = P + ED + PH"
+                  title="Total days = P + ED + PH + WO"
                 >
                   Total
-                  <br />
-                  Paid
                   <br />
                   Days
                 </th>
@@ -5144,6 +5147,9 @@ function MusterRollPage() {
                       <td className={cn(cellBase, "p-1 font-semibold")}>{totals.otHours}</td>
                       <td className={cn(cellBase, "p-1 font-semibold")} rowSpan={2}>
                         {totals.phDays}
+                      </td>
+                      <td className={cn(cellBase, "p-1 font-semibold")} rowSpan={2}>
+                        {totals.woDays}
                       </td>
                       <td className={cn(cellBase, "p-1 font-semibold")} rowSpan={2}>
                         {totals.tDays}
