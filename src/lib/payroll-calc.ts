@@ -37,6 +37,7 @@ export type AttendanceTotals = {
   otHours: number;
   otDays: number;
   phDays: number;
+  woDays: number;
   otherPaidDays: number;
   tDays: number;
 };
@@ -119,6 +120,7 @@ export function computeAttendanceTotals(
   // The legacy "Hours" label is kept on the column for schema stability; the value is days.
   let otDaysSum = 0;
   let phCount = 0;
+  let woCount = 0;
   let otherPaidDays = 0;
 
   for (const date of periodDates) {
