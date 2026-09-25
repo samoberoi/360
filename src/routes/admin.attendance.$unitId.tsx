@@ -3333,6 +3333,7 @@ function MusterRollPage() {
     let phCount = 0;
     let unitPhDays = 0;
     let otherPaidDays = 0;
+    let woDays = 0;
     for (const cell of periodCells) {
       const e = entryMap.get(`${rk}|${cell.date}`);
       if (!e) continue;
@@ -3362,8 +3363,13 @@ function MusterRollPage() {
         phCount += phValue;
         continue;
       }
-      // Weekly off is not a payable duty — it must never inflate the payable total.
-      if (e.code === "WO" || e.code === "W") continue;
+      // Weekly off counts toward the roster total: one calendar day per WO cell,
+      // even though the code master stores WO with a zero day value.
+      if (e.code === "WO" || e.code === "W") {
+        const woRaw = Number(c.day_value);
+        woDays += !Number.isNaN(woRaw) && woRaw > 0 ? woRaw : 1;
+        continue;
+      }
       const dayValue =
         c.day_value == null || Number.isNaN(Number(c.day_value)) ? 1 : Number(c.day_value);
       if (c.counts_as_present) pDays += dayValue;
@@ -3373,8 +3379,8 @@ function MusterRollPage() {
     const otDays = Math.round(otDaysSum * 100) / 100;
     // OT cell value is OT-days; expose under both names for display compat.
     const otHours = otDays;
-    const tDays = pDays + phDays + otDays;
-    return { pDays, otHours, otDays, phDays, tDays };
+    const tDays = pDays + phDays + woDays + otDays;
+    return { pDays, otHours, otDays, phDays, woDays, tDays };
   };
 
   const principalEmployer = unit
@@ -4770,14 +4776,17 @@ function MusterRollPage() {
                   <br />
                   Days
                 </th>
+                <th className="border border-slate-400 p-1 align-middle" rowSpan={2}>
+                  WO
+                  <br />
+                  Days
+                </th>
                 <th
                   className="border border-slate-400 p-1 align-middle"
                   rowSpan={2}
-                  title="Total paid days = P + ED + PH"
+                  title="Total days = P + ED + PH + WO"
                 >
                   Total
-                  <br />
-                  Paid
                   <br />
                   Days
                 </th>
@@ -4821,25 +4830,25 @@ function MusterRollPage() {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={9 + dayCount} className="p-4 text-slate-500">
+                  <td colSpan={10 + dayCount} className="p-4 text-slate-500">
                     Loading roster…
                   </td>
                 </tr>
               ) : rosterError ? (
                 <tr>
-                  <td colSpan={9 + dayCount} className="p-6 text-red-600">
+                  <td colSpan={10 + dayCount} className="p-6 text-red-600">
                     Failed to load mapped employees for this unit.
                   </td>
                 </tr>
               ) : musterRows.length === 0 ? (
                 <tr>
-                  <td colSpan={9 + dayCount} className="p-6 text-slate-500">
+                  <td colSpan={10 + dayCount} className="p-6 text-slate-500">
                     No active security guards are mapped to this unit.
                   </td>
                 </tr>
               ) : visibleMusterRows.length === 0 ? (
                 <tr>
-                  <td colSpan={9 + dayCount} className="p-6 text-slate-500">
+                  <td colSpan={10 + dayCount} className="p-6 text-slate-500">
                     No rows match &ldquo;{musterQuery}&rdquo;.
                   </td>
                 </tr>
@@ -5140,6 +5149,9 @@ function MusterRollPage() {
                         {totals.phDays}
                       </td>
                       <td className={cn(cellBase, "p-1 font-semibold")} rowSpan={2}>
+                        {totals.woDays}
+                      </td>
+                      <td className={cn(cellBase, "p-1 font-semibold")} rowSpan={2}>
                         {totals.tDays}
                       </td>
                     </tr>,
@@ -5265,10 +5277,11 @@ function MusterRollPage() {
                       acc.pDays += t.pDays;
                       acc.otHours += t.otHours;
                       acc.phDays += t.phDays;
+                      acc.woDays += t.woDays;
                       acc.tDays += t.tDays;
                       return acc;
                     },
-                    { pDays: 0, otHours: 0, phDays: 0, tDays: 0 },
+                    { pDays: 0, otHours: 0, phDays: 0, woDays: 0, tDays: 0 },
                   );
                   const r2 = (n: number) => Math.round(n * 100) / 100;
                   return (
@@ -5279,6 +5292,7 @@ function MusterRollPage() {
                       <td className="border border-slate-400 p-1">{r2(grand.pDays)}</td>
                       <td className="border border-slate-400 p-1">{r2(grand.otHours)}</td>
                       <td className="border border-slate-400 p-1">{r2(grand.phDays)}</td>
+                      <td className="border border-slate-400 p-1">{r2(grand.woDays)}</td>
                       <td className="border border-slate-400 p-1">{r2(grand.tDays)}</td>
                     </tr>
                   );
