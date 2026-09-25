@@ -3363,11 +3363,11 @@ function MusterRollPage() {
         phCount += phValue;
         continue;
       }
-      // Weekly off counts toward the roster total (WO is a paid rest day).
+      // Weekly off counts toward the roster total: one calendar day per WO cell,
+      // even though the code master stores WO with a zero day value.
       if (e.code === "WO" || e.code === "W") {
-        const woValue =
-          c.day_value == null || Number.isNaN(Number(c.day_value)) ? 1 : Number(c.day_value);
-        woDays += woValue;
+        const woRaw = Number(c.day_value);
+        woDays += !Number.isNaN(woRaw) && woRaw > 0 ? woRaw : 1;
         continue;
       }
       const dayValue =
