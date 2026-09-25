@@ -5552,6 +5552,7 @@ export type Database = {
           bonus_enabled: boolean
           bonus_frequency: string | null
           branch_id: string | null
+          branch_sap_code: string | null
           closing_date: string | null
           code: string
           contract_end_date: string | null
@@ -5604,6 +5605,7 @@ export type Database = {
           uniform_fee_amount: number
           uniform_included: boolean
           updated_at: string
+          zone: string | null
         }
         Insert: {
           ambulance_mobile?: string
@@ -5620,6 +5622,7 @@ export type Database = {
           bonus_enabled?: boolean
           bonus_frequency?: string | null
           branch_id?: string | null
+          branch_sap_code?: string | null
           closing_date?: string | null
           code: string
           contract_end_date?: string | null
@@ -5672,6 +5675,7 @@ export type Database = {
           uniform_fee_amount?: number
           uniform_included?: boolean
           updated_at?: string
+          zone?: string | null
         }
         Update: {
           ambulance_mobile?: string
@@ -5688,6 +5692,7 @@ export type Database = {
           bonus_enabled?: boolean
           bonus_frequency?: string | null
           branch_id?: string | null
+          branch_sap_code?: string | null
           closing_date?: string | null
           code?: string
           contract_end_date?: string | null
@@ -5740,6 +5745,7 @@ export type Database = {
           uniform_fee_amount?: number
           uniform_included?: boolean
           updated_at?: string
+          zone?: string | null
         }
         Relationships: [
           {
