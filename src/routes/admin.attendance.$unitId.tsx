@@ -5277,10 +5277,11 @@ function MusterRollPage() {
                       acc.pDays += t.pDays;
                       acc.otHours += t.otHours;
                       acc.phDays += t.phDays;
+                      acc.woDays += t.woDays;
                       acc.tDays += t.tDays;
                       return acc;
                     },
-                    { pDays: 0, otHours: 0, phDays: 0, tDays: 0 },
+                    { pDays: 0, otHours: 0, phDays: 0, woDays: 0, tDays: 0 },
                   );
                   const r2 = (n: number) => Math.round(n * 100) / 100;
                   return (
@@ -5291,6 +5292,7 @@ function MusterRollPage() {
                       <td className="border border-slate-400 p-1">{r2(grand.pDays)}</td>
                       <td className="border border-slate-400 p-1">{r2(grand.otHours)}</td>
                       <td className="border border-slate-400 p-1">{r2(grand.phDays)}</td>
+                      <td className="border border-slate-400 p-1">{r2(grand.woDays)}</td>
                       <td className="border border-slate-400 p-1">{r2(grand.tDays)}</td>
                     </tr>
                   );
