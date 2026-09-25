@@ -118,7 +118,7 @@ function Tile({
       </div>
       <div
         className={cn(
-          "mt-1 whitespace-nowrap text-lg font-semibold whitespace-nowrap tabular-nums",
+          "mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold tabular-nums",
           tone === "success" && "text-emerald-600",
           tone === "warning" && "text-amber-600",
           tone === "destructive" && "text-destructive",
@@ -126,7 +126,7 @@ function Tile({
       >
         {value}
       </div>
-      {sub && <div className="mt-0.5 text-[11px] text-muted-foreground">{sub}</div>}
+      {sub && <div className="mt-0.5 truncate text-[11px] text-muted-foreground">{sub}</div>}
     </div>
   );
 }
@@ -467,15 +467,12 @@ function CharterDialog({
 
 /** Payroll committed vs actual (MTD). */
 export function PayrollCoverageCard({ rows }: { rows: UnitFinanceRow[] }) {
-  // Compare like-for-like with invoice: customer-billable units only.
-  // Internal payroll belongs in overhead reporting, not this coverage charter.
-  const billable = rows.filter((r) => !r.internal);
   return (
     <CoverageCard
       eyebrow="Payroll"
       title="Committed vs Actual Payroll"
-      description="Full-month contracted payroll cost across active contracts against payroll actually earned month-till-date."
-      rows={billable}
+      description="Full-month payroll cost across all active client and internal units against payroll actually earned month-till-date."
+      rows={rows}
       pick={(r) => ({ committed: r.committed_payroll, actual: r.actual_payroll })}
       buttonLabel="View full payroll charter"
       labels={{ committed: "Committed payroll", actual: "Actual payroll MTD" }}

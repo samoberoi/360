@@ -34,7 +34,6 @@ import { useCurrentPermissions } from "@/lib/rbac";
 import { ROLE_KEYS } from "@/lib/role-keys";
 import { InventoryOwnerDashboard } from "./admin.inventory.dashboard";
 import { fmtINR, computeWages, type ContractResourceLike } from "@/lib/payroll-calc";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { hydrateFormulasFromMaster } from "@/lib/contract-hydrate";
 import { refreshBillingAddOns } from "@/lib/contract-billing-addons";
 import { resolvePayrollDayCount } from "@/lib/payroll-days";
@@ -328,11 +327,6 @@ function DashboardPage() {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   })();
 
-  // Phones cannot hold the whole-month profitability computation in memory
-  // (it loads every contract, roster and attendance row). Keep the mobile
-  // dashboard to the light counts so the app never runs out of memory.
-  const lightMode = useIsMobile();
-
   // Fast tile counts paint first; the heavy month P&L loads in a second,
   // independent query so the dashboard is usable immediately.
   const countsQuery = useQuery({
@@ -386,7 +380,8 @@ function DashboardPage() {
               } as never,
             )
           : { data: null, error: null };
-      const lifecycleData = lifecycleResult.error ? null : lifecycleResult.data;
+      if (lifecycleResult.error) throw lifecycleResult.error;
+      const lifecycleData = lifecycleResult.data;
 
       const d = (data ?? {}) as {
         orgs?: number;
@@ -493,7 +488,6 @@ function DashboardPage() {
       !showInventoryDashboard &&
       !showTransportDashboard &&
       !opsFocus &&
-      !lightMode &&
       (can("payroll") || can("invoice") || can("contracts")),
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
@@ -584,7 +578,8 @@ function DashboardPage() {
               | "fixed_days"
               | "actual_minus_weekly_off"
               | "custom_weekdays"
-              | "fixed_annual_average",
+              | "fixed_annual_average"
+              | "actual_minus_days",
             fixedDays: p.fixed_days,
             weeklyOffDay: p.weekly_off_day,
             includedWeekdays: Array.isArray(p.included_weekdays)
@@ -694,9 +689,9 @@ function DashboardPage() {
             otHours: otDays,
             otDays,
             phDays,
-            woDays: 0,
+            woDays: otherPaidDays,
             otherPaidDays,
-            tDays: round2(pDays + phDays + otDays),
+            tDays: round2(pDays + phDays + otherPaidDays + otDays),
           };
           const resource =
             hydratedByContractDesignation.get(`${u.contract_id}|${p.designation_id}`) ??
@@ -801,6 +796,7 @@ function DashboardPage() {
     },
   });
 
+  if (countsQuery.error) return <DashboardErrorState error={countsQuery.error} />;
   const isLoading = countsQuery.isLoading;
   const data = useMemo(() => {
     if (!countsQuery.data) return undefined;

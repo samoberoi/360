@@ -1167,7 +1167,7 @@ export function FinanceCharter({
               >
                 <div className="flex items-stretch">
                   {canFinalise && !r.finalInvoice && r.status.attendance === "approved" && (
-                    <div className="flex w-9 shrink-0 items-center justify-center border-r border-border/60">
+                    <div className="flex w-11 shrink-0 items-center justify-center border-r border-border/60">
                       <Checkbox
                         disabled={!!lockedState && normalizeState(r.unit.billing_state ?? "") !== lockedState}
                         checked={!!selected[r.unit.id]}
