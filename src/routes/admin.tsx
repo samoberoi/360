@@ -49,7 +49,7 @@ import {
   Radio,
 } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
-import brandLogo from "@/assets/radiant-logo-v2.png";
+import brandLogoAsset from "@/assets/plus-360-fahrenheit-logo.png.asset.json";
 import { MobileBottomNav, type BottomNavItem, type BottomNavMoreItem } from "@/components/MobileBottomNav";
 import { useT } from "@/lib/i18n";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -582,7 +582,7 @@ function AdminLayout() {
               aria-label="Dashboard"
               className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-white p-1.5 shadow-[0_10px_28px_-10px_rgba(0,0,0,0.65)]"
             >
-              <img src={brandLogo} alt="Radiant" className="h-full w-full object-contain" />
+              <img src={brandLogoAsset.url} alt="PLUS 360" className="h-full w-full object-contain" />
             </Link>
           ) : (
             <Link to={dashboardHref} className="flex min-w-0 items-center">
@@ -763,9 +763,9 @@ function AdminLayout() {
       )}>
         <Link to={dashboardHref} className="flex min-w-0 items-center gap-2">
           <div className="relative shrink-0">
-            <img src={brandLogo} alt="Radiant" className="h-7 w-7 object-contain" />
+            <img src={brandLogoAsset.url} alt="PLUS 360" className="h-7 w-10 object-contain" />
           </div>
-          <div className="truncate text-[14px] font-semibold leading-tight text-foreground">Radiant</div>
+          <div className="truncate text-[14px] font-semibold leading-tight text-foreground">PLUS 360</div>
         </Link>
         <div className="flex shrink-0 items-center">
           <NotificationBell />
