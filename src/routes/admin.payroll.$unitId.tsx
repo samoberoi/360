@@ -1036,22 +1036,38 @@ function PayrollUnitPage() {
   const [slipBusy, setSlipBusy] = useState<string | null>(null);
 
   // The salary slip is the document handed to the employee for what was
-  // approved in this period. Approved figures are frozen in the v1 snapshot;
-  // a later attendance amendment is settled in the next payroll.
+  // approved in this period. Each approved amendment stores a complete frozen
+  // snapshot, so the issued slip must use the latest version, not stale v1.
   const buildSlip = (r: (typeof rows)[number]): WageSlipData => {
     const paid = snapshots
       .filter((s) => s.candidate_id === r.id)
-      .sort((a, b) => a.version - b.version)[0];
+      .sort((a, b) => b.version - a.version)[0];
 
     const mergeLines = (lines: NamedAmount[]) => mergeByCanonicalName(lines)
       .map((line) => ({ name: line.name, amount: Math.round((Number(line.amount) || 0) * 100) / 100 }))
       .filter((line) => Math.abs(line.amount) >= 0.005);
+    const normalizeFrozenDeductions = (lines: NamedAmount[]) => {
+      if (!paid) return mergeLines(lines);
+      const grouped = new Map<string, NamedAmount[]>();
+      for (const line of lines) {
+        const key = line.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+        grouped.set(key, [...(grouped.get(key) ?? []), line]);
+      }
+      return Array.from(grouped.values()).map((group) => {
+        const first = group[0];
+        const statutory = EMPLOYEE_STATUTORY_RE.test(first.name);
+        const amount = statutory
+          ? Math.max(...group.map((line) => Number(line.amount) || 0))
+          : group.reduce((sum, line) => sum + (Number(line.amount) || 0), 0);
+        return { name: first.name, amount: Math.round(amount * 100) / 100 };
+      }).filter((line) => Math.abs(line.amount) >= 0.005);
+    };
     const comps = mergeLines((paid ? paid.earnings : r.wages?.components ?? []) as NamedAmount[]);
-    const deds = mergeLines((paid ? paid.deductions : r.wages?.deductions ?? []) as NamedAmount[]);
+    const deds = normalizeFrozenDeductions((paid ? paid.deductions : r.wages?.deductions ?? []) as NamedAmount[]);
     const adds = mergeLines((paid ? paid.additions : (r.wages as unknown as { additions?: NamedAmount[] } | null)?.additions ?? []) as NamedAmount[]);
     const grossWages = paid ? Number(paid.gross) || 0 : Number(r.wages!.earnedGross) || 0;
     const total = paid
-      ? Number(paid.total_deductions) || 0
+      ? Math.max(0, Math.round((grossWages - (Number(paid.net_pay) || 0)) * 100) / 100)
       : Number(r.wages!.totalDeductions) || 0;
     const netWages = paid ? Number(paid.net_pay) || 0 : Number(r.wages!.netPay) || 0;
     const paidDays = paid ? Number(paid.paid_days) || 0 : r.totals.tDays;
