@@ -4942,6 +4942,57 @@ function MusterRollPage() {
                               <X className="h-3 w-3" />
                             </button>
                           )}
+
+                          {!mr.reliever && !mr.vacant && (
+                            <button
+                              type="button"
+                              title="Remove this person from this unit's muster (their saved attendance is kept)"
+                              disabled={!editable}
+                              onClick={async () => {
+                                if (!editable) return;
+                                if (
+                                  !window.confirm(
+                                    `Remove ${mr.emp.full_name} from this unit's muster? Their saved attendance entries are kept, but they will no longer appear on this sheet.`,
+                                  )
+                                ) {
+                                  return;
+                                }
+                                try {
+                                  const { error: unlinkError } = await supabase
+                                    .from("candidate_units")
+                                    .delete()
+                                    .eq("unit_id", unitId)
+                                    .eq("candidate_id", mr.candidateId);
+                                  if (unlinkError) throw unlinkError;
+                                  // If this unit is their home unit, clear that too.
+                                  const { error: homeError } = await supabase
+                                    .from("candidates")
+                                    .update({ unit_id: null })
+                                    .eq("id", mr.candidateId)
+                                    .eq("unit_id", unitId);
+                                  if (homeError) throw homeError;
+                                  const { error: scopeError } = await supabase
+                                    .from("employee_scope_assignments")
+                                    .delete()
+                                    .eq("candidate_id", mr.candidateId)
+                                    .eq("scope_type", "unit")
+                                    .eq("scope_id", unitId);
+                                  if (scopeError) throw scopeError;
+                                  queryClient.invalidateQueries({
+                                    queryKey: ["attendance-roster-v5", unitId],
+                                  });
+                                  toast.success(`${mr.emp.full_name} removed from this muster`);
+                                } catch (e) {
+                                  toast.error(
+                                    e instanceof Error ? e.message : "Failed to remove person",
+                                  );
+                                }
+                              }}
+                              className="rounded-full p-0.5 text-slate-400 hover:text-rose-600 disabled:opacity-40 print:hidden"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          )}
                         </div>
                       </td>
                       <td className={cn(cellBase, "p-1 text-left")} rowSpan={2}>
