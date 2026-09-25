@@ -284,11 +284,11 @@
 
 ## Payroll accuracy and complete salary-slip exports
 
-- [ ] Diagnose and fix zero payroll and salary-slip amounts from source data through saved snapshots.
-- [ ] Show the complete earning and deduction bifurcation in every salary slip.
-- [ ] Add individual PDF and Excel salary-slip downloads.
-- [ ] Add bulk PDF and Excel salary-slip downloads for the full payroll run.
-- [ ] Verify non-zero figures and all four download paths on a signed-in processed payroll.
+- [x] Diagnose and fix zero payroll and salary-slip amounts from source data through saved snapshots.
+- [x] Show the complete earning and deduction bifurcation in every salary slip.
+- [x] Add individual PDF and Excel salary-slip downloads.
+- [x] Add bulk PDF and Excel salary-slip downloads for the full payroll run.
+- [x] Verify non-zero figures and all four download paths on a signed-in processed payroll.
 
 ## Immediate payroll approval and salary slips
 
