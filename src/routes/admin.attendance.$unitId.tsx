@@ -3333,6 +3333,7 @@ function MusterRollPage() {
     let phCount = 0;
     let unitPhDays = 0;
     let otherPaidDays = 0;
+    let woDays = 0;
     for (const cell of periodCells) {
       const e = entryMap.get(`${rk}|${cell.date}`);
       if (!e) continue;
