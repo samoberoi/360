@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/radiant-logo-v2.png";
+import logo from "@/assets/plus-360-fahrenheit-logo.png";
 
 export type TaxInvoiceLine = {
   id: string;
@@ -142,7 +142,7 @@ export function TaxInvoiceSheet({ data }: { data: TaxInvoiceData }) {
               <tr>
                 <td className="w-[58%] border border-border p-2 align-top">
                   <div className="flex items-start gap-3">
-                    <img src={logo} alt={c.name} className="h-12 w-12 object-contain" />
+                    <img src={logo} alt="PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD." className="h-12 w-28 object-contain" />
                     <div>
                       <div className="text-[13px] font-bold">{c.name}</div>
                       {c.registeredAddress && <div className="muted text-muted-foreground">{c.registeredAddress}</div>}
