@@ -6291,6 +6291,24 @@ export type Database = {
       }
       current_user_role_key: { Args: never; Returns: string }
       current_user_unit_ids: { Args: never; Returns: string[] }
+      dashboard_counts: {
+        Args: {
+          p_end: string
+          p_horizon: string
+          p_start: string
+          p_today: string
+        }
+        Returns: Json
+      }
+      dashboard_lifecycle_counts: {
+        Args: {
+          p_month: number
+          p_window_end: number
+          p_window_start: number
+          p_year: number
+        }
+        Returns: Json
+      }
       ensure_annual_gpaip_deductions: { Args: never; Returns: number }
       find_rehire_candidate_by_aadhaar: {
         Args: { _aadhaar: string }
