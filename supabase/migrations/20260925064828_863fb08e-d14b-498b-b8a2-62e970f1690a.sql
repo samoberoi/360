@@ -1,0 +1,4 @@
+alter table public.payroll_day_bases drop constraint if exists payroll_day_bases_method_check;
+alter table public.payroll_day_bases add constraint payroll_day_bases_method_check check (method in ('actual_days','fixed_days','actual_minus_weekly_off','custom_weekdays','fixed_annual_average','actual_minus_days'));
+alter table public.billing_day_bases drop constraint if exists billing_day_bases_method_check;
+alter table public.billing_day_bases add constraint billing_day_bases_method_check check (method in ('actual_days','fixed_days','actual_minus_weekly_off','custom_weekdays','fixed_annual_average','actual_minus_days'));
