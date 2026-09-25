@@ -106,7 +106,11 @@ async function fetchDashboardCountsFallback(
     await Promise.all([
       supabase.from("customers").select("id", { count: "exact", head: true }),
       supabase.from("units").select("id", { count: "exact", head: true }),
-      supabase.from("candidates").select("id", { count: "exact", head: true }),
+      supabase
+        .from("candidates")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active")
+        .eq("is_enabled", true),
       supabase
         .from("client_contracts")
         .select("id", { count: "exact", head: true })
