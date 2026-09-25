@@ -282,6 +282,14 @@
 - [x] Add Payroll Open and Payroll Processed filtering beside search.
 - [x] Validate filtering before pagination and run TypeScript checks.
 
+## Payroll accuracy and complete salary-slip exports
+
+- [ ] Diagnose and fix zero payroll and salary-slip amounts from source data through saved snapshots.
+- [ ] Show the complete earning and deduction bifurcation in every salary slip.
+- [ ] Add individual PDF and Excel salary-slip downloads.
+- [ ] Add bulk PDF and Excel salary-slip downloads for the full payroll run.
+- [ ] Verify non-zero figures and all four download paths on a signed-in processed payroll.
+
 ## Immediate payroll approval and salary slips
 
 - [x] Remove the separate Process Payroll action and dialog.
