@@ -720,7 +720,7 @@ function ProfilePage() {
         periodDayCount,
       );
       const wages = computeWages(
-        { pDays: probe.baseDays, otHours: 0, otDays: 0, phDays: 0, otherPaidDays: 0, tDays: probe.baseDays },
+        { pDays: probe.baseDays, otHours: 0, otDays: 0, phDays: 0, woDays: 0, otherPaidDays: 0, tDays: probe.baseDays },
         resourceLike,
         periodDayCount,
       );
