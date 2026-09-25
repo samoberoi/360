@@ -1448,7 +1448,7 @@ function StatusTile({
         className={`relative mt-auto grid min-w-0 gap-1.5 pb-2 sm:gap-3 sm:pb-3 ${open != null ? "grid-cols-3" : "grid-cols-2"}`}
       >
         <div className="min-w-0">
-          <div className="whitespace-nowrap font-display text-[24px] font-medium tabular-nums leading-none text-foreground sm:text-[26px]">
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap font-display text-[24px] font-medium tabular-nums leading-none text-foreground sm:text-[26px]">
             {approved}
           </div>
           <div className="mt-0.5 truncate whitespace-nowrap text-[9px] uppercase tracking-[0.08em] text-muted-foreground sm:mt-1 sm:text-[10px] sm:tracking-[0.1em]">
@@ -1456,7 +1456,7 @@ function StatusTile({
           </div>
         </div>
         <div className="min-w-0">
-          <div className="whitespace-nowrap font-display text-[24px] font-medium tabular-nums leading-none text-foreground sm:text-[26px]">
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap font-display text-[24px] font-medium tabular-nums leading-none text-foreground sm:text-[26px]">
             {pending}
           </div>
           <div className="mt-0.5 truncate whitespace-nowrap text-[9px] uppercase tracking-[0.08em] text-muted-foreground sm:mt-1 sm:text-[10px] sm:tracking-[0.1em]">
@@ -1465,7 +1465,7 @@ function StatusTile({
         </div>
         {open != null && (
           <div className="min-w-0">
-            <div className="whitespace-nowrap font-display text-[24px] font-medium tabular-nums leading-none text-foreground sm:text-[26px]">
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap font-display text-[24px] font-medium tabular-nums leading-none text-foreground sm:text-[26px]">
               {open}
             </div>
             <div className="mt-0.5 truncate whitespace-nowrap text-[9px] uppercase tracking-[0.08em] text-muted-foreground sm:mt-1 sm:text-[10px] sm:tracking-[0.1em]">

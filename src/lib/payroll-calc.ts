@@ -232,7 +232,7 @@ export type ContractResourceLike = {
   deductions: BenefitLike[];
   employerContributions: BenefitLike[];
   payrollDayBase: {
-    method: "actual_days" | "fixed_days" | "actual_minus_weekly_off" | "custom_weekdays" | "fixed_annual_average";
+    method: "actual_days" | "fixed_days" | "actual_minus_weekly_off" | "custom_weekdays" | "fixed_annual_average" | "actual_minus_days";
     fixedDays: number | null;
     weeklyOffDay: number | null;
     includedWeekdays?: number[] | null;
