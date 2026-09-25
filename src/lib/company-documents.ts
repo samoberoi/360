@@ -1699,6 +1699,15 @@ export const WAGE_SLIP_CSS = `
 .govdoc .wage-slip-doc .ws-sign { margin-top: 26px; text-align: right; }
 .govdoc .wage-slip-doc .ws-stamp { height: 74px; object-fit: contain; display: inline-block; }
 .govdoc .wage-slip-doc .sign-line { font-size: 12px; margin-top: 2px; }
+.govdoc .wage-slip-doc .ws-breakdown { margin-top: 14px; break-inside: avoid; }
+.govdoc .wage-slip-doc .ws-breakdown-title { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+.govdoc .wage-slip-doc .ws-breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.govdoc .wage-slip-doc .ws-lines { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.govdoc .wage-slip-doc .ws-lines th, .govdoc .wage-slip-doc .ws-lines td { border: 1px solid #000; padding: 4px 6px; }
+.govdoc .wage-slip-doc .ws-lines th { text-align: left; background: #eef2f7; }
+.govdoc .wage-slip-doc .ws-lines .money { text-align: right; white-space: nowrap; }
+.govdoc .wage-slip-doc .ws-lines .total td { font-weight: 700; }
+.govdoc .wage-slip-doc .ws-net { display: flex; justify-content: space-between; border: 1px solid #000; border-top: 0; padding: 6px; font-size: 12.5px; }
 `;
 
 export type WageSlipData = {
@@ -1721,6 +1730,9 @@ export type WageSlipData = {
   dedOthers: number;
   totalDeductions: number;
   netWages: number;
+  earningLines?: Array<{ name: string; amount: number }>;
+  additionLines?: Array<{ name: string; amount: number }>;
+  deductionLines?: Array<{ name: string; amount: number }>;
 };
 
 function inr(n: number): string {
@@ -1728,6 +1740,32 @@ function inr(n: number): string {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
+}
+
+function wageSlipLinesHtml(lines: Array<{ name: string; amount: number }> | undefined, emptyLabel: string): string {
+  const visible = (lines ?? []).filter((line) => line.name && Math.abs(Number(line.amount) || 0) >= 0.005);
+  if (!visible.length) return `<tr><td>${esc(emptyLabel)}</td><td class="money">${inr(0)}</td></tr>`;
+  return visible
+    .map((line) => `<tr><td>${esc(line.name)}</td><td class="money">${inr(line.amount)}</td></tr>`)
+    .join("");
+}
+
+function wageSlipBreakdownHtml(d: WageSlipData): string {
+  return `<div class="ws-breakdown">
+    <div class="ws-breakdown-title">Salary bifurcation</div>
+    <div class="ws-breakdown-grid">
+      <table class="ws-lines"><thead><tr><th>Earnings</th><th>Amount</th></tr></thead><tbody>
+        ${wageSlipLinesHtml(d.earningLines, "No earnings")}
+        ${wageSlipLinesHtml(d.additionLines, "No additions")}
+        <tr class="total"><td>Gross wages</td><td class="money">${inr(d.grossWages)}</td></tr>
+      </tbody></table>
+      <table class="ws-lines"><thead><tr><th>Deductions</th><th>Amount</th></tr></thead><tbody>
+        ${wageSlipLinesHtml(d.deductionLines, "No deductions")}
+        <tr class="total"><td>Total deductions</td><td class="money">${inr(d.totalDeductions)}</td></tr>
+      </tbody></table>
+    </div>
+    <div class="ws-net"><span>Net wages paid</span><b>${inr(d.netWages)}</b></div>
+  </div>`;
 }
 
 export function buildWageSlipPlaceholderMap(d: WageSlipData): Record<string, string> {
