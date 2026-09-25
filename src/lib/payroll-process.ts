@@ -39,6 +39,22 @@ export type ProcessResult = {
   netTotal: number;
 };
 
+function mergeProcessLines(lines: ProcessLine[]): ProcessLine[] {
+  const totals = new Map<string, ProcessLine>();
+  for (const line of lines) {
+    const name = String(line.name ?? "").trim();
+    const amount = Number(line.amount) || 0;
+    if (!name || Math.abs(amount) < 0.005) continue;
+    const key = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const current = totals.get(key);
+    totals.set(key, { name: current?.name ?? name, amount: (current?.amount ?? 0) + amount });
+  }
+  return Array.from(totals.values()).map((line) => ({
+    ...line,
+    amount: Math.round(line.amount * 100) / 100,
+  }));
+}
+
 
 function pickDeductionTypeId(name: string, types: { id: string; code: string; name: string }[]): string {
   const n = name.toLowerCase();
@@ -115,10 +131,10 @@ async function writeSnapshots(args: {
       edDays: (Number(prev.edDays) || 0) + (Number(r.edDays) || 0),
       gross: (Number(prev.gross) || 0) + (Number(r.gross) || 0),
       netPay: (Number(prev.netPay) || 0) + (Number(r.netPay) || 0),
-      earnings: [...(prev.earnings ?? []), ...(r.earnings ?? [])],
-      deductions: [...(prev.deductions ?? []), ...(r.deductions ?? [])],
-      employerContributions: [...(prev.employerContributions ?? []), ...(r.employerContributions ?? [])],
-      additions: [...(prev.additions ?? []), ...(r.additions ?? [])],
+      earnings: mergeProcessLines([...(prev.earnings ?? []), ...(r.earnings ?? [])]),
+      deductions: mergeProcessLines([...(prev.deductions ?? []), ...(r.deductions ?? [])]),
+      employerContributions: mergeProcessLines([...(prev.employerContributions ?? []), ...(r.employerContributions ?? [])]),
+      additions: mergeProcessLines([...(prev.additions ?? []), ...(r.additions ?? [])]),
     });
   }
   const payload = [...byCandidate.values()]
@@ -135,10 +151,10 @@ async function writeSnapshots(args: {
       total_deductions: (r.deductions ?? []).reduce((s, d) => s + (Number(d.amount) || 0), 0),
       total_employer: (r.employerContributions ?? []).reduce((s, d) => s + (Number(d.amount) || 0), 0),
       net_pay: Number(r.netPay) || 0,
-      earnings: r.earnings ?? [],
-      deductions: r.deductions ?? [],
-      employer_contributions: r.employerContributions ?? [],
-      additions: r.additions ?? [],
+      earnings: mergeProcessLines(r.earnings ?? []),
+      deductions: mergeProcessLines(r.deductions ?? []),
+      employer_contributions: mergeProcessLines(r.employerContributions ?? []),
+      additions: mergeProcessLines(r.additions ?? []),
       on_hold: args.heldIds.has(r.candidateId),
       posted_by: args.uid,
     }));

@@ -14,6 +14,11 @@ export async function downloadWageSlipsXlsx(slips: WageSlipData[], filename: str
   const usedNames = new Set<string>();
 
   slips.forEach((slip, index) => {
+    const earnings = [...(slip.earningLines ?? []), ...(slip.additionLines ?? [])]
+      .filter((line) => line.name && Math.abs(Number(line.amount) || 0) >= 0.005);
+    const deductions = (slip.deductionLines ?? [])
+      .filter((line) => line.name && Math.abs(Number(line.amount) || 0) >= 0.005);
+    const lineCount = Math.max(earnings.length, deductions.length, 1);
     const rows: unknown[][] = [
       ["PLUS 360 FAHRENHEIT SOLUTIONS PVT. LTD."],
       ["SALARY SLIP", slip.period],
@@ -23,20 +28,27 @@ export async function downloadWageSlipsXlsx(slips: WageSlipData[], filename: str
       ["Bank Account", slip.bankAccountNumber || "—", "Wage Period", slip.wagePeriod],
       ["Establishment / Site", slip.establishmentAddress],
       [],
-      ["Earnings", "Amount (₹)", "Deductions", "Amount (₹)"],
-      ["Basic", slip.rateBasic, "PF", slip.dedPf],
-      ["DA", slip.rateDa, "ESI", slip.dedEsi],
-      ["Other earnings", slip.rateOther, "Other deductions", slip.dedOthers],
-      ["Extra Duty wages", slip.extraDutyWages, "Total deductions", slip.totalDeductions],
-      ["Gross wages", slip.grossWages, "Net wages", slip.netWages],
+      ["Earnings / additions", "Amount (₹)", "Deductions", "Amount (₹)"],
+      ...Array.from({ length: lineCount }, (_, row) => [
+        earnings[row]?.name ?? "",
+        earnings[row]?.amount ?? "",
+        deductions[row]?.name ?? "",
+        deductions[row]?.amount ?? "",
+      ]),
+      ["Gross wages", slip.grossWages, "Total deductions", slip.totalDeductions],
+      ["Net wages paid", slip.netWages],
       [],
       ["Total attendance", slip.totalAttendance],
     ];
+    const grossRow = 9 + lineCount;
+    const netRow = grossRow + 1;
+    const attendanceRow = grossRow + 3;
     const sheet = XLSX.utils.aoa_to_sheet(rows);
     sheet["!merges"] = [
       { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },
       { s: { r: 6, c: 1 }, e: { r: 6, c: 3 } },
-      { s: { r: 15, c: 1 }, e: { r: 15, c: 3 } },
+      { s: { r: netRow, c: 1 }, e: { r: netRow, c: 3 } },
+      { s: { r: attendanceRow, c: 1 }, e: { r: attendanceRow, c: 3 } },
     ];
     sheet["!cols"] = [{ wch: 18 }, { wch: 24 }, { wch: 18 }, { wch: 18 }];
     sheet["!rows"] = rows.map((_, row) => ({
@@ -59,7 +71,7 @@ export async function downloadWageSlipsXlsx(slips: WageSlipData[], filename: str
         const isTitle = row === 0;
         const isSubtitle = row === 1;
         const isHeader = row === 8;
-        const isTotal = row === 13;
+        const isTotal = row === grossRow || row === netRow;
         cell.s = {
           font: {
             name: "Arial",
@@ -78,7 +90,7 @@ export async function downloadWageSlipsXlsx(slips: WageSlipData[], filename: str
           },
           border: row >= 3 && row !== 7 && row !== 14 ? border : undefined,
         };
-        if (row >= 9 && row <= 13 && (col === 1 || col === 3)) cell.z = '₹#,##0.00;(₹#,##0.00);-';
+        if (row >= 9 && row <= netRow && (col === 1 || col === 3)) cell.z = '₹#,##0.00;(₹#,##0.00);-';
       }
     }
 

@@ -49,7 +49,7 @@ export const COMPANY_DOCUMENT_TYPES: DocType[] = [
 
 /** CDN URL of the official company stamp (with authorised signature). */
 export const COMPANY_STAMP_URL =
-  "/__l5e/assets-v1/87ea9ec6-0ff1-4c65-8122-abc676b013d3/company-stamp.png";
+  "/__l5e/assets-v1/f9b47279-da8e-4e85-a8fd-f05e0bdab12d/plus-360-fahrenheit-logo.png";
 
 /** CDN URL of the company logo used on the ID card (replaceable in the template). */
 export const COMPANY_LOGO_URL =
@@ -1680,6 +1680,8 @@ export const DEFAULT_WAGE_SLIP_TEMPLATE = `<div class="wage-slip-doc">
     <tr><td class="n">12.</td><td class="k">Net wages paid</td><td class="v" colspan="3"><b>$net_wages</b></td></tr>
   </table>
 
+  $salary_bifurcation
+
   <div class="ws-sign">
     <img class="ws-stamp" src="$company_stamp" alt="" />
     <div class="sign-line">Employer / Pay-in-charge signature</div>
@@ -1699,6 +1701,15 @@ export const WAGE_SLIP_CSS = `
 .govdoc .wage-slip-doc .ws-sign { margin-top: 26px; text-align: right; }
 .govdoc .wage-slip-doc .ws-stamp { height: 74px; object-fit: contain; display: inline-block; }
 .govdoc .wage-slip-doc .sign-line { font-size: 12px; margin-top: 2px; }
+.govdoc .wage-slip-doc .ws-breakdown { margin-top: 14px; break-inside: avoid; }
+.govdoc .wage-slip-doc .ws-breakdown-title { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+.govdoc .wage-slip-doc .ws-breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.govdoc .wage-slip-doc .ws-lines { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+.govdoc .wage-slip-doc .ws-lines th, .govdoc .wage-slip-doc .ws-lines td { border: 1px solid #000; padding: 4px 6px; }
+.govdoc .wage-slip-doc .ws-lines th { text-align: left; background: #eef2f7; }
+.govdoc .wage-slip-doc .ws-lines .money { text-align: right; white-space: nowrap; }
+.govdoc .wage-slip-doc .ws-lines .total td { font-weight: 700; }
+.govdoc .wage-slip-doc .ws-net { display: flex; justify-content: space-between; border: 1px solid #000; border-top: 0; padding: 6px; font-size: 12.5px; }
 `;
 
 export type WageSlipData = {
@@ -1721,6 +1732,9 @@ export type WageSlipData = {
   dedOthers: number;
   totalDeductions: number;
   netWages: number;
+  earningLines?: Array<{ name: string; amount: number }>;
+  additionLines?: Array<{ name: string; amount: number }>;
+  deductionLines?: Array<{ name: string; amount: number }>;
 };
 
 function inr(n: number): string {
@@ -1728,6 +1742,32 @@ function inr(n: number): string {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
+}
+
+function wageSlipLinesHtml(lines: Array<{ name: string; amount: number }> | undefined, emptyLabel: string): string {
+  const visible = (lines ?? []).filter((line) => line.name && Math.abs(Number(line.amount) || 0) >= 0.005);
+  if (!visible.length) return `<tr><td>${esc(emptyLabel)}</td><td class="money">${inr(0)}</td></tr>`;
+  return visible
+    .map((line) => `<tr><td>${esc(line.name)}</td><td class="money">${inr(line.amount)}</td></tr>`)
+    .join("");
+}
+
+function wageSlipBreakdownHtml(d: WageSlipData): string {
+  return `<div class="ws-breakdown">
+    <div class="ws-breakdown-title">Salary bifurcation</div>
+    <div class="ws-breakdown-grid">
+      <table class="ws-lines"><thead><tr><th>Earnings</th><th>Amount</th></tr></thead><tbody>
+        ${wageSlipLinesHtml(d.earningLines, "No earnings")}
+        ${wageSlipLinesHtml(d.additionLines, "No additions")}
+        <tr class="total"><td>Gross wages</td><td class="money">${inr(d.grossWages)}</td></tr>
+      </tbody></table>
+      <table class="ws-lines"><thead><tr><th>Deductions</th><th>Amount</th></tr></thead><tbody>
+        ${wageSlipLinesHtml(d.deductionLines, "No deductions")}
+        <tr class="total"><td>Total deductions</td><td class="money">${inr(d.totalDeductions)}</td></tr>
+      </tbody></table>
+    </div>
+    <div class="ws-net"><span>Net wages paid</span><b>${inr(d.netWages)}</b></div>
+  </div>`;
 }
 
 export function buildWageSlipPlaceholderMap(d: WageSlipData): Record<string, string> {
@@ -1753,6 +1793,7 @@ export function buildWageSlipPlaceholderMap(d: WageSlipData): Record<string, str
     ded_others: inr(d.dedOthers),
     total_deductions: inr(d.totalDeductions),
     net_wages: inr(d.netWages),
+    salary_bifurcation: wageSlipBreakdownHtml(d),
     company_stamp: absoluteAssetUrl(COMPANY_STAMP_URL),
     company_logo: absoluteAssetUrl(COMPANY_LOGO_URL),
   };
@@ -1784,6 +1825,40 @@ export async function downloadWageSlipPdf(d: WageSlipData, fileName?: string): P
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+/** Render one A4 page per employee into a single salary-slip PDF. */
+export async function downloadWageSlipsPdf(slips: WageSlipData[], fileName: string): Promise<void> {
+  if (!slips.length) throw new Error("No salary slips are available to download");
+  const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+    import("jspdf"),
+    import("html2canvas-pro"),
+  ]);
+  const template = await getWageSlipTemplateBody();
+  const host = document.createElement("div");
+  host.style.cssText = `position:fixed;left:-10000px;top:0;width:${A4_WIDTH_PX}px;background:#fff;`;
+  document.body.appendChild(host);
+  try {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    for (let index = 0; index < slips.length; index += 1) {
+      const slip = slips[index];
+      host.innerHTML = buildDocumentPageHtml(renderTemplate(template, buildWageSlipPlaceholderMap(slip)));
+      const target = host.querySelector(".govdoc") as HTMLElement | null;
+      if (!target) throw new Error(`Could not render salary slip for ${slip.employeeName}`);
+      const canvas = await html2canvas(target, { scale: 2, backgroundColor: "#ffffff", useCORS: true });
+      if (index > 0) doc.addPage("a4", "portrait");
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const naturalH = (canvas.height * pageW) / canvas.width;
+      const scale = Math.min(1, pageH / naturalH);
+      const width = pageW * scale;
+      const height = naturalH * scale;
+      doc.addImage(canvas.toDataURL("image/jpeg", 0.88), "JPEG", (pageW - width) / 2, 0, width, height, undefined, "FAST");
+    }
+    doc.save(fileName.toLowerCase().endsWith(".pdf") ? fileName : `${fileName}.pdf`);
+  } finally {
+    host.remove();
+  }
 }
 
 // Registered after declaration to avoid a temporal-dead-zone read at module init.

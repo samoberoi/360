@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, Download, CheckCircle2, XCircle, Send, ChevronDown, ChevronUp, Banknote, PauseCircle, PlayCircle, FileSpreadsheet, Loader2 } from "lucide-react";
+import { ChevronLeft, Download, CheckCircle2, XCircle, Send, ChevronDown, ChevronUp, Banknote, PauseCircle, PlayCircle, FileSpreadsheet, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -54,7 +54,7 @@ import {
 import { setAmendmentStatus, fetchAttendanceVersions, fetchLiveSnapshot, diffAttendance } from "@/lib/attendance-versions";
 
 import { fetchAttendanceEntriesForPeriod } from "@/lib/attendance-fetch";
-import type { WageSlipData } from "@/lib/company-documents";
+import { downloadWageSlipPdf, downloadWageSlipsPdf, type WageSlipData } from "@/lib/company-documents";
 import { downloadWageSlipsXlsx } from "@/lib/wage-slip-xlsx";
 import { DataPagination, usePagination } from "@/components/DataPagination";
 
@@ -87,6 +87,8 @@ function cleanLedgerName(raw: string | null | undefined): string {
 
 const ESI_COMPONENT_RE = /\besi(c)?\b/i;
 const PT_COMPONENT_RE = /\bprofessional\s*tax\b|\bpt\b/i;
+const EMPLOYEE_STATUTORY_RE = /\b(e)?pf\b|provident\s*fund|\besi(c)?\b|professional\s*tax|\bpt\b|\blwf\b|labour\s*welfare/i;
+const EMPLOYER_STATUTORY_RE = /\b(epf|pf|provident|eps|pension|esi(c)?|lwf|labour\s*welfare)\b/i;
 const isEsiItem = (item: { name?: unknown }) => ESI_COMPONENT_RE.test(String(item.name ?? ""));
 const isPtItem = (item: { name?: unknown }) => PT_COMPONENT_RE.test(String(item.name ?? ""));
 const contractTotalAmount = (item: { name?: unknown; amount?: unknown }) =>
@@ -886,18 +888,21 @@ function PayrollUnitPage() {
           });
           Object.assign(wages, applyPtToWageComputation(wages, ptResolved.amount));
         } else if (wages) {
-          // PT is a once-a-month statutory deduction per employee. Secondary
-          // lines (e.g. extra-duty-only designation rows) must never charge it
-          // again — the primary line already carries it.
-          const stripped = wages.deductions.filter((d) => !PT_COMPONENT_RE.test(d.name));
-          if (stripped.length !== wages.deductions.length) {
-            const totalDeductions = Math.round(stripped.reduce((s, d) => s + d.amount, 0) * 100) / 100;
-            Object.assign(wages, {
-              deductions: stripped,
-              totalDeductions,
-              netPay: Math.max(0, Math.round((wages.earnedGross - totalDeductions) * 100) / 100),
-            });
-          }
+          // EPF, ESI, PT and LWF are monthly employee-level charges. A person
+          // may have secondary designation lines, but these charges belong on
+          // the primary line once — never once per designation.
+          const deductions = wages.deductions.filter((d) => !EMPLOYEE_STATUTORY_RE.test(d.name));
+          const employerContributions = wages.employerContributions.filter((d) => !EMPLOYER_STATUTORY_RE.test(d.name));
+          const totalDeductions = Math.round(deductions.reduce((s, d) => s + d.amount, 0) * 100) / 100;
+          const totalEmployerContributions = Math.round(employerContributions.reduce((s, d) => s + d.amount, 0) * 100) / 100;
+          Object.assign(wages, {
+            deductions,
+            employerContributions,
+            totalDeductions,
+            totalEmployerContributions,
+            netPay: Math.max(0, Math.round((wages.earnedGross - totalDeductions) * 100) / 100),
+            employerCost: Math.round((wages.earnedGross + totalEmployerContributions) * 100) / 100,
+          });
         }
 
 
@@ -950,6 +955,19 @@ function PayrollUnitPage() {
           const wAny = wages as unknown as { additions?: { name: string; amount: number }[] };
           if (Array.isArray(wAny.additions)) {
             wAny.additions = mergeByCanonicalName(wAny.additions);
+          }
+          // A roster row with no paid attendance and no payable earning must
+          // never receive fixed statutory deductions or employer charges.
+          if (totals.tDays <= 0 && wages.earnedGross <= 0) {
+            wages.components = wages.components.filter((line) => Math.abs(Number(line.amount) || 0) >= 0.005);
+            wages.deductions = [];
+            wages.employerContributions = [];
+            Object.assign(wages, {
+              totalDeductions: 0,
+              totalEmployerContributions: 0,
+              netPay: 0,
+              employerCost: 0,
+            });
           }
         }
 
@@ -1018,18 +1036,38 @@ function PayrollUnitPage() {
   const [slipBusy, setSlipBusy] = useState<string | null>(null);
 
   // The salary slip is the document handed to the employee for what was
-  // approved in this period. Approved figures are frozen in the v1 snapshot;
-  // a later attendance amendment is settled in the next payroll.
+  // approved in this period. Each approved amendment stores a complete frozen
+  // snapshot, so the issued slip must use the latest version, not stale v1.
   const buildSlip = (r: (typeof rows)[number]): WageSlipData => {
     const paid = snapshots
       .filter((s) => s.candidate_id === r.id)
-      .sort((a, b) => a.version - b.version)[0];
+      .sort((a, b) => b.version - a.version)[0];
 
-    const comps = (paid ? paid.earnings : r.wages!.components ?? []) as NamedAmount[];
-    const deds = (paid ? paid.deductions : r.wages!.deductions ?? []) as NamedAmount[];
+    const mergeLines = (lines: NamedAmount[]) => mergeByCanonicalName(lines)
+      .map((line) => ({ name: line.name, amount: Math.round((Number(line.amount) || 0) * 100) / 100 }))
+      .filter((line) => Math.abs(line.amount) >= 0.005);
+    const normalizeFrozenDeductions = (lines: NamedAmount[]) => {
+      if (!paid) return mergeLines(lines);
+      const grouped = new Map<string, NamedAmount[]>();
+      for (const line of lines) {
+        const key = line.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+        grouped.set(key, [...(grouped.get(key) ?? []), line]);
+      }
+      return Array.from(grouped.values()).map((group) => {
+        const first = group[0];
+        const statutory = EMPLOYEE_STATUTORY_RE.test(first.name);
+        const amount = statutory
+          ? Math.max(...group.map((line) => Number(line.amount) || 0))
+          : group.reduce((sum, line) => sum + (Number(line.amount) || 0), 0);
+        return { name: first.name, amount: Math.round(amount * 100) / 100 };
+      }).filter((line) => Math.abs(line.amount) >= 0.005);
+    };
+    const comps = mergeLines((paid ? paid.earnings : r.wages?.components ?? []) as NamedAmount[]);
+    const deds = normalizeFrozenDeductions((paid ? paid.deductions : r.wages?.deductions ?? []) as NamedAmount[]);
+    const adds = mergeLines((paid ? paid.additions : (r.wages as unknown as { additions?: NamedAmount[] } | null)?.additions ?? []) as NamedAmount[]);
     const grossWages = paid ? Number(paid.gross) || 0 : Number(r.wages!.earnedGross) || 0;
     const total = paid
-      ? Number(paid.total_deductions) || 0
+      ? Math.max(0, Math.round((grossWages - (Number(paid.net_pay) || 0)) * 100) / 100)
       : Number(r.wages!.totalDeductions) || 0;
     const netWages = paid ? Number(paid.net_pay) || 0 : Number(r.wages!.netPay) || 0;
     const paidDays = paid ? Number(paid.paid_days) || 0 : r.totals.tDays;
@@ -1067,18 +1105,36 @@ function PayrollUnitPage() {
       dedOthers: Math.max(0, total - pf - esi),
       totalDeductions: total,
       netWages,
+      earningLines: comps,
+      additionLines: adds,
+      deductionLines: deds,
     };
   };
 
+  const payableSlipRows = () => {
+    const seen = new Set<string>();
+    return rows.filter((r) => {
+      if (!r.wages || seen.has(r.id)) return false;
+      const slip = buildSlip(r);
+      if (slip.grossWages <= 0 && slip.netWages <= 0) return false;
+      seen.add(r.id);
+      return true;
+    });
+  };
+  const hasPayableSlip = (r: (typeof rows)[number]) => {
+    if (!r.wages) return false;
+    const slip = buildSlip(r);
+    return slip.grossWages > 0 || slip.netWages > 0;
+  };
 
-  const downloadSlip = async (r: (typeof rows)[number]) => {
+  const downloadSlip = async (r: (typeof rows)[number], kind: "xlsx" | "pdf") => {
     if (!r.wages) return;
-    setSlipBusy(r.rowKey);
+    setSlipBusy(`${r.rowKey}:${kind}`);
     try {
-      await downloadWageSlipsXlsx(
-        [buildSlip(r)],
-        `salary-slip-${r.employeeCode || r.name}-${start}-${end}`,
-      );
+      const slip = buildSlip(r);
+      const filename = `salary-slip-${r.employeeCode || r.name}-${start}-${end}`;
+      if (kind === "pdf") await downloadWageSlipPdf(slip, `${filename}.pdf`);
+      else await downloadWageSlipsXlsx([slip], filename);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not generate salary slip");
     } finally {
@@ -1086,16 +1142,16 @@ function PayrollUnitPage() {
     }
   };
 
-  const downloadAllSlips = async () => {
-    const list = rows.filter((r) => r.wages);
+  const downloadAllSlips = async (kind: "xlsx" | "pdf") => {
+    const list = payableSlipRows();
     if (list.length === 0) return;
-    setSlipBusy("__all__");
+    setSlipBusy(`__all__:${kind}`);
     try {
-      await downloadWageSlipsXlsx(
-        list.map(buildSlip),
-        `salary-slips-${unit?.code ?? unitId}-${start}-${end}`,
-      );
-      toast.success(`${list.length} salary slips downloaded in one Excel workbook`);
+      const slips = list.map(buildSlip);
+      const filename = `salary-slips-${unit?.code ?? unitId}-${start}-${end}`;
+      if (kind === "pdf") await downloadWageSlipsPdf(slips, filename);
+      else await downloadWageSlipsXlsx(slips, filename);
+      toast.success(`${list.length} salary slips downloaded in one ${kind === "pdf" ? "PDF" : "Excel workbook"}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not generate salary slips");
     } finally {
@@ -1709,11 +1765,22 @@ function PayrollUnitPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={downloadAllSlips}
+              onClick={() => void downloadAllSlips("pdf")}
               disabled={isLoading || rows.length === 0 || slipBusy !== null}
             >
-               {slipBusy === "__all__" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileSpreadsheet className="mr-1.5 h-4 w-4" />}
-               All salary slips (Excel)
+               {slipBusy === "__all__:pdf" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileText className="mr-1.5 h-4 w-4" />}
+               All slips PDF
+            </Button>
+          )}
+          {isProcessed && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void downloadAllSlips("xlsx")}
+              disabled={isLoading || rows.length === 0 || slipBusy !== null}
+            >
+               {slipBusy === "__all__:xlsx" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileSpreadsheet className="mr-1.5 h-4 w-4" />}
+               All slips Excel
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={exportCsv} disabled={isLoading || rows.length === 0}>
@@ -2074,18 +2141,32 @@ function PayrollUnitPage() {
                   <td className="px-4 py-3 font-medium">
                     <div className="flex items-center gap-2">
                       <span>{r.name}</span>
-                      {r.wages && isProcessed && (
+                      {isProcessed && hasPayableSlip(r) && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          title="Download salary slip in PDF"
+                          aria-label={`Download salary slip for ${r.name} in PDF`}
+                          onClick={() => void downloadSlip(r, "pdf")}
+                          disabled={slipBusy !== null}
+                          className="h-7 w-7 text-muted-foreground"
+                        >
+                          {slipBusy === `${r.rowKey}:pdf` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
+                        </Button>
+                      )}
+                      {isProcessed && hasPayableSlip(r) && (
                         <Button
                           type="button"
                           variant="outline"
                           size="icon"
                           title="Download salary slip in Excel"
                           aria-label={`Download salary slip for ${r.name} in Excel`}
-                          onClick={() => downloadSlip(r)}
+                          onClick={() => void downloadSlip(r, "xlsx")}
                           disabled={slipBusy !== null}
                           className="h-7 w-7 text-muted-foreground"
                         >
-                          {slipBusy === r.rowKey ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileSpreadsheet className="h-3.5 w-3.5" />}
+                          {slipBusy === `${r.rowKey}:xlsx` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileSpreadsheet className="h-3.5 w-3.5" />}
                         </Button>
                       )}
                     </div>
