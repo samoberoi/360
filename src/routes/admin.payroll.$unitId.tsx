@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, Download, CheckCircle2, XCircle, Send, ChevronDown, ChevronUp, Banknote, PauseCircle, PlayCircle, FileSpreadsheet, Loader2 } from "lucide-react";
+import { ChevronLeft, Download, CheckCircle2, XCircle, Send, ChevronDown, ChevronUp, Banknote, PauseCircle, PlayCircle, FileSpreadsheet, FileText, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -54,7 +54,7 @@ import {
 import { setAmendmentStatus, fetchAttendanceVersions, fetchLiveSnapshot, diffAttendance } from "@/lib/attendance-versions";
 
 import { fetchAttendanceEntriesForPeriod } from "@/lib/attendance-fetch";
-import type { WageSlipData } from "@/lib/company-documents";
+import { downloadWageSlipPdf, downloadWageSlipsPdf, type WageSlipData } from "@/lib/company-documents";
 import { downloadWageSlipsXlsx } from "@/lib/wage-slip-xlsx";
 import { DataPagination, usePagination } from "@/components/DataPagination";
 
@@ -1025,8 +1025,12 @@ function PayrollUnitPage() {
       .filter((s) => s.candidate_id === r.id)
       .sort((a, b) => a.version - b.version)[0];
 
-    const comps = (paid ? paid.earnings : r.wages!.components ?? []) as NamedAmount[];
-    const deds = (paid ? paid.deductions : r.wages!.deductions ?? []) as NamedAmount[];
+    const mergeLines = (lines: NamedAmount[]) => mergeByCanonicalName(lines)
+      .map((line) => ({ name: line.name, amount: Math.round((Number(line.amount) || 0) * 100) / 100 }))
+      .filter((line) => Math.abs(line.amount) >= 0.005);
+    const comps = mergeLines((paid ? paid.earnings : r.wages?.components ?? []) as NamedAmount[]);
+    const deds = mergeLines((paid ? paid.deductions : r.wages?.deductions ?? []) as NamedAmount[]);
+    const adds = mergeLines((paid ? paid.additions : (r.wages as unknown as { additions?: NamedAmount[] } | null)?.additions ?? []) as NamedAmount[]);
     const grossWages = paid ? Number(paid.gross) || 0 : Number(r.wages!.earnedGross) || 0;
     const total = paid
       ? Number(paid.total_deductions) || 0
@@ -1067,18 +1071,31 @@ function PayrollUnitPage() {
       dedOthers: Math.max(0, total - pf - esi),
       totalDeductions: total,
       netWages,
+      earningLines: comps,
+      additionLines: adds,
+      deductionLines: deds,
     };
   };
 
+  const payableSlipRows = () => {
+    const seen = new Set<string>();
+    return rows.filter((r) => {
+      if (!r.wages || seen.has(r.id)) return false;
+      const slip = buildSlip(r);
+      if (slip.grossWages <= 0 && slip.netWages <= 0) return false;
+      seen.add(r.id);
+      return true;
+    });
+  };
 
-  const downloadSlip = async (r: (typeof rows)[number]) => {
+  const downloadSlip = async (r: (typeof rows)[number], kind: "xlsx" | "pdf") => {
     if (!r.wages) return;
-    setSlipBusy(r.rowKey);
+    setSlipBusy(`${r.rowKey}:${kind}`);
     try {
-      await downloadWageSlipsXlsx(
-        [buildSlip(r)],
-        `salary-slip-${r.employeeCode || r.name}-${start}-${end}`,
-      );
+      const slip = buildSlip(r);
+      const filename = `salary-slip-${r.employeeCode || r.name}-${start}-${end}`;
+      if (kind === "pdf") await downloadWageSlipPdf(slip, `${filename}.pdf`);
+      else await downloadWageSlipsXlsx([slip], filename);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not generate salary slip");
     } finally {
@@ -1086,16 +1103,16 @@ function PayrollUnitPage() {
     }
   };
 
-  const downloadAllSlips = async () => {
-    const list = rows.filter((r) => r.wages);
+  const downloadAllSlips = async (kind: "xlsx" | "pdf") => {
+    const list = payableSlipRows();
     if (list.length === 0) return;
-    setSlipBusy("__all__");
+    setSlipBusy(`__all__:${kind}`);
     try {
-      await downloadWageSlipsXlsx(
-        list.map(buildSlip),
-        `salary-slips-${unit?.code ?? unitId}-${start}-${end}`,
-      );
-      toast.success(`${list.length} salary slips downloaded in one Excel workbook`);
+      const slips = list.map(buildSlip);
+      const filename = `salary-slips-${unit?.code ?? unitId}-${start}-${end}`;
+      if (kind === "pdf") await downloadWageSlipsPdf(slips, filename);
+      else await downloadWageSlipsXlsx(slips, filename);
+      toast.success(`${list.length} salary slips downloaded in one ${kind === "pdf" ? "PDF" : "Excel workbook"}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not generate salary slips");
     } finally {
@@ -1709,11 +1726,22 @@ function PayrollUnitPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={downloadAllSlips}
+              onClick={() => void downloadAllSlips("pdf")}
               disabled={isLoading || rows.length === 0 || slipBusy !== null}
             >
-               {slipBusy === "__all__" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileSpreadsheet className="mr-1.5 h-4 w-4" />}
-               All salary slips (Excel)
+               {slipBusy === "__all__:pdf" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileText className="mr-1.5 h-4 w-4" />}
+               All slips PDF
+            </Button>
+          )}
+          {isProcessed && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void downloadAllSlips("xlsx")}
+              disabled={isLoading || rows.length === 0 || slipBusy !== null}
+            >
+               {slipBusy === "__all__:xlsx" ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FileSpreadsheet className="mr-1.5 h-4 w-4" />}
+               All slips Excel
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={exportCsv} disabled={isLoading || rows.length === 0}>
@@ -2079,13 +2107,27 @@ function PayrollUnitPage() {
                           type="button"
                           variant="outline"
                           size="icon"
-                          title="Download salary slip in Excel"
-                          aria-label={`Download salary slip for ${r.name} in Excel`}
-                          onClick={() => downloadSlip(r)}
+                          title="Download salary slip in PDF"
+                          aria-label={`Download salary slip for ${r.name} in PDF`}
+                          onClick={() => void downloadSlip(r, "pdf")}
                           disabled={slipBusy !== null}
                           className="h-7 w-7 text-muted-foreground"
                         >
-                          {slipBusy === r.rowKey ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileSpreadsheet className="h-3.5 w-3.5" />}
+                          {slipBusy === `${r.rowKey}:pdf` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
+                        </Button>
+                      )}
+                      {r.wages && isProcessed && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          title="Download salary slip in Excel"
+                          aria-label={`Download salary slip for ${r.name} in Excel`}
+                          onClick={() => void downloadSlip(r, "xlsx")}
+                          disabled={slipBusy !== null}
+                          className="h-7 w-7 text-muted-foreground"
+                        >
+                          {slipBusy === `${r.rowKey}:xlsx` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileSpreadsheet className="h-3.5 w-3.5" />}
                         </Button>
                       )}
                     </div>

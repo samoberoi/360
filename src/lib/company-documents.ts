@@ -1680,6 +1680,8 @@ export const DEFAULT_WAGE_SLIP_TEMPLATE = `<div class="wage-slip-doc">
     <tr><td class="n">12.</td><td class="k">Net wages paid</td><td class="v" colspan="3"><b>$net_wages</b></td></tr>
   </table>
 
+  $salary_bifurcation
+
   <div class="ws-sign">
     <img class="ws-stamp" src="$company_stamp" alt="" />
     <div class="sign-line">Employer / Pay-in-charge signature</div>
@@ -1791,6 +1793,7 @@ export function buildWageSlipPlaceholderMap(d: WageSlipData): Record<string, str
     ded_others: inr(d.dedOthers),
     total_deductions: inr(d.totalDeductions),
     net_wages: inr(d.netWages),
+    salary_bifurcation: wageSlipBreakdownHtml(d),
     company_stamp: absoluteAssetUrl(COMPANY_STAMP_URL),
     company_logo: absoluteAssetUrl(COMPANY_LOGO_URL),
   };
@@ -1822,6 +1825,40 @@ export async function downloadWageSlipPdf(d: WageSlipData, fileName?: string): P
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+/** Render one A4 page per employee into a single salary-slip PDF. */
+export async function downloadWageSlipsPdf(slips: WageSlipData[], fileName: string): Promise<void> {
+  if (!slips.length) throw new Error("No salary slips are available to download");
+  const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+    import("jspdf"),
+    import("html2canvas-pro"),
+  ]);
+  const template = await getWageSlipTemplateBody();
+  const host = document.createElement("div");
+  host.style.cssText = `position:fixed;left:-10000px;top:0;width:${A4_WIDTH_PX}px;background:#fff;`;
+  document.body.appendChild(host);
+  try {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    for (let index = 0; index < slips.length; index += 1) {
+      const slip = slips[index];
+      host.innerHTML = buildDocumentPageHtml(renderTemplate(template, buildWageSlipPlaceholderMap(slip)));
+      const target = host.querySelector(".govdoc") as HTMLElement | null;
+      if (!target) throw new Error(`Could not render salary slip for ${slip.employeeName}`);
+      const canvas = await html2canvas(target, { scale: 2, backgroundColor: "#ffffff", useCORS: true });
+      if (index > 0) doc.addPage("a4", "portrait");
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const naturalH = (canvas.height * pageW) / canvas.width;
+      const scale = Math.min(1, pageH / naturalH);
+      const width = pageW * scale;
+      const height = naturalH * scale;
+      doc.addImage(canvas.toDataURL("image/png"), "PNG", (pageW - width) / 2, 0, width, height);
+    }
+    doc.save(fileName.toLowerCase().endsWith(".pdf") ? fileName : `${fileName}.pdf`);
+  } finally {
+    host.remove();
+  }
 }
 
 // Registered after declaration to avoid a temporal-dead-zone read at module init.
