@@ -5521,7 +5521,7 @@ export function ResourceFormDialog({
                             ? `Fixed 30.4166 days`
                             : p.method === "actual_minus_weekly_off"
                               ? `Actual − weekly off`
-                              : p.method === "actual_minus_days"
+                              : (p.method as string) === "actual_minus_days"
                                 ? `Actual − ${p.fixedDays ?? 4} days`
                                 : `Actual days in month`}
                       </span>
@@ -5549,7 +5549,7 @@ export function ResourceFormDialog({
                             ? `Fixed 30.4166 days`
                             : p.method === "actual_minus_weekly_off"
                               ? `Actual − weekly off`
-                              : p.method === "actual_minus_days"
+                              : (p.method as string) === "actual_minus_days"
                                 ? `Actual − ${p.fixedDays ?? 4} days`
                                 : `Actual days in month`}
                       </span>
