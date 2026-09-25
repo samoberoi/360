@@ -132,9 +132,9 @@ function ScoreRing({ score }: { score: number }) {
           strokeDashoffset={c - (c * score) / 100}
         />
       </svg>
-      <div className="absolute inset-0 grid place-items-center">
-        <span className={cn("text-[28px] font-semibold leading-none tabular-nums", tone.text)}>{score}</span>
-        <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center pt-0.5 text-center">
+        <span className={cn("block text-[28px] font-semibold leading-none tabular-nums", tone.text)}>{score}</span>
+        <span className="mt-1.5 block text-[10px] font-semibold uppercase leading-none tracking-[0.14em] text-muted-foreground">
           {tone.verdict}
         </span>
       </div>
