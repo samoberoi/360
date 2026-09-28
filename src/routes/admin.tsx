@@ -445,28 +445,14 @@ function AdminLayout() {
   const filteredInventoryChildren = useMemo(
     () => {
       const isFO = roleKey === "field_officer";
+      // Field officers never see Uniform Manager.
+      if (isFO) return [];
       const isInvAdmin = isSuperAdmin || roleKey === "inventory_manager" || roleKey === "inventory";
-      const visibleInventoryChildren = inventoryChildren.filter((c) => c.to !== "/admin/inventory/collections" || isFO);
-      if (isSuperAdmin) return visibleInventoryChildren.filter((c) => !c.adminOnly || isInvAdmin);
+      if (isSuperAdmin) return inventoryChildren.filter((c) => !c.adminOnly || isInvAdmin);
       const list = inventoryChildren.filter((c) => {
         if (c.adminOnly) return isInvAdmin;
-        // These are field-officer workflows — bypass sub-permission gating for FOs.
-        if (isFO && [
-          "/admin/inventory",
-          "/admin/inventory/demands",
-          "/admin/inventory/goods-receipts",
-          "/admin/inventory/collections",
-          "/admin/inventory/issuances",
-        ].includes(c.to)) return true;
         return !c.sub || canSub("inventory", c.sub);
       });
-      if (isFO) return list.filter((c) => [
-        "/admin/inventory",
-        "/admin/inventory/demands",
-        "/admin/inventory/goods-receipts",
-        "/admin/inventory/issuances",
-        "/admin/inventory/collections",
-      ].includes(c.to));
       return list;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -509,7 +495,8 @@ function AdminLayout() {
         if (g.key === "org-manager" || g.key === "unit-manager") {
           if (isFieldOfficer) return false;
         }
-        if (g.key === "inventory" && isFieldOfficer) return true;
+        // Uniform Manager is not a field-officer surface — hidden end to end.
+        if (g.key === "inventory" && isFieldOfficer) return false;
         if (!g.module) return true;
         if (!can(g.module)) return false;
         if (g.sub && !canSub(g.module, g.sub)) return false;
@@ -865,8 +852,7 @@ function AdminLayout() {
               { key: "fo-dashboard", to: "/admin/field-dashboard", label: "Dashboard", icon: LayoutDashboard, active: isActive("/admin/field-dashboard") },
               { key: "fo-candidates", to: "/admin/employees", label: "Candidates", icon: UserPlus, active: isActive("/admin/employees") },
               { key: "fo-attendance", to: "/admin/attendance", label: "Attendance", icon: ClipboardList, active: isActive("/admin/attendance") },
-               { key: "fo-radar", to: "/admin/field-sense", label: "Site Visits", icon: MapPin, active: isActive("/admin/field-sense") },
-              { key: "fo-uniform", to: "/admin/inventory", label: "Uniform", icon: Boxes, active: isActive("/admin/inventory") },
+                { key: "fo-radar", to: "/admin/field-sense", label: "Site Visits", icon: MapPin, active: isActive("/admin/field-sense") },
               { key: "fo-my-attendance", to: "/admin/my-attendance", label: "My Attendance", icon: Clock, active: isActive("/admin/my-attendance") },
             ]
           : visibleGroups.flatMap((g) => {
