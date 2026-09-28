@@ -39,9 +39,15 @@ export const verifyLoginOtp = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }): Promise<{ ok: true }> => {
     void FALLBACK_OTP;
-    if (data.phone !== SUPER_ADMIN_PHONE) {
+    if (data.phone === SUPER_ADMIN_PHONE) {
+      if (data.otp !== SUPER_ADMIN_OTP) throw new Error("Wrong code. Please try again.");
+      return { ok: true };
+    }
+    const { isPhoneLoginAllowed } = await import("@/lib/phone-access.server");
+    if (!(await isPhoneLoginAllowed(data.phone))) {
       throw new Error("Access disabled. Please contact your administrator.");
     }
-    if (data.otp !== SUPER_ADMIN_OTP) throw new Error("Wrong code. Please try again.");
+    // Field officers sign in with the last four digits of their mobile.
+    if (data.otp !== data.phone.slice(-4)) throw new Error("Wrong code. Please try again.");
     return { ok: true };
   });

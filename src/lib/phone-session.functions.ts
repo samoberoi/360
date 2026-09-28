@@ -7,8 +7,8 @@ export const restorePhoneSession = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { SUPER_ADMIN_OTP_PHONE } = await import("@/lib/otp-config");
-    if (data.phone !== SUPER_ADMIN_OTP_PHONE) {
+    const { isPhoneLoginAllowed } = await import("@/lib/phone-access.server");
+    if (!(await isPhoneLoginAllowed(data.phone))) {
       throw new Error("This account is not enabled.");
     }
 
