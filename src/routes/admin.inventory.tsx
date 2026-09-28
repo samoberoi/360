@@ -1,7 +1,6 @@
-import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
+import { createFileRoute, Navigate, Outlet, useLocation } from "@tanstack/react-router";
 import { PageHeader } from "@/components/PageHeader";
 import { InventoryOwnerDashboard } from "./admin.inventory.dashboard";
-import { FieldOfficerInventoryDashboard } from "@/components/FieldOfficerInventoryDashboard";
 import { useCurrentUserRole } from "@/lib/use-current-user-role";
 
 export const Route = createFileRoute("/admin/inventory")({
@@ -18,7 +17,8 @@ function InventoryLayout() {
 function InventoryDashboard() {
   const role = useCurrentUserRole();
   if (role.isLoading) return <div className="min-h-[40vh] animate-pulse rounded-2xl bg-muted" />;
-  if (role.isFieldOfficer) return <FieldOfficerInventoryDashboard />;
+  // Uniform Manager is not available to field officers.
+  if (role.isFieldOfficer) return <Navigate to="/admin/field-dashboard" replace />;
   return (
     <div className="space-y-6">
       <PageHeader
