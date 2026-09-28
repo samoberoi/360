@@ -24,6 +24,9 @@ export type SelfPunch = {
   battery_charging: boolean | null;
   network_type: string | null;
   unit_id?: string | null;
+  check_in_selfie_path?: string | null;
+  check_out_selfie_path?: string | null;
+  distance_km?: number | string | null;
 };
 
 
@@ -129,7 +132,7 @@ export async function fetchTodayPunch(candidateId: string): Promise<SelfPunch | 
   return (data as SelfPunch | null) ?? null;
 }
 
-export async function checkIn(candidateId: string, geo: Geo | null, faceVerified: boolean, unitId?: string | null): Promise<SelfPunch> {
+export async function checkIn(candidateId: string, geo: Geo | null, faceVerified: boolean, unitId?: string | null, selfiePath?: string | null): Promise<SelfPunch> {
   // A punch is accepted at ANY unit the person is assigned to (primary or
   // reliever) — the GPS proximity check at the unit's coordinates is the gate.
   // Whether the day is paid as duty or extra duty stays a payroll decision.
@@ -142,6 +145,7 @@ export async function checkIn(candidateId: string, geo: Geo | null, faceVerified
     check_in_lng: geo?.lng ?? null,
     check_in_accuracy: geo?.accuracy ?? null,
     check_in_face_verified: faceVerified,
+    check_in_selfie_path: selfiePath ?? null,
   };
   if (unitId) row.unit_id = unitId;
   const { data, error } = await supabase
@@ -158,6 +162,7 @@ export async function checkOut(
   id: string,
   geo: Geo | null,
   faceVerified: boolean,
+  selfiePath?: string | null,
 ): Promise<SelfPunch> {
   const { data, error } = await supabase
     .from("self_attendance_punches" as never)
@@ -167,6 +172,7 @@ export async function checkOut(
       check_out_lng: geo?.lng ?? null,
       check_out_accuracy: geo?.accuracy ?? null,
       check_out_face_verified: faceVerified,
+      check_out_selfie_path: selfiePath ?? null,
     } as never)
     .eq("id", id)
     .select("*")

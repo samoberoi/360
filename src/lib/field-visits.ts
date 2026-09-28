@@ -20,6 +20,7 @@ export type FieldVisit = {
   client_photo_url: string | null;
   client_name: string | null;
   distance_from_prev_m: number | null;
+  check_in_selfie_path?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -228,6 +229,7 @@ export async function createVisit(params: {
   visitSeq: number;
   prevLat: number | null;
   prevLng: number | null;
+  selfiePath?: string | null;
 }): Promise<FieldVisit> {
   const distFromPrev =
     params.prevLat != null && params.prevLng != null
@@ -245,6 +247,7 @@ export async function createVisit(params: {
       check_in_lng: params.lng,
       check_in_accuracy: params.accuracy,
       distance_from_prev_m: distFromPrev,
+      check_in_selfie_path: params.selfiePath ?? null,
     } as never)
     .select("*")
     .single();

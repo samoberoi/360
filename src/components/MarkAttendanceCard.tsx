@@ -23,6 +23,8 @@ import {
 } from "@/lib/self-attendance";
 
 import { isNativePlatform } from "@/lib/native";
+import { captureAndUploadSelfie } from "@/lib/selfie";
+import { useCurrentUserRole } from "@/lib/use-current-user-role";
 import { cn } from "@/lib/utils";
 
 // In-memory reverse-geocode cache keyed by rounded coords.
@@ -185,6 +187,8 @@ export function MarkAttendanceCard({
   proximityThresholdM?: number;
 }) {
   const qc = useQueryClient();
+  const role = useCurrentUserRole();
+  const canPunch = role.isFieldOfficer;
   const [busy, setBusy] = useState<"in" | "out" | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [nearby, setNearby] = useState<Array<{ unit: AllowedUnit; distance: number }>>([]);
@@ -282,8 +286,11 @@ export function MarkAttendanceCard({
 
   const performCheckIn = async (unitId: string | null, geo: import("@/lib/self-attendance").Geo | null, face: boolean) => {
     if (!candidateId) throw new Error("Profile not ready.");
+    if (!geo) throw new Error("Location is required.");
+    const site = (allowedUnits ?? []).find((u) => u.id === unitId)?.name ?? null;
+    const selfiePath = await captureAndUploadSelfie({ label: "Log in", candidateId, geo, site }, "login");
     const [row, battery, network] = await Promise.allSettled([
-      checkIn(candidateId, geo, face, unitId),
+      checkIn(candidateId, geo, face, unitId, selfiePath),
       readBattery(),
       readNetworkType(),
     ]);
@@ -299,6 +306,7 @@ export function MarkAttendanceCard({
   const inMut = useMutation({
     mutationFn: async () => {
       if (!candidateId) throw new Error("Profile not ready.");
+      if (!canPunch) throw new Error("Only field officers can log in and log out from their location.");
       let face = false;
       if (isNativePlatform()) {
         face = await verifyFaceForAttendance("Attendance login");
@@ -390,6 +398,7 @@ export function MarkAttendanceCard({
   const outMut = useMutation({
     mutationFn: async () => {
       if (!punch?.id) throw new Error("No active attendance login.");
+      if (!canPunch) throw new Error("Only field officers can log in and log out from their location.");
       if (openVisitQ.data?.id) throw new Error("Complete your active client visit before logging out.");
       let face = false;
       if (isNativePlatform()) {
@@ -405,7 +414,11 @@ export function MarkAttendanceCard({
         .sort((a, b) => a.distance - b.distance)[0];
       const confirmed = await confirmPunch("out", nearest?.unit.name ?? "Current GPS location");
       if (!confirmed) return null;
-      return await checkOut(punch.id, geo, face);
+      const selfiePath = await captureAndUploadSelfie(
+        { label: "Log out", candidateId: punch.candidate_id, geo, site: nearest?.unit.name ?? null },
+        "logout",
+      );
+      return await checkOut(punch.id, geo, face, selfiePath);
     },
     onSuccess: (row) => {
       if (!row) return;
@@ -627,7 +640,12 @@ export function MarkAttendanceCard({
       )}
 
       <div className="mt-3 sm:mt-4">
-        {state === "idle" && (
+        {!role.isLoading && !canPunch && state !== "done" && (
+          <div className="rounded-xl border border-border bg-muted/40 px-3 py-2.5 text-center text-xs font-semibold text-muted-foreground">
+            Only field officers can log in and log out from their location.
+          </div>
+        )}
+        {canPunch && state === "idle" && (
           <Button
             className="h-11 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm sm:h-12"
             disabled={!candidateId || inMut.isPending || busy === "in" || locState === "denied" || locState === "unavailable"}
@@ -637,7 +655,7 @@ export function MarkAttendanceCard({
             Log in now
           </Button>
         )}
-        {state === "in" && (
+        {canPunch && state === "in" && (
           <Button
             className="h-11 w-full rounded-xl bg-emerald-600 text-sm font-semibold text-white shadow-sm hover:bg-emerald-600/90 sm:h-12"
             disabled={outMut.isPending || busy === "out" || locState === "denied" || locState === "unavailable"}

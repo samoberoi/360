@@ -2136,33 +2136,39 @@ export type Database = {
         Row: {
           accuracy: number | null
           candidate_id: string
+          counted: boolean
           created_at: string
           id: string
           lat: number
           lng: number
           recorded_at: string
+          step_m: number
           track_date: string
           visit_id: string | null
         }
         Insert: {
           accuracy?: number | null
           candidate_id: string
+          counted?: boolean
           created_at?: string
           id?: string
           lat: number
           lng: number
           recorded_at?: string
+          step_m?: number
           track_date?: string
           visit_id?: string | null
         }
         Update: {
           accuracy?: number | null
           candidate_id?: string
+          counted?: boolean
           created_at?: string
           id?: string
           lat?: number
           lng?: number
           recorded_at?: string
+          step_m?: number
           track_date?: string
           visit_id?: string | null
         }
@@ -2257,6 +2263,7 @@ export type Database = {
           check_in_at: string
           check_in_lat: number | null
           check_in_lng: number | null
+          check_in_selfie_path: string | null
           check_out_at: string | null
           check_out_lat: number | null
           check_out_lng: number | null
@@ -2279,6 +2286,7 @@ export type Database = {
           check_in_at?: string
           check_in_lat?: number | null
           check_in_lng?: number | null
+          check_in_selfie_path?: string | null
           check_out_at?: string | null
           check_out_lat?: number | null
           check_out_lng?: number | null
@@ -2301,6 +2309,7 @@ export type Database = {
           check_in_at?: string
           check_in_lat?: number | null
           check_in_lng?: number | null
+          check_in_selfie_path?: string | null
           check_out_at?: string | null
           check_out_lat?: number | null
           check_out_lng?: number | null
@@ -5345,11 +5354,13 @@ export type Database = {
           check_in_face_verified: boolean
           check_in_lat: number | null
           check_in_lng: number | null
+          check_in_selfie_path: string | null
           check_out_accuracy: number | null
           check_out_at: string | null
           check_out_face_verified: boolean
           check_out_lat: number | null
           check_out_lng: number | null
+          check_out_selfie_path: string | null
           created_at: string
           distance_km: number | null
           id: string
@@ -5372,11 +5383,13 @@ export type Database = {
           check_in_face_verified?: boolean
           check_in_lat?: number | null
           check_in_lng?: number | null
+          check_in_selfie_path?: string | null
           check_out_accuracy?: number | null
           check_out_at?: string | null
           check_out_face_verified?: boolean
           check_out_lat?: number | null
           check_out_lng?: number | null
+          check_out_selfie_path?: string | null
           created_at?: string
           distance_km?: number | null
           id?: string
@@ -5399,11 +5412,13 @@ export type Database = {
           check_in_face_verified?: boolean
           check_in_lat?: number | null
           check_in_lng?: number | null
+          check_in_selfie_path?: string | null
           check_out_accuracy?: number | null
           check_out_at?: string | null
           check_out_face_verified?: boolean
           check_out_lat?: number | null
           check_out_lng?: number | null
+          check_out_selfie_path?: string | null
           created_at?: string
           distance_km?: number | null
           id?: string

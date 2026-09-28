@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.fo_track_point_distance() FROM PUBLIC, anon, authenticated;

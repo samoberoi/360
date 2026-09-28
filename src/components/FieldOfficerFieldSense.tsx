@@ -1,3 +1,4 @@
+import { captureAndUploadSelfie } from "@/lib/selfie";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -440,7 +441,7 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
   }, [snappedPosition, units]);
 
   // Total kms today
-  const totalKmToday = useMemo(() => {
+  const routeKm = useMemo(() => {
     if (routeCoords.length < 2) return 0;
     let sum = 0;
     for (let i = 1; i < routeCoords.length; i += 1) {
@@ -451,26 +452,10 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
     }
     return sum / 1000;
   }, [routeCoords]);
+  // Server-calculated distance (filters GPS jitter, poor fixes and jumps).
+  const serverKm = Number((punchQ.data as { distance_km?: number | string | null } | null | undefined)?.distance_km);
+  const totalKmToday = Number.isFinite(serverKm) && punchQ.data ? serverKm : routeKm;
 
-  // Persist the daily distance to the punch row so admin
-  // dashboards read the exact same number the FO sees. Skip for historical views.
-  const lastPersistedKmRef = useRef<number | null>(null);
-  useEffect(() => {
-    if (isHistorical) return;
-    const punchId = punchQ.data?.id;
-    if (!punchId) return;
-    if (!Number.isFinite(totalKmToday)) return;
-    const rounded = Number(totalKmToday.toFixed(3));
-    if (lastPersistedKmRef.current !== null && Math.abs(lastPersistedKmRef.current - rounded) < 0.01) return;
-    lastPersistedKmRef.current = rounded;
-    const timer = setTimeout(() => {
-      void supabase
-        .from("self_attendance_punches" as never)
-        .update({ distance_km: rounded } as never)
-        .eq("id", punchId);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [totalKmToday, punchQ.data?.id, isHistorical]);
 
   // Only the officer themselves can record a visit (enforced in the database
   // too). Viewers with Radar access see the same day read-only.
@@ -792,8 +777,11 @@ function CheckInDialog({
 
   const mutation = useMutation({
     mutationFn: async () => {
-      if (!pos) throw new Error("Location not available.");
       if (!selectedId) throw new Error("Select a unit.");
+      // Always take a fresh GPS fix at the moment of check-in.
+      const pos = await getCurrentPosition().catch(() => {
+        throw new Error("Location not available. Turn on GPS and try again.");
+      });
       const unit = units.find((u) => u.unit_id === selectedId) ?? null;
       const geo = unitGeo(unit);
       if (geo) {
@@ -804,7 +792,12 @@ function CheckInDialog({
           );
         }
       }
+      const selfiePath = await captureAndUploadSelfie(
+        { label: "Site visit", candidateId, geo: pos, site: unit?.unit_name ?? null },
+        "visit",
+      );
       const visit = await createVisit({
+        selfiePath,
         candidateId,
         unitId: selectedId,
         lat: pos.lat,
