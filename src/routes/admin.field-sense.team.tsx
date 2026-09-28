@@ -6,6 +6,33 @@ import { subscribeLivePunches } from "@/lib/use-live-location-beacon";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/PageHeader";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { signedSelfieUrl } from "@/lib/selfie";
+
+function SelfieThumb({ path, title, initial }: { path: string | null; title: string; initial: string }) {
+  const [open, setOpen] = useState(false);
+  const urlQ = useQuery({ queryKey: ["selfie-url", path], enabled: !!path, staleTime: 8 * 60_000, queryFn: () => signedSelfieUrl(path) });
+  if (!path || !urlQ.data) {
+    return (
+      <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sky-100 text-[12px] font-bold text-sky-700 dark:bg-sky-500/20 dark:text-sky-300">
+        {initial}
+      </div>
+    );
+  }
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)} className="h-8 w-8 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/30" aria-label={`View ${title} photo`}>
+        <img src={urlQ.data} alt="" className="h-full w-full object-cover" />
+      </button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
+          <img src={urlQ.data} alt={title} className="w-full rounded-2xl" />
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
 
 export const Route = createFileRoute("/admin/field-sense/team")({
   component: () => (<FieldSenseAdminGuard sub="day_patrol"><MyTeamPage /></FieldSenseAdminGuard>),
@@ -38,6 +65,8 @@ type Row = {
   in_meeting_unit: string | null;
   work_ms: number | null;
   km_today: number;
+  selfie_in: string | null;
+  selfie_out: string | null;
   status: "in_meeting" | "in_transit" | "punched_in" | "not_punched" | "checkout_missing";
 };
 
@@ -94,7 +123,7 @@ function MyTeamPage() {
           .order("full_name", { ascending: true }),
         supabase
           .from("self_attendance_punches" as never)
-          .select("candidate_id, check_in_at, check_out_at, last_lat, last_lng, last_seen_at")
+          .select("candidate_id, check_in_at, check_out_at, last_lat, last_lng, last_seen_at, distance_km, check_in_selfie_path, check_out_selfie_path")
           .eq("punch_date", selectedDate),
         supabase
           .from("field_visits" as never)
@@ -116,6 +145,9 @@ function MyTeamPage() {
         last_lat: number | null;
         last_lng: number | null;
         last_seen_at: string | null;
+        distance_km: number | string | null;
+        check_in_selfie_path: string | null;
+        check_out_selfie_path: string | null;
       }>;
       const visits = ((visitsRes.data ?? []) as unknown) as Array<{
         candidate_id: string;
@@ -186,7 +218,9 @@ function MyTeamPage() {
           last_seen_at: p?.last_seen_at ?? null,
           in_meeting_unit: inMeetingUnit,
           work_ms: workMs != null ? Math.max(0, workMs) : null,
-          km_today: Number((kmByCand.get(f.id) ?? 0).toFixed(2)),
+          km_today: Number((p?.distance_km != null && Number.isFinite(Number(p.distance_km)) ? Number(p.distance_km) : kmByCand.get(f.id) ?? 0).toFixed(2)),
+          selfie_in: p?.check_in_selfie_path ?? null,
+          selfie_out: p?.check_out_selfie_path ?? null,
           status,
         };
       });
@@ -331,9 +365,7 @@ function TeamRow({ row }: { row: Row }) {
       {/* Name */}
       <div className="flex min-w-0 items-center gap-2.5">
         <span className={`relative flex h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} />
-        <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sky-100 text-[12px] font-bold text-sky-700 dark:bg-sky-500/20 dark:text-sky-300">
-          {initial}
-        </div>
+        <SelfieThumb path={row.selfie_out ?? row.selfie_in} title={`${row.full_name} · ${row.selfie_out ? "Log out" : "Log in"}`} initial={initial} />
         <div className="min-w-0">
           <Link {...linkProps} className="block truncate text-[13px] font-semibold text-foreground hover:underline">
             {row.full_name}
