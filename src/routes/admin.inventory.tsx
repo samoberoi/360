@@ -9,6 +9,9 @@ export const Route = createFileRoute("/admin/inventory")({
 
 function InventoryLayout() {
   const location = useLocation();
+  const role = useCurrentUserRole();
+  // Uniform Manager is not available to field officers — block the whole section.
+  if (!role.isLoading && role.isFieldOfficer) return <Navigate to="/admin/field-dashboard" replace />;
   const isHub = location.pathname === "/admin/inventory" || location.pathname === "/admin/inventory/";
   if (!isHub) return <Outlet />;
   return <InventoryDashboard />;
