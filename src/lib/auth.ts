@@ -151,14 +151,8 @@ async function ensureSupabaseSession(
   }) => Promise<{ accessToken: string; refreshToken: string }>,
 ) {
   const digits = phone.replace(/\D/g, "").slice(-10);
-  const isSuperAdmin = digits === SUPER_ADMIN_PHONE;
+  // Access (super admin / active field officers) is enforced server-side.
 
-  // Preflight: only super-admins or active/approved & enabled employees may sign in.
-  if (!isSuperAdmin) {
-    throw new Error(
-      "Access disabled. Your account is not active. Please contact your administrator.",
-    );
-  }
 
   const { email, password } = credsForPhone(phone);
   const signIn = await withTimeout(
