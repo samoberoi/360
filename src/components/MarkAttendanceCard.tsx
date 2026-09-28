@@ -640,7 +640,12 @@ export function MarkAttendanceCard({
       )}
 
       <div className="mt-3 sm:mt-4">
-        {state === "idle" && (
+        {!role.isLoading && !canPunch && state !== "done" && (
+          <div className="rounded-xl border border-border bg-muted/40 px-3 py-2.5 text-center text-xs font-semibold text-muted-foreground">
+            Only field officers can log in and log out from their location.
+          </div>
+        )}
+        {canPunch && state === "idle" && (
           <Button
             className="h-11 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-sm sm:h-12"
             disabled={!candidateId || inMut.isPending || busy === "in" || locState === "denied" || locState === "unavailable"}
@@ -650,7 +655,7 @@ export function MarkAttendanceCard({
             Log in now
           </Button>
         )}
-        {state === "in" && (
+        {canPunch && state === "in" && (
           <Button
             className="h-11 w-full rounded-xl bg-emerald-600 text-sm font-semibold text-white shadow-sm hover:bg-emerald-600/90 sm:h-12"
             disabled={outMut.isPending || busy === "out" || locState === "denied" || locState === "unavailable"}
