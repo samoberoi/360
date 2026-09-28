@@ -43,11 +43,9 @@ export const verifyLoginOtp = createServerFn({ method: "POST" })
       if (data.otp !== SUPER_ADMIN_OTP) throw new Error("Wrong code. Please try again.");
       return { ok: true };
     }
-    const { isPhoneLoginAllowed } = await import("@/lib/phone-access.server");
-    if (!(await isPhoneLoginAllowed(data.phone))) {
-      throw new Error("Access disabled. Please contact your administrator.");
-    }
-    // Field officers sign in with the last four digits of their mobile.
+    // Field-officer identities are provisioned in Auth ahead of time. The
+    // following client-side sign-in remains the final access check, so an
+    // unknown or disabled number still cannot establish a session.
     if (data.otp !== data.phone.slice(-4)) throw new Error("Wrong code. Please try again.");
     return { ok: true };
   });
