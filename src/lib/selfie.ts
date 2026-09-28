@@ -26,10 +26,10 @@ export function registerSelfieHost(fn: Listener | null) {
  * Resolves null when cancelled.
  */
 export function requestSelfie(req: SelfieRequest): Promise<string | null> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (!listener) {
-      resolve(null);
-      throw new Error("Camera is not ready. Reload the app and try again.");
+      reject(new Error("Camera is not ready. Reload the app and try again."));
+      return;
     }
     listener({ req, resolve });
   });
