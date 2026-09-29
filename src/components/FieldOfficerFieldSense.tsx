@@ -53,6 +53,8 @@ import {
   type FieldVisit,
   type RangePreset,
 } from "@/lib/field-visits";
+import { OfficerDayMap } from "@/components/OfficerDayMap";
+import { VisitDetailDialog } from "@/components/VisitDetailDialog";
 import { FieldSenseRangeFilter } from "@/components/FieldSenseRangeFilter";
 import {
   acknowledgeFieldVisitRequest,
@@ -486,6 +488,24 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
   }, [search.action, isOnDuty, openVisit, canRecord]);
 
   const nextSeq = (visits[visits.length - 1]?.visit_seq ?? 0) + 1;
+  const [detailVisitId, setDetailVisitId] = useState<string | null>(null);
+  const detailVisit = visits.find((v) => v.id === detailVisitId) ?? null;
+  const detailUnit = detailVisit ? units.find((u) => u.unit_id === detailVisit.unit_id) ?? null : null;
+
+  const mapData = useMemo(() => {
+    const p = punchQ.data;
+    const login = p?.check_in_at && hasGeo(p.check_in_lat, p.check_in_lng) ? { lat: Number(p.check_in_lat), lng: Number(p.check_in_lng) } : null;
+    const logout = p?.check_out_at && hasGeo(p.check_out_lat, p.check_out_lng) ? { lat: Number(p.check_out_lat), lng: Number(p.check_out_lng) } : null;
+    const trail = track.map((t) => ({ lat: Number(t.lat), lng: Number(t.lng) })).filter((t) => Number.isFinite(t.lat) && Number.isFinite(t.lng));
+    const mapVisits = visits.flatMap((v) => {
+      const u = units.find((x) => x.unit_id === v.unit_id) ?? null;
+      const g = unitGeo(u) ?? (hasGeo(v.check_in_lat, v.check_in_lng) ? { lat: Number(v.check_in_lat), lng: Number(v.check_in_lng) } : null);
+      return g ? [{ id: v.id, seq: v.visit_seq, lat: g.lat, lng: g.lng, label: u?.unit_name ?? "Site", open: !v.check_out_at }] : [];
+    });
+    const lastTrail = trail[trail.length - 1] ?? null;
+    const live = !isHistorical && isOnDuty ? (pos && isSelf ? { lat: pos.lat, lng: pos.lng } : lastTrail) : null;
+    return { login, logout, trail, visits: mapVisits, live };
+  }, [punchQ.data, track, visits, units, isHistorical, isOnDuty, pos, isSelf]);
 
   // Total on-duty time (mm) for the day
   const totalMinutesOnDuty = useMemo(() => {
@@ -589,6 +609,15 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
         />
       </div>
 
+      <OfficerDayMap
+        login={mapData.login}
+        logout={mapData.logout}
+        live={mapData.live}
+        trail={mapData.trail}
+        visits={mapData.visits}
+        onVisitClick={setDetailVisitId}
+      />
+
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
         <div className="order-2 lg:order-1">
           {/* Units list */}
@@ -651,6 +680,7 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
           distanceToDest={distanceToDest}
           totalKmToday={totalKmToday}
           onCompleteVisit={() => setCheckOutOpen(true)}
+          onOpenVisit={setDetailVisitId}
         />
         </div>
       </div>
@@ -688,6 +718,13 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
         onClearHighlight={() => setRange(validPreset, { highlight: null })}
       />
 
+
+      <VisitDetailDialog
+        visit={detailVisit}
+        unitName={detailUnit?.unit_name ?? "Site"}
+        address={detailUnit?.address ?? null}
+        onClose={() => setDetailVisitId(null)}
+      />
 
       {checkInOpen && (
         <CheckInDialog
@@ -1154,8 +1191,10 @@ function FieldSenseTimeline(props: {
   distanceToDest: number | null;
   totalKmToday: number;
   onCompleteVisit: () => void;
+  onOpenVisit: (id: string) => void;
 }) {
   const {
+    onOpenVisit,
     visits,
     units,
     openVisit,
@@ -1192,6 +1231,7 @@ function FieldSenseTimeline(props: {
               time={`${fmtTime(v.check_in_at)} → ${fmtTime(v.check_out_at)}`}
               subtitle={u?.address ?? u?.customer_name ?? ""}
               chip={v.customer_rating != null ? `★ ${v.customer_rating}` : undefined}
+              onClick={() => onOpenVisit(v.id)}
             />
           );
         })}
@@ -1240,8 +1280,9 @@ function TimelineRow(props: {
   chip?: string;
   action?: React.ReactNode;
   pulsing?: boolean;
+  onClick?: () => void;
 }) {
-  const { color, icon, title, time, subtitle, chip, action, pulsing } = props;
+  const { color, icon, title, time, subtitle, chip, action, pulsing, onClick } = props;
   const dotColor: Record<typeof props.color, string> = {
     emerald: "bg-emerald-500",
     sky: "bg-sky-500",
@@ -1249,7 +1290,13 @@ function TimelineRow(props: {
     slate: "bg-slate-400",
   };
   return (
-    <div className="relative flex gap-3 py-2">
+    <div
+      className={cn("relative flex gap-3 py-2", onClick && "cursor-pointer rounded-lg hover:bg-muted/40")}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === "Enter") onClick(); } : undefined}
+    >
       <div className="flex flex-col items-center">
         <div
           className={cn(
