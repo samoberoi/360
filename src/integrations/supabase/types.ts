@@ -343,6 +343,36 @@ export type Database = {
           },
         ]
       }
+      attendance_location_rules: {
+        Row: {
+          allowed_distance_m: number
+          created_at: string
+          face_photo_required: boolean
+          mark_mode: string
+          role_key: string
+          save_new_site_locations: boolean
+          updated_at: string
+        }
+        Insert: {
+          allowed_distance_m?: number
+          created_at?: string
+          face_photo_required?: boolean
+          mark_mode?: string
+          role_key: string
+          save_new_site_locations?: boolean
+          updated_at?: string
+        }
+        Update: {
+          allowed_distance_m?: number
+          created_at?: string
+          face_photo_required?: boolean
+          mark_mode?: string
+          role_key?: string
+          save_new_site_locations?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       attendance_scan_jobs: {
         Row: {
           created_by: string | null
