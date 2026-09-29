@@ -9,10 +9,11 @@ import { PageHeader } from "@/components/PageHeader";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { signedSelfieUrl } from "@/lib/selfie";
 
-function SelfieThumb({ path, title, initial }: { path: string | null; title: string; initial: string }) {
+function SelfieThumb({ path, title, initial }: { path: string | null; title: string; initial?: string }) {
   const [open, setOpen] = useState(false);
   const urlQ = useQuery({ queryKey: ["selfie-url", path], enabled: !!path, staleTime: 8 * 60_000, queryFn: () => signedSelfieUrl(path) });
   if (!path || !urlQ.data) {
+    if (initial == null) return <div className="h-8 w-8 shrink-0 rounded-lg border border-border/60 bg-muted/30" />;
     return (
       <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sky-100 text-[12px] font-bold text-sky-700 dark:bg-sky-500/20 dark:text-sky-300">
         {initial}
@@ -21,7 +22,7 @@ function SelfieThumb({ path, title, initial }: { path: string | null; title: str
   }
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className="h-8 w-8 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/30" aria-label={`View ${title} photo`}>
+      <button type="button" onClick={() => setOpen(true)} className="h-8 w-8 shrink-0 overflow-hidden rounded-lg ring-1 ring-border" aria-label={`View ${title} photo`}>
         <img src={urlQ.data} alt="" className="h-full w-full object-cover" />
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -282,7 +283,7 @@ function MyTeamPage() {
 
       {/* Table */}
       <section className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
-        <div className="hidden grid-cols-[minmax(160px,1.4fr)_minmax(160px,1.4fr)_minmax(120px,1fr)_100px_100px_110px_100px_44px] items-center gap-3 border-b border-border/60 bg-muted/40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground md:grid">
+        <div className="hidden grid-cols-[minmax(160px,1.4fr)_minmax(160px,1.4fr)_minmax(120px,1fr)_130px_130px_100px_90px_44px] items-center gap-3 border-b border-border/60 bg-muted/40 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground md:grid">
           <div>Name</div>
           <div>Location</div>
           <div>Status</div>
@@ -361,11 +362,11 @@ function TeamRow({ row }: { row: Row }) {
     params: { id: row.id },
   };
   return (
-    <li className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5 md:grid-cols-[minmax(160px,1.4fr)_minmax(160px,1.4fr)_minmax(120px,1fr)_100px_100px_110px_100px_44px]">
+    <li className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5 md:grid-cols-[minmax(160px,1.4fr)_minmax(160px,1.4fr)_minmax(120px,1fr)_130px_130px_100px_90px_44px]">
       {/* Name */}
       <div className="flex min-w-0 items-center gap-2.5">
         <span className={`relative flex h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} />
-        <SelfieThumb path={row.selfie_out ?? row.selfie_in} title={`${row.full_name} · ${row.selfie_out ? "Log out" : "Log in"}`} initial={initial} />
+        <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sky-100 text-[12px] font-bold text-sky-700 dark:bg-sky-500/20 dark:text-sky-300">{initial}</div>
         <div className="min-w-0">
           <Link {...linkProps} className="block truncate text-[13px] font-semibold text-foreground hover:underline">
             {row.full_name}
@@ -395,8 +396,14 @@ function TeamRow({ row }: { row: Row }) {
       <div className="hidden min-w-0 md:block">
         <StatusPill row={row} />
       </div>
-      <div className="hidden text-[12px] font-semibold text-foreground md:block">{timeShort(row.punch_in)}</div>
-      <div className="hidden text-[12px] font-semibold text-foreground md:block">{timeShort(row.punch_out)}</div>
+      <div className="hidden items-center gap-2 text-[12px] font-semibold text-foreground md:flex">
+        {row.punch_in && <SelfieThumb path={row.selfie_in} title={`${row.full_name} · Log in`} />}
+        {timeShort(row.punch_in)}
+      </div>
+      <div className="hidden items-center gap-2 text-[12px] font-semibold text-foreground md:flex">
+        {row.punch_out && <SelfieThumb path={row.selfie_out} title={`${row.full_name} · Log out`} />}
+        {timeShort(row.punch_out)}
+      </div>
       <div className="hidden text-[12px] font-semibold tabular-nums text-foreground md:block">{fmtDur(row.work_ms)}</div>
       <div className="hidden text-[12px] font-semibold tabular-nums text-foreground md:block">{row.km_today.toFixed(2)} km</div>
       <Link

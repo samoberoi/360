@@ -24,6 +24,7 @@ import {
 
 import { isNativePlatform } from "@/lib/native";
 import { captureAndUploadSelfie } from "@/lib/selfie";
+import { useAttendanceRule } from "@/lib/attendance-rules";
 import { useCurrentUserRole } from "@/lib/use-current-user-role";
 import { cn } from "@/lib/utils";
 
@@ -189,6 +190,8 @@ export function MarkAttendanceCard({
   const qc = useQueryClient();
   const role = useCurrentUserRole();
   const canPunch = role.isFieldOfficer;
+  const { rule: attendanceRule } = useAttendanceRule(role.roleKey);
+  const faceRequired = attendanceRule.face_photo_required;
   const [busy, setBusy] = useState<"in" | "out" | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [nearby, setNearby] = useState<Array<{ unit: AllowedUnit; distance: number }>>([]);
@@ -288,7 +291,7 @@ export function MarkAttendanceCard({
     if (!candidateId) throw new Error("Profile not ready.");
     if (!geo) throw new Error("Location is required.");
     const site = (allowedUnits ?? []).find((u) => u.id === unitId)?.name ?? null;
-    const selfiePath = await captureAndUploadSelfie({ label: "Log in", candidateId, geo, site }, "login");
+    const selfiePath = faceRequired ? await captureAndUploadSelfie({ label: "Log in", candidateId, geo, site }, "login") : null;
     const [row, battery, network] = await Promise.allSettled([
       checkIn(candidateId, geo, face, unitId, selfiePath),
       readBattery(),
@@ -414,7 +417,7 @@ export function MarkAttendanceCard({
         .sort((a, b) => a.distance - b.distance)[0];
       const confirmed = await confirmPunch("out", nearest?.unit.name ?? "Current GPS location");
       if (!confirmed) return null;
-      const selfiePath = await captureAndUploadSelfie(
+      const selfiePath = !faceRequired ? null : await captureAndUploadSelfie(
         { label: "Log out", candidateId: punch.candidate_id, geo, site: nearest?.unit.name ?? null },
         "logout",
       );
