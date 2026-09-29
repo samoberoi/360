@@ -157,6 +157,7 @@ const fieldSenseChildren: LeafItem[] = [
   { to: "/admin/field-sense/team", label: "Day Patrol", icon: Users, sub: "day_patrol" },
   { to: "/admin/field-sense/expenses", label: "Expense Manager", icon: Wallet, sub: "expense_manager" },
   { to: "/admin/field-sense/reports", label: "Reports", icon: FileText, sub: "reports" },
+  { to: "/admin/field-sense/attendance-rules", label: "Attendance Rules", icon: MapPin, adminOnly: true },
 ];
 
 
@@ -512,7 +513,7 @@ function AdminLayout() {
               .filter((c) => c.to === "/admin/field-sense")
               .map((c) => ({ ...c, label: "Site Visits" }));
           } else if (!isSuperAdmin) {
-            kids = kids.filter((c) => !c.sub || canSub("field_sense", c.sub));
+            kids = kids.filter((c) => !c.adminOnly && (!c.sub || canSub("field_sense", c.sub)));
           }
           return { ...g, children: kids };
         }
