@@ -67,9 +67,15 @@ export const Route = createFileRoute("/admin/profile")({
   head: () => ({
     meta: [
       { title: "My Profile | PLUS 360 FAHRENHEIT SOLUTIONS" },
-      { name: "description", content: "View your PLUS 360 employee profile, posting, CTC, and documents." },
+      {
+        name: "description",
+        content: "View your PLUS 360 employee profile, posting, CTC, and documents.",
+      },
       { property: "og:title", content: "My Profile | PLUS 360 FAHRENHEIT SOLUTIONS" },
-      { property: "og:description", content: "View your PLUS 360 employee profile, posting, CTC, and documents." },
+      {
+        property: "og:description",
+        content: "View your PLUS 360 employee profile, posting, CTC, and documents.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -216,14 +222,47 @@ type ProfileData = {
   documents: Array<{ name?: string; url?: string; type?: string }>;
   identification_proofs: Array<{ type?: string; number?: string; url?: string }>;
   assigned_asset_ids: string[];
-  contacts: Array<{ name?: string; relation?: string; mobile?: string; occupation?: string; alive?: boolean }>;
-  nominations: Array<{ name?: string; relation?: string; share?: number; dob?: string; aadhaar?: string }>;
-  references: Array<{ name?: string; relation?: string; mobile?: string; email?: string; address?: string }>;
+  contacts: Array<{
+    name?: string;
+    relation?: string;
+    mobile?: string;
+    occupation?: string;
+    alive?: boolean;
+  }>;
+  nominations: Array<{
+    name?: string;
+    relation?: string;
+    share?: number;
+    dob?: string;
+    aadhaar?: string;
+  }>;
+  references: Array<{
+    name?: string;
+    relation?: string;
+    mobile?: string;
+    email?: string;
+    address?: string;
+  }>;
   languages: Array<{ name?: string; read?: boolean; write?: boolean; speak?: boolean }>;
-  experiences: Array<{ company?: string; designation?: string; from?: string; to?: string; salary?: string; reason_for_leaving?: string }>;
-  educations: Array<{ qualification?: string; institution?: string; year?: string; percentage?: string }>;
+  experiences: Array<{
+    company?: string;
+    designation?: string;
+    from?: string;
+    to?: string;
+    salary?: string;
+    reason_for_leaving?: string;
+  }>;
+  educations: Array<{
+    qualification?: string;
+    institution?: string;
+    year?: string;
+    percentage?: string;
+  }>;
   extra_curricular: Array<{ activity?: string; level?: string; year?: string }>;
-  criminal_history: { has_history?: boolean; incidents?: Array<{ description?: string; year?: string }> };
+  criminal_history: {
+    has_history?: boolean;
+    incidents?: Array<{ description?: string; year?: string }>;
+  };
   physical_health_full: Record<string, string>;
   other_info: Record<string, string>;
   offboarding_details: Record<string, any> | null;
@@ -266,7 +305,9 @@ function Section({
   className?: string;
 }) {
   return (
-    <section className={`flex min-w-0 flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm ${className}`}>
+    <section
+      className={`flex min-w-0 flex-col overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm ${className}`}
+    >
       <div className="flex min-h-14 items-center gap-3 border-b border-border/60 px-4 py-3">
         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent/10 text-accent ring-1 ring-inset ring-accent/15">
           <Icon className="h-4 w-4" />
@@ -296,7 +337,11 @@ function ProfilePage() {
           className="h-11 justify-center gap-2 rounded-lg bg-secondary/50 px-3 text-sm text-foreground hover:bg-secondary"
         >
           <span className="grid h-7 w-7 place-items-center rounded-full bg-background text-primary shadow-sm">
-            {themeMounted && theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {themeMounted && theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </span>
           {themeMounted && theme === "dark" ? "Light mode" : "Dark mode"}
         </Button>
@@ -320,10 +365,7 @@ function ProfilePage() {
   const [downloadingDoc, setDownloadingDoc] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
 
-  const phone = useMemo(
-    () => (user?.phone ?? "").replace(/\D/g, "").slice(-10),
-    [user?.phone],
-  );
+  const phone = useMemo(() => (user?.phone ?? "").replace(/\D/g, "").slice(-10), [user?.phone]);
 
   const profileQ = useQuery({
     queryKey: ["my-profile", phone],
@@ -347,7 +389,10 @@ function ProfilePage() {
         blood_group: row.physical_health?.blood_group ?? "",
         physical_health_full: row.physical_health ?? {},
         other_info: row.other_info ?? {},
-        offboarding_details: row.offboarding_details && typeof row.offboarding_details === "object" ? row.offboarding_details : null,
+        offboarding_details:
+          row.offboarding_details && typeof row.offboarding_details === "object"
+            ? row.offboarding_details
+            : null,
         documents: arr(row.documents),
         identification_proofs: arr(row.identification_proofs),
         assigned_asset_ids: arr(row.assigned_asset_ids),
@@ -431,13 +476,21 @@ function ProfilePage() {
       .channel(`profile-stock-${profile.id}`)
       .on(
         "postgres_changes" as never,
-        { event: "*", schema: "public", table: "inv_stock_movements", filter: `location_id=eq.${profile.id}` } as never,
-        () => { void stockBalanceQ.refetch(); },
+        {
+          event: "*",
+          schema: "public",
+          table: "inv_stock_movements",
+          filter: `location_id=eq.${profile.id}`,
+        } as never,
+        () => {
+          void stockBalanceQ.refetch();
+        },
       )
       .subscribe();
-    return () => { void supabase.removeChannel(ch); };
+    return () => {
+      void supabase.removeChannel(ch);
+    };
   }, [profile?.id, stockBalanceQ]);
-
 
   const postingsQ = useQuery({
     queryKey: ["my-postings", profile?.id, profile?.reports_to],
@@ -452,10 +505,7 @@ function ProfilePage() {
       if (cuErr) throw cuErr;
       const unitIds = Array.from(
         new Set(
-          [
-            ...(cu ?? []).map((r: any) => r.unit_id),
-            profile?.unit_id,
-          ].filter(Boolean) as string[],
+          [...(cu ?? []).map((r: any) => r.unit_id), profile?.unit_id].filter(Boolean) as string[],
         ),
       );
       let units: any[] = [];
@@ -469,12 +519,8 @@ function ProfilePage() {
         if (uErr) throw uErr;
         units = u ?? [];
       }
-      const branchIds = Array.from(
-        new Set(units.map((u) => u.branch_id).filter(Boolean)),
-      );
-      const customerIds = Array.from(
-        new Set(units.map((u) => u.customer_id).filter(Boolean)),
-      );
+      const branchIds = Array.from(new Set(units.map((u) => u.branch_id).filter(Boolean)));
+      const customerIds = Array.from(new Set(units.map((u) => u.customer_id).filter(Boolean)));
       const [branchesRes, customersRes] = await Promise.all([
         branchIds.length
           ? supabase.from("branches").select("id,name,code").in("id", branchIds)
@@ -489,14 +535,11 @@ function ProfilePage() {
       const customerMap = new Map<string, any>(
         ((customersRes.data as any[]) ?? []).map((c: any) => [c.id, c]),
       );
-      const cuMap = new Map<string, any>(
-        ((cu ?? []) as any[]).map((r: any) => [r.unit_id, r]),
-      );
+      const cuMap = new Map<string, any>(((cu ?? []) as any[]).map((r: any) => [r.unit_id, r]));
       const ownPostings = units
         .map((u: any) => ({
           ...u,
-          is_primary:
-            cuMap.get(u.id)?.is_primary || u.id === profile?.unit_id,
+          is_primary: cuMap.get(u.id)?.is_primary || u.id === profile?.unit_id,
           branch: branchMap.get(u.branch_id) ?? null,
           customer: customerMap.get(u.customer_id) ?? null,
         }))
@@ -555,10 +598,16 @@ function ProfilePage() {
       );
       const [reportDesigsRes, reportUnitsRes] = await Promise.all([
         reportDesigIds.length
-          ? supabase.from("designations").select("id,name").in("id", reportDesigIds as string[])
+          ? supabase
+              .from("designations")
+              .select("id,name")
+              .in("id", reportDesigIds as string[])
           : Promise.resolve({ data: [] } as any),
         reportUnitIds.length
-          ? supabase.from("units").select("id,name").in("id", reportUnitIds as string[])
+          ? supabase
+              .from("units")
+              .select("id,name")
+              .in("id", reportUnitIds as string[])
           : Promise.resolve({ data: [] } as any),
       ]);
       const desigMap = new Map<string, string>(
@@ -622,8 +671,7 @@ function ProfilePage() {
       profile?.role_key,
     ],
     enabled:
-      !!profile?.id &&
-      ((!!profile?.unit_id && !!profile?.designation_id) || !!profile?.role_key),
+      !!profile?.id && ((!!profile?.unit_id && !!profile?.designation_id) || !!profile?.role_key),
     queryFn: async () => {
       let contract: any = null;
       let res: any = null;
@@ -681,7 +729,6 @@ function ProfilePage() {
 
       if (!res) return { contract, resource: null as null, wages: null as null, pdb: null as null };
 
-
       let pdb: any = null;
       if (res.payroll_day_base_id) {
         const { data } = await supabase
@@ -720,7 +767,15 @@ function ProfilePage() {
         periodDayCount,
       );
       const wages = computeWages(
-        { pDays: probe.baseDays, otHours: 0, otDays: 0, phDays: 0, woDays: 0, otherPaidDays: 0, tDays: probe.baseDays },
+        {
+          pDays: probe.baseDays,
+          otHours: 0,
+          otDays: 0,
+          phDays: 0,
+          woDays: 0,
+          otherPaidDays: 0,
+          tDays: probe.baseDays,
+        },
         resourceLike,
         periodDayCount,
       );
@@ -758,10 +813,7 @@ function ProfilePage() {
         .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
       if (signErr) throw signErr;
       const url = signed.signedUrl;
-      const upd = await supabase
-        .from("candidates")
-        .update({ photo_url: url })
-        .eq("id", profile.id);
+      const upd = await supabase.from("candidates").update({ photo_url: url }).eq("id", profile.id);
       if (upd.error) throw upd.error;
       void logActivity({
         module: "My Profile",
@@ -846,7 +898,10 @@ function ProfilePage() {
   const directReports = postingsQ.data?.directReports ?? [];
 
   return (
-    <div data-profile-page className="flex w-full min-w-0 flex-col gap-4 pb-6 lg:h-[calc(100dvh-4rem)] lg:overflow-hidden lg:pb-0">
+    <div
+      data-profile-page
+      className="flex w-full min-w-0 flex-col gap-4 pb-6 lg:h-[calc(100dvh-4rem)] lg:overflow-hidden lg:pb-0"
+    >
       <PageHeader
         title="My Profile"
         description="Work details, records and documents."
@@ -855,854 +910,893 @@ function ProfilePage() {
 
       <div className="grid min-h-0 min-w-0 flex-1 items-start gap-4 lg:grid-cols-[280px_minmax(0,1fr)] 2xl:grid-cols-[300px_minmax(0,1fr)]">
         <aside className="min-w-0 space-y-4 lg:h-full lg:overflow-y-auto lg:pr-1">
-      <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm">
-        <div className="flex flex-col items-center gap-4 p-5 text-center">
-          <div className="relative shrink-0">
-            <div className="block h-24 w-24 overflow-hidden rounded-full border-4 border-background bg-accent/10 shadow-sm ring-1 ring-border">
-              {profile.photo_url ? (
-                <img
-                  src={profile.photo_url}
-                  alt={profile.full_name}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                  <div className="flex h-full w-full items-center justify-center text-accent">
-                    <Users className="h-10 w-10" />
-                </div>
-              )}
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  type="button"
-                  size="icon"
-                  disabled={uploadingPhoto}
-                  aria-label="Change profile photo"
-                  className="absolute -bottom-1 -right-1 h-9 w-9 rounded-full border-2 border-background bg-accent text-accent-foreground shadow-md hover:bg-accent/90"
-                  title="Change photo"
-                >
-                  {uploadingPhoto ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+          <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm">
+            <div className="flex flex-col items-center gap-4 p-5 text-center">
+              <div className="relative shrink-0">
+                <div className="block h-24 w-24 overflow-hidden rounded-full border-4 border-background bg-accent/10 shadow-sm ring-1 ring-border">
+                  {profile.photo_url ? (
+                    <img
+                      src={profile.photo_url}
+                      alt={profile.full_name}
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
-                    <Camera className="h-4 w-4" />
+                    <div className="flex h-full w-full items-center justify-center text-accent">
+                      <Users className="h-10 w-10" />
+                    </div>
                   )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setCameraOpen(true)}>
-                  <Camera className="mr-2 h-4 w-4" /> Take photo
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => fileRef.current?.click()}>
-                  <Upload className="mr-2 h-4 w-4" /> Upload file
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) handlePhoto(f);
-              }}
-            />
-            <CameraCaptureDialog
-              open={cameraOpen}
-              onOpenChange={setCameraOpen}
-              onCapture={handlePhoto}
-            />
-          </div>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      size="icon"
+                      disabled={uploadingPhoto}
+                      aria-label="Change profile photo"
+                      className="absolute -bottom-1 -right-1 h-9 w-9 rounded-full border-2 border-background bg-accent text-accent-foreground shadow-md hover:bg-accent/90"
+                      title="Change photo"
+                    >
+                      {uploadingPhoto ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Camera className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setCameraOpen(true)}>
+                      <Camera className="mr-2 h-4 w-4" /> Take photo
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => fileRef.current?.click()}>
+                      <Upload className="mr-2 h-4 w-4" /> Upload file
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handlePhoto(f);
+                  }}
+                />
+                <CameraCaptureDialog
+                  open={cameraOpen}
+                  onOpenChange={setCameraOpen}
+                  onCapture={handlePhoto}
+                />
+              </div>
 
-           <div className="min-w-0 w-full">
-             <h1 className="break-words font-display text-xl font-semibold leading-tight text-foreground">
-              {profile.full_name || "Unnamed"}
-            </h1>
-             <p className="mt-1 break-words text-[13px] font-medium text-muted-foreground">
-              {lookups?.designation?.name || "—"}
-              {lookups?.unit ? ` · ${lookups.unit.name}` : ""}
-              {lookups?.unit?.city ? ` (${lookups.unit.city})` : ""}
-            </p>
-             <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
-              <Badge className="rounded-full border border-accent/15 bg-accent/10 px-3 py-1 capitalize text-accent hover:bg-accent/10">
-                {profile.status}
-              </Badge>
-              {lookups?.role?.name && (
-                <Badge className="rounded-full bg-primary/15 px-2.5 py-0.5 text-primary hover:bg-primary/20">
-                  {lookups.role.name}
-                </Badge>
-              )}
-              {profile.employee_code && (
-                <Badge variant="outline" className="rounded-full px-2.5 py-0.5 font-mono text-[11px]">
-                  {profile.employee_code}
-                </Badge>
-              )}
+              <div className="min-w-0 w-full">
+                <h1 className="break-words font-display text-xl font-semibold leading-tight text-foreground">
+                  {profile.full_name || "Unnamed"}
+                </h1>
+                <p className="mt-1 break-words text-[13px] font-medium text-muted-foreground">
+                  {lookups?.designation?.name || "—"}
+                  {lookups?.unit ? ` · ${lookups.unit.name}` : ""}
+                  {lookups?.unit?.city ? ` (${lookups.unit.city})` : ""}
+                </p>
+                <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                  <Badge className="rounded-full border border-accent/15 bg-accent/10 px-3 py-1 capitalize text-accent hover:bg-accent/10">
+                    {profile.status}
+                  </Badge>
+                  {lookups?.role?.name && (
+                    <Badge className="rounded-full bg-primary/15 px-2.5 py-0.5 text-primary hover:bg-primary/20">
+                      {lookups.role.name}
+                    </Badge>
+                  )}
+                  {profile.employee_code && (
+                    <Badge
+                      variant="outline"
+                      className="rounded-full px-2.5 py-0.5 font-mono text-[11px]"
+                    >
+                      {profile.employee_code}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 border-t border-border/60 bg-accent/5 p-3">
+              <InfoRow label="Employee Code" value={profile.employee_code || "—"} />
+              <InfoRow
+                label="Role"
+                value={
+                  lookups?.role?.name || (profile.role_key ? profile.role_key : "Not assigned")
+                }
+              />
+              <InfoRow
+                label="Date of Joining"
+                value={profile.approved_at?.slice(0, 10) ?? profile.preferred_joining_date ?? "—"}
+              />
+              <InfoRow label="Status" value={profile.status} />
             </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-2 gap-2 border-t border-border/60 bg-accent/5 p-3">
-          <InfoRow label="Employee Code" value={profile.employee_code || "—"} />
-          <InfoRow
-            label="Role"
-            value={lookups?.role?.name || (profile.role_key ? profile.role_key : "Not assigned")}
-          />
-          <InfoRow
-            label="Date of Joining"
-            value={
-              profile.approved_at?.slice(0, 10) ??
-              profile.preferred_joining_date ??
-              "—"
-            }
-          />
-          <InfoRow label="Status" value={profile.status} />
-        </div>
-      </div>
-
-      <div className="shrink-0"><MyLiveStatusCard /></div>
-      <LanguagePreferenceCard candidateId={profile.id} />
-      <div className="hidden lg:block">{bottomActions}</div>
-      </aside>
-
-      <div className="min-w-0 space-y-4 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
-      <Section title="My Posting & Reporting" icon={Building2}>
-        {postingsQ.isLoading ? (
-          <div className="text-sm text-muted-foreground">Loading posting details…</div>
-        ) : postings.length === 0 && overseenUnits.length === 0 && directReports.length === 0 && !manager ? (
-          <div className="text-sm text-muted-foreground">
-            No posting, reporting line, or team mapped yet. Please contact HR.
+          <div className="shrink-0">
+            <MyLiveStatusCard />
           </div>
-        ) : (
-          <div className="space-y-4">
-            {postings.length > 0 && (
-              <div className="grid gap-4 xl:grid-cols-2">
-                {postings.map((u: any) => {
-                  const officers = Array.isArray(u.reporting_officers)
-                    ? u.reporting_officers
-                    : [];
-                  const cityState = [u.billing_city, u.billing_state]
-                    .filter(Boolean)
-                    .join(", ");
-                  const siteDetails = [u.customer?.name, u.branch?.name, u.location || cityState]
-                    .filter(Boolean);
-                  const initials = (name: string) =>
-                    name
-                      .split(/\s+/)
-                      .filter(Boolean)
-                      .slice(0, 2)
-                      .map((part: string) => part[0]?.toUpperCase() ?? "")
-                      .join("") || "?";
-                  return (
-                    <div
-                      key={u.id}
-                      className="group overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm transition duration-200 hover:border-accent/30 hover:shadow-md"
-                    >
-                      <div className="flex min-h-[74px] items-start justify-between gap-3 bg-primary px-4 py-4 text-primary-foreground sm:px-5">
-                        <div className="min-w-0">
-                          <div className="font-display text-[13px] font-bold leading-snug sm:text-sm">
-                            {u.name}
+          <LanguagePreferenceCard candidateId={profile.id} />
+          <div className="hidden lg:block">{bottomActions}</div>
+        </aside>
+
+        <div className="min-w-0 space-y-4 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+          <Section title="My Posting & Reporting" icon={Building2}>
+            {postingsQ.isLoading ? (
+              <div className="text-sm text-muted-foreground">Loading posting details…</div>
+            ) : postings.length === 0 &&
+              overseenUnits.length === 0 &&
+              directReports.length === 0 &&
+              !manager ? (
+              <div className="text-sm text-muted-foreground">
+                No posting, reporting line, or team mapped yet. Please contact HR.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {postings.length > 0 && (
+                  <div className="grid gap-4 xl:grid-cols-2">
+                    {postings.map((u: any) => {
+                      const officers = Array.isArray(u.reporting_officers)
+                        ? u.reporting_officers
+                        : [];
+                      const cityState = [u.billing_city, u.billing_state]
+                        .filter(Boolean)
+                        .join(", ");
+                      const siteDetails = [
+                        u.customer?.name,
+                        u.branch?.name,
+                        u.location || cityState,
+                      ].filter(Boolean);
+                      const initials = (name: string) =>
+                        name
+                          .split(/\s+/)
+                          .filter(Boolean)
+                          .slice(0, 2)
+                          .map((part: string) => part[0]?.toUpperCase() ?? "")
+                          .join("") || "?";
+                      return (
+                        <div
+                          key={u.id}
+                          className="group overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm transition duration-200 hover:border-accent/30 hover:shadow-md"
+                        >
+                          <div className="flex min-h-[74px] items-start justify-between gap-3 bg-primary px-4 py-4 text-primary-foreground sm:px-5">
+                            <div className="min-w-0">
+                              <div className="font-display text-[13px] font-bold leading-snug sm:text-sm">
+                                {u.name}
+                              </div>
+                              {u.code && (
+                                <div className="mt-1 font-mono text-[10px] font-semibold text-accent-secondary">
+                                  {u.code}
+                                </div>
+                              )}
+                            </div>
+                            {u.is_primary && (
+                              <span className="shrink-0 rounded-md border border-accent-secondary/30 bg-accent-secondary/15 px-2 py-1 text-[9px] font-bold uppercase text-accent-secondary">
+                                Primary posting
+                              </span>
+                            )}
                           </div>
-                          {u.code && (
-                            <div className="mt-1 font-mono text-[10px] font-semibold text-accent-secondary">
-                              {u.code}
+
+                          <div className="flex items-start gap-2 border-b border-border/70 bg-secondary/45 px-4 py-3 text-xs text-muted-foreground sm:px-5">
+                            <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+                            <span className="min-w-0 break-words font-medium">
+                              {siteDetails.join(" · ") || "Location not available"}
+                            </span>
+                          </div>
+
+                          <div className="px-4 py-4 sm:px-5">
+                            <div className="mb-2.5 flex items-center justify-between gap-3">
+                              <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                                Reporting hierarchy
+                              </div>
+                              <span className="text-[10px] font-semibold text-accent">
+                                {officers.length} {officers.length === 1 ? "person" : "people"}
+                              </span>
+                            </div>
+                            {officers.length === 0 ? (
+                              <div className="rounded-lg border border-dashed border-border bg-secondary/30 px-3 py-4 text-xs text-muted-foreground">
+                                None listed for this unit.
+                              </div>
+                            ) : (
+                              <ul className="divide-y divide-border/60 overflow-hidden rounded-lg border border-border/70">
+                                {officers.map((o: any, idx: number) => (
+                                  <li
+                                    key={`${o.name || "officer"}-${o.mobile || idx}-${idx}`}
+                                    className="flex min-w-0 items-center gap-3 bg-card px-3 py-2.5 transition-colors hover:bg-accent/5"
+                                  >
+                                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-secondary text-[10px] font-bold text-foreground ring-1 ring-inset ring-border">
+                                      {initials(o.name || "")}
+                                    </span>
+                                    <div className="min-w-0 flex-1">
+                                      <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                                        <span className="truncate text-[13px] font-semibold text-foreground">
+                                          {o.name || "—"}
+                                        </span>
+                                        {o.is_primary && (
+                                          <span className="rounded bg-accent px-1.5 py-0.5 text-[9px] font-bold uppercase text-accent-foreground">
+                                            Primary
+                                          </span>
+                                        )}
+                                        {o.is_active === false && (
+                                          <span className="rounded border border-border px-1.5 py-0.5 text-[9px] font-bold uppercase text-muted-foreground">
+                                            Inactive
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-[11px] text-muted-foreground">
+                                        {o.mobile && (
+                                          <span className="tabular-nums">{o.mobile}</span>
+                                        )}
+                                        {o.mobile && (o.role || o.designation) && (
+                                          <span aria-hidden>·</span>
+                                        )}
+                                        {(o.role || o.designation) && (
+                                          <span className="font-medium text-accent">
+                                            {o.role || o.designation}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                    {o.mobile && (
+                                      <a
+                                        href={`tel:${o.mobile}`}
+                                        aria-label={`Call ${o.name || o.mobile}`}
+                                        title={`Call ${o.name || o.mobile}`}
+                                        className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-accent transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                      >
+                                        <PhoneIcon className="h-3.5 w-3.5" />
+                                      </a>
+                                    )}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+
+                          {(u.emergency_contact_name || u.nearby_hospital_name) && (
+                            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                              {u.emergency_contact_name && (
+                                <InfoRow
+                                  label="Emergency Contact"
+                                  value={`${u.emergency_contact_name}${u.emergency_contact_mobile ? ` · ${u.emergency_contact_mobile}` : ""}`}
+                                />
+                              )}
+                              {u.nearby_hospital_name && (
+                                <InfoRow
+                                  label="Nearby Hospital"
+                                  value={`${u.nearby_hospital_name}${u.nearby_hospital_mobile ? ` · ${u.nearby_hospital_mobile}` : ""}`}
+                                />
+                              )}
                             </div>
                           )}
                         </div>
-                        {u.is_primary && (
-                          <span className="shrink-0 rounded-md border border-accent-secondary/30 bg-accent-secondary/15 px-2 py-1 text-[9px] font-bold uppercase text-accent-secondary">
-                            Primary posting
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-start gap-2 border-b border-border/70 bg-secondary/45 px-4 py-3 text-xs text-muted-foreground sm:px-5">
-                        <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
-                        <span className="min-w-0 break-words font-medium">
-                          {siteDetails.join(" · ") || "Location not available"}
-                        </span>
-                      </div>
-
-                      <div className="px-4 py-4 sm:px-5">
-                        <div className="mb-2.5 flex items-center justify-between gap-3">
-                          <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                            Reporting hierarchy
-                          </div>
-                          <span className="text-[10px] font-semibold text-accent">
-                            {officers.length} {officers.length === 1 ? "person" : "people"}
-                          </span>
-                        </div>
-                        {officers.length === 0 ? (
-                          <div className="rounded-lg border border-dashed border-border bg-secondary/30 px-3 py-4 text-xs text-muted-foreground">
-                            None listed for this unit.
-                          </div>
-                        ) : (
-                          <ul className="divide-y divide-border/60 overflow-hidden rounded-lg border border-border/70">
-                            {officers.map((o: any, idx: number) => (
-                              <li
-                                key={`${o.name || "officer"}-${o.mobile || idx}-${idx}`}
-                                className="flex min-w-0 items-center gap-3 bg-card px-3 py-2.5 transition-colors hover:bg-accent/5"
-                              >
-                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-secondary text-[10px] font-bold text-foreground ring-1 ring-inset ring-border">
-                                  {initials(o.name || "")}
-                                </span>
-                                <div className="min-w-0 flex-1">
-                                  <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-                                    <span className="truncate text-[13px] font-semibold text-foreground">
-                                      {o.name || "—"}
-                                    </span>
-                                    {o.is_primary && (
-                                      <span className="rounded bg-accent px-1.5 py-0.5 text-[9px] font-bold uppercase text-accent-foreground">
-                                        Primary
-                                      </span>
-                                    )}
-                                    {o.is_active === false && (
-                                      <span className="rounded border border-border px-1.5 py-0.5 text-[9px] font-bold uppercase text-muted-foreground">
-                                        Inactive
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-[11px] text-muted-foreground">
-                                    {o.mobile && <span className="tabular-nums">{o.mobile}</span>}
-                                    {o.mobile && (o.role || o.designation) && <span aria-hidden>·</span>}
-                                    {(o.role || o.designation) && (
-                                      <span className="font-medium text-accent">{o.role || o.designation}</span>
-                                    )}
-                                  </div>
-                                </div>
-                                {o.mobile && (
-                                  <a
-                                    href={`tel:${o.mobile}`}
-                                    aria-label={`Call ${o.name || o.mobile}`}
-                                    title={`Call ${o.name || o.mobile}`}
-                                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-accent transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                  >
-                                    <PhoneIcon className="h-3.5 w-3.5" />
-                                  </a>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-
-                      {(u.emergency_contact_name || u.nearby_hospital_name) && (
-                        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                          {u.emergency_contact_name && (
-                            <InfoRow
-                              label="Emergency Contact"
-                              value={`${u.emergency_contact_name}${u.emergency_contact_mobile ? ` · ${u.emergency_contact_mobile}` : ""}`}
-                            />
-                          )}
-                          {u.nearby_hospital_name && (
-                            <InfoRow
-                              label="Nearby Hospital"
-                              value={`${u.nearby_hospital_name}${u.nearby_hospital_mobile ? ` · ${u.nearby_hospital_mobile}` : ""}`}
-                            />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {manager && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Direct Manager
-                </div>
-                <div className="mt-2 flex items-center gap-3">
-                  {manager.photo_url ? (
-                    <img
-                      src={manager.photo_url}
-                      alt={manager.full_name}
-                      className="h-10 w-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
-                      <UserCheck className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                  )}
-                  <div>
-                    <div className="text-sm font-semibold">{manager.full_name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {[manager.designation_name, manager.employee_code, manager.mobile]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </div>
+                      );
+                    })}
                   </div>
-                </div>
-              </div>
-            )}
+                )}
 
-            {overseenUnits.length > 0 && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <div className="mb-2 flex items-center gap-2">
-                  <Building2 className="h-3.5 w-3.5 text-accent" />
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    Units I Oversee ({overseenUnits.length})
-                  </div>
-                </div>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {overseenUnits.map((u: any) => (
-                    <div key={u.id} className="rounded-lg border border-border bg-secondary/30 p-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <div className="text-sm font-semibold">{u.name}</div>
-                        {u.code && (
-                          <Badge variant="outline" className="text-[10px]">{u.code}</Badge>
-                        )}
-                      </div>
-                      <div className="mt-1 text-xs text-muted-foreground">
-                        {[
-                          u.customer?.name,
-                          u.branch?.name,
-                          u.location || [u.billing_city, u.billing_state].filter(Boolean).join(", "),
-                        ]
-                          .filter(Boolean)
-                          .join(" · ") || "—"}
-                      </div>
+                {manager && (
+                  <div className="rounded-xl border border-border bg-card p-4">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Direct Manager
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {directReports.length > 0 && (
-              <div className="rounded-xl border border-border bg-card p-4">
-                <div className="mb-2 flex items-center gap-2">
-                  <Users className="h-3.5 w-3.5 text-accent" />
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    Team / Direct Reports ({directReports.length})
-                  </div>
-                </div>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {directReports.map((r: any) => (
-                    <div key={r.id} className="flex items-center gap-3 rounded-lg border border-border bg-secondary/30 p-3">
-                      {r.photo_url ? (
+                    <div className="mt-2 flex items-center gap-3">
+                      {manager.photo_url ? (
                         <img
-                          src={r.photo_url}
-                          alt={r.full_name}
+                          src={manager.photo_url}
+                          alt={manager.full_name}
                           className="h-10 w-10 rounded-full object-cover"
                         />
                       ) : (
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
-                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <UserCheck className="h-4 w-4 text-muted-foreground" />
                         </div>
                       )}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <div className="truncate text-sm font-semibold">{r.full_name}</div>
-                          {r.status && (
-                            <Badge variant="outline" className="text-[10px] capitalize">{r.status}</Badge>
-                          )}
-                        </div>
-                        <div className="truncate text-xs text-muted-foreground">
-                          {[r.designation_name, r.unit_name, r.employee_code, r.mobile]
+                      <div>
+                        <div className="text-sm font-semibold">{manager.full_name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {[manager.designation_name, manager.employee_code, manager.mobile]
                             .filter(Boolean)
                             .join(" · ")}
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </Section>
-
-      <div className="grid min-w-0 items-start gap-4 lg:grid-cols-2">
-        <div className="min-w-0 space-y-4">
-        <Section title="Contact" icon={PhoneIcon}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <InfoRow label="Mobile" value={profile.mobile} />
-            <InfoRow label="Email" value={profile.email} />
-            <InfoRow
-              label="Date of Birth"
-              value={profile.date_of_birth ?? "—"}
-            />
-            <InfoRow label="Gender" value={profile.gender} />
-            <InfoRow label="Marital Status" value={profile.marital_status} />
-            <InfoRow label="Blood Group" value={profile.blood_group} />
-          </div>
-        </Section>
-
-        <Section title="Addresses" icon={MapPin}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Present
-              </div>
-              <p className="text-sm">
-                {[
-                  profile.present_address1,
-                  profile.present_address2,
-                  profile.present_city,
-                  profile.present_state,
-                  profile.present_pincode,
-                ]
-                  .filter(Boolean)
-                  .join(", ") || "—"}
-              </p>
-            </div>
-            <div>
-              <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Permanent
-              </div>
-              <p className="text-sm">
-                {[
-                  profile.permanent_address1,
-                  profile.permanent_city,
-                  profile.permanent_state,
-                  profile.permanent_pincode,
-                ]
-                  .filter(Boolean)
-                  .join(", ") || "—"}
-              </p>
-            </div>
-          </div>
-        </Section>
-
-        <Section title="Identification" icon={IdCard}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <InfoRow label="Aadhaar" value={profile.aadhaar_number} />
-            <InfoRow label="PAN" value={profile.pan_number} />
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            {[
-              { label: "Photo", url: profile.photo_url },
-              { label: "Aadhaar", url: profile.aadhaar_image_url },
-              { label: "PAN", url: profile.pan_image_url },
-              { label: "Signature", url: profile.signature_url },
-              ...profile.identification_proofs.map((p, i) => ({
-                label: p.type || `Proof ${i + 1}`,
-                url: p.url || "",
-              })),
-            ].map((p, i) => (
-              <a
-                key={`${p.label}-${i}`}
-                href={p.url || "#"}
-                target="_blank"
-                rel="noreferrer"
-                className={
-                  "flex items-center justify-between rounded-lg border border-border px-3 py-2 text-xs font-medium " +
-                  (p.url
-                    ? "hover:border-accent hover:text-accent"
-                    : "cursor-not-allowed opacity-50")
-                }
-                onClick={(e) => {
-                  if (!p.url) e.preventDefault();
-                }}
-              >
-                <span>{p.label}</span>
-                <Download className="h-3.5 w-3.5" />
-              </a>
-            ))}
-          </div>
-        </Section>
-
-        <Section title="Bank" icon={ShieldCheck}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <InfoRow label="Account Holder" value={profile.bank_account_holder} />
-            <InfoRow label="Account Number" value={profile.bank_account_number} />
-            <InfoRow label="IFSC" value={profile.bank_ifsc} />
-            <InfoRow label="Bank" value={profile.bank_name} />
-            <InfoRow label="Branch" value={profile.bank_branch} />
-            <InfoRow label="Account Type" value={profile.bank_account_type} />
-          </div>
-        </Section>
-
-        <Section title="Emergency Contact" icon={ShieldAlert}>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <InfoRow label="Name" value={profile.emergency_contact_name} />
-            <InfoRow label="Relation" value={profile.emergency_contact_relation} />
-            <InfoRow label="Mobile" value={profile.emergency_contact_mobile} />
-          </div>
-        </Section>
-
-        <Section title="Family & Contacts" icon={Users}>
-          {profile.contacts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No family contacts on file.</p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {profile.contacts.map((c, i) => (
-                <li key={i} className="grid grid-cols-2 gap-3 py-2 text-sm sm:grid-cols-4">
-                  <span className="font-medium">{c.name || "—"}</span>
-                  <span className="text-muted-foreground">{c.relation || "—"}</span>
-                  <span className="font-mono text-xs">{c.mobile || "—"}</span>
-                  <span className="text-muted-foreground">{c.occupation || "—"}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
-
-        <Section title="Nominees" icon={UserCheck}>
-          {profile.nominations.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No nominees added.</p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {profile.nominations.map((n, i) => (
-                <li key={i} className="grid grid-cols-2 gap-3 py-2 text-sm sm:grid-cols-4">
-                  <span className="font-medium">{n.name || "—"}</span>
-                  <span className="text-muted-foreground">{n.relation || "—"}</span>
-                  <span className="text-muted-foreground">DOB: {n.dob || "—"}</span>
-                  <span className="font-semibold text-accent">{n.share ?? "—"}%</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
-
-        </div>
-        <div className="min-w-0 space-y-4">
-
-        <Section title="References" icon={UserCheck}>
-          {profile.references.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No references provided.</p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {profile.references.map((r, i) => (
-                <li key={i} className="py-2 text-sm">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium">{r.name || "—"}</span>
-                    <span className="text-xs text-muted-foreground">· {r.relation || "—"}</span>
                   </div>
-                  <div className="mt-0.5 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                    {r.mobile && <span className="font-mono">{r.mobile}</span>}
-                    {r.email && <span>{r.email}</span>}
-                    {r.address && <span>{r.address}</span>}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
+                )}
 
-        <Section title="Languages" icon={LanguagesIcon}>
-          {profile.languages.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No languages listed.</p>
-          ) : (
-            <ul className="space-y-2">
-              {profile.languages.map((l, i) => (
-                <li key={i} className="flex items-center justify-between text-sm">
-                  <span className="font-medium">{l.name || "—"}</span>
-                  <span className="flex gap-1.5 text-[10px] font-semibold uppercase tracking-wider">
-                    {l.read && <Badge variant="outline">Read</Badge>}
-                    {l.write && <Badge variant="outline">Write</Badge>}
-                    {l.speak && <Badge variant="outline">Speak</Badge>}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
-
-        <Section title="Work Experience" icon={Briefcase}>
-          {profile.experiences.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No previous experience recorded.</p>
-          ) : (
-            <ul className="space-y-3">
-              {profile.experiences.map((e, i) => (
-                <li key={i} className="rounded-lg border border-border/70 p-3 text-sm">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-semibold">{e.company || "—"}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {e.from || "?"} → {e.to || "Present"}
-                    </span>
-                  </div>
-                  <div className="mt-0.5 text-xs text-muted-foreground">
-                    {e.designation || "—"}
-                    {e.salary ? ` · ₹${e.salary}` : ""}
-                  </div>
-                  {e.reason_for_leaving && (
-                    <div className="mt-1 text-xs italic text-muted-foreground">
-                      Left: {e.reason_for_leaving}
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
-
-        <Section title="Education" icon={GraduationCap}>
-          {profile.educations.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No education records.</p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {profile.educations.map((ed, i) => (
-                <li key={i} className="grid grid-cols-2 gap-3 py-2 text-sm sm:grid-cols-4">
-                  <span className="font-medium">{ed.qualification || "—"}</span>
-                  <span className="text-muted-foreground">{ed.institution || "—"}</span>
-                  <span className="text-muted-foreground">{ed.year || "—"}</span>
-                  <span className="font-semibold">{ed.percentage ? `${ed.percentage}%` : "—"}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
-
-        <Section title="Physical Health" icon={Heart}>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <InfoRow label="Height" value={profile.physical_health_full.height_cm ? `${profile.physical_health_full.height_cm} cm` : ""} />
-            <InfoRow label="Weight" value={profile.physical_health_full.weight_kg ? `${profile.physical_health_full.weight_kg} kg` : ""} />
-            <InfoRow label="Blood Group" value={profile.blood_group} />
-            
-            <InfoRow label="Disabilities" value={profile.physical_health_full.disabilities} />
-            <InfoRow label="Allergies" value={profile.physical_health_full.allergies} />
-          </div>
-        </Section>
-
-        <Section title="Extra Curricular" icon={Activity}>
-          {profile.extra_curricular.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nothing recorded.</p>
-          ) : (
-            <ul className="space-y-1.5 text-sm">
-              {profile.extra_curricular.map((x, i) => (
-                <li key={i} className="flex items-center justify-between">
-                  <span className="font-medium">{x.activity || "—"}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {x.level || "—"}{x.year ? ` · ${x.year}` : ""}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
-
-        <Section title="Other Info" icon={Sparkles}>
-          {Object.keys(profile.other_info || {}).length === 0 ? (
-            <p className="text-sm text-muted-foreground">No additional info.</p>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {Object.entries(profile.other_info).map(([k, v]) => (
-                <InfoRow
-                  key={k}
-                  label={k.replace(/_/g, " ")}
-                  value={String(v ?? "")}
-                />
-              ))}
-            </div>
-          )}
-        </Section>
-
-        <Section title="Criminal History" icon={ShieldAlert}>
-          {profile.criminal_history?.has_history ? (
-            <ul className="space-y-2 text-sm">
-              {(profile.criminal_history.incidents ?? []).map((inc, i) => (
-                <li key={i} className="rounded-lg border border-destructive/40 bg-destructive/5 p-3">
-                  <div className="font-medium">{inc.description || "—"}</div>
-                  <div className="text-xs text-muted-foreground">{inc.year || ""}</div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground">No criminal history declared.</p>
-          )}
-        </Section>
-
-        <Section title="Stock Available" icon={Package}>
-          {stockBalanceQ.isLoading ? (
-            <p className="text-sm text-muted-foreground">Loading stock…</p>
-          ) : stockItems.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No stock currently assigned to you.
-            </p>
-          ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-border bg-muted/40 p-3">
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Total Qty
-                  </div>
-                  <div className="mt-1 text-xl font-bold tabular-nums leading-none sm:text-2xl">
-                    {stockItems.reduce((s, it) => s + it.qty, 0)}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-border bg-muted/40 p-3">
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    SKUs
-                  </div>
-                  <div className="mt-1 text-xl font-bold tabular-nums leading-none sm:text-2xl">
-                    {stockItems.length}
-                  </div>
-                </div>
-              </div>
-              <ul className="divide-y divide-border rounded-lg border border-border">
-                {stockItems.map((it) => (
-                  <li
-                    key={`${it.item_id}-${it.size_value}`}
-                    className="flex items-center justify-between gap-3 p-3 text-sm"
-                  >
-                    <div className="min-w-0">
-                      <div className="font-medium truncate">{it.item_name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {it.item_code}
-                        {it.size_value ? ` · Size ${it.size_value}` : ""}
-                        {it.unit ? ` · ${it.unit}` : ""}
+                {overseenUnits.length > 0 && (
+                  <div className="rounded-xl border border-border bg-card p-4">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Building2 className="h-3.5 w-3.5 text-accent" />
+                      <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Units I Oversee ({overseenUnits.length})
                       </div>
                     </div>
-                    <span className="shrink-0 text-sm font-semibold tabular-nums">
-                      × {it.qty}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to="/admin/inventory/stock"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline"
-              >
-                View full stock →
-              </Link>
-            </div>
-          )}
-        </Section>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {overseenUnits.map((u: any) => (
+                        <div
+                          key={u.id}
+                          className="rounded-lg border border-border bg-secondary/30 p-3"
+                        >
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="text-sm font-semibold">{u.name}</div>
+                            {u.code && (
+                              <Badge variant="outline" className="text-[10px]">
+                                {u.code}
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="mt-1 text-xs text-muted-foreground">
+                            {[
+                              u.customer?.name,
+                              u.branch?.name,
+                              u.location ||
+                                [u.billing_city, u.billing_state].filter(Boolean).join(", "),
+                            ]
+                              .filter(Boolean)
+                              .join(" · ") || "—"}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
+                {directReports.length > 0 && (
+                  <div className="rounded-xl border border-border bg-card p-4">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Users className="h-3.5 w-3.5 text-accent" />
+                      <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Team / Direct Reports ({directReports.length})
+                      </div>
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {directReports.map((r: any) => (
+                        <div
+                          key={r.id}
+                          className="flex items-center gap-3 rounded-lg border border-border bg-secondary/30 p-3"
+                        >
+                          {r.photo_url ? (
+                            <img
+                              src={r.photo_url}
+                              alt={r.full_name}
+                              className="h-10 w-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
+                              <Users className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <div className="truncate text-sm font-semibold">{r.full_name}</div>
+                              {r.status && (
+                                <Badge variant="outline" className="text-[10px] capitalize">
+                                  {r.status}
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="truncate text-xs text-muted-foreground">
+                              {[r.designation_name, r.unit_name, r.employee_code, r.mobile]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </Section>
 
-        <Section title="Other Documents" icon={Upload}>
-          {profile.documents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No additional documents uploaded.</p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {profile.documents.map((d, i) => (
-                <li
-                  key={i}
-                  className="flex items-center justify-between gap-3 py-2 text-sm"
-                >
-                  <span className="truncate">{d.name || `Document ${i + 1}`}</span>
-                  {d.url ? (
+          <div className="grid min-w-0 items-start gap-4 lg:grid-cols-2">
+            <div className="min-w-0 space-y-4">
+              <Section title="Contact" icon={PhoneIcon}>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <InfoRow label="Mobile" value={profile.mobile} />
+                  <InfoRow label="Email" value={profile.email} />
+                  <InfoRow label="Date of Birth" value={profile.date_of_birth ?? "—"} />
+                  <InfoRow label="Gender" value={profile.gender} />
+                  <InfoRow label="Marital Status" value={profile.marital_status} />
+                  <InfoRow label="Blood Group" value={profile.blood_group} />
+                </div>
+              </Section>
+
+              <Section title="Addresses" icon={MapPin}>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Present
+                    </div>
+                    <p className="text-sm">
+                      {[
+                        profile.present_address1,
+                        profile.present_address2,
+                        profile.present_city,
+                        profile.present_state,
+                        profile.present_pincode,
+                      ]
+                        .filter(Boolean)
+                        .join(", ") || "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Permanent
+                    </div>
+                    <p className="text-sm">
+                      {[
+                        profile.permanent_address1,
+                        profile.permanent_city,
+                        profile.permanent_state,
+                        profile.permanent_pincode,
+                      ]
+                        .filter(Boolean)
+                        .join(", ") || "—"}
+                    </p>
+                  </div>
+                </div>
+              </Section>
+
+              <Section title="Identification" icon={IdCard}>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <InfoRow label="Aadhaar" value={profile.aadhaar_number} />
+                  <InfoRow label="PAN" value={profile.pan_number} />
+                </div>
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  {[
+                    { label: "Photo", url: profile.photo_url },
+                    { label: "Aadhaar", url: profile.aadhaar_image_url },
+                    { label: "PAN", url: profile.pan_image_url },
+                    { label: "Signature", url: profile.signature_url },
+                    ...profile.identification_proofs.map((p, i) => ({
+                      label: p.type || `Proof ${i + 1}`,
+                      url: p.url || "",
+                    })),
+                  ].map((p, i) => (
                     <a
-                      href={d.url}
+                      key={`${p.label}-${i}`}
+                      href={p.url || "#"}
                       target="_blank"
                       rel="noreferrer"
+                      className={
+                        "flex items-center justify-between rounded-lg border border-border px-3 py-2 text-xs font-medium " +
+                        (p.url
+                          ? "hover:border-accent hover:text-accent"
+                          : "cursor-not-allowed opacity-50")
+                      }
+                      onClick={(e) => {
+                        if (!p.url) e.preventDefault();
+                      }}
+                    >
+                      <span>{p.label}</span>
+                      <Download className="h-3.5 w-3.5" />
+                    </a>
+                  ))}
+                </div>
+              </Section>
+
+              <Section title="Bank" icon={ShieldCheck}>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <InfoRow label="Account Holder" value={profile.bank_account_holder} />
+                  <InfoRow label="Account Number" value={profile.bank_account_number} />
+                  <InfoRow label="IFSC" value={profile.bank_ifsc} />
+                  <InfoRow label="Bank" value={profile.bank_name} />
+                  <InfoRow label="Branch" value={profile.bank_branch} />
+                  <InfoRow label="Account Type" value={profile.bank_account_type} />
+                </div>
+              </Section>
+
+              <Section title="Emergency Contact" icon={ShieldAlert}>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <InfoRow label="Name" value={profile.emergency_contact_name} />
+                  <InfoRow label="Relation" value={profile.emergency_contact_relation} />
+                  <InfoRow label="Mobile" value={profile.emergency_contact_mobile} />
+                </div>
+              </Section>
+
+              <Section title="Family & Contacts" icon={Users}>
+                {profile.contacts.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No family contacts on file.</p>
+                ) : (
+                  <ul className="divide-y divide-border">
+                    {profile.contacts.map((c, i) => (
+                      <li key={i} className="grid grid-cols-2 gap-3 py-2 text-sm sm:grid-cols-4">
+                        <span className="font-medium">{c.name || "—"}</span>
+                        <span className="text-muted-foreground">{c.relation || "—"}</span>
+                        <span className="font-mono text-xs">{c.mobile || "—"}</span>
+                        <span className="text-muted-foreground">{c.occupation || "—"}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Section>
+
+              <Section title="Nominees" icon={UserCheck}>
+                {profile.nominations.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No nominees added.</p>
+                ) : (
+                  <ul className="divide-y divide-border">
+                    {profile.nominations.map((n, i) => (
+                      <li key={i} className="grid grid-cols-2 gap-3 py-2 text-sm sm:grid-cols-4">
+                        <span className="font-medium">{n.name || "—"}</span>
+                        <span className="text-muted-foreground">{n.relation || "—"}</span>
+                        <span className="text-muted-foreground">DOB: {n.dob || "—"}</span>
+                        <span className="font-semibold text-accent">{n.share ?? "—"}%</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Section>
+            </div>
+            <div className="min-w-0 space-y-4">
+              <Section title="References" icon={UserCheck}>
+                {profile.references.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No references provided.</p>
+                ) : (
+                  <ul className="divide-y divide-border">
+                    {profile.references.map((r, i) => (
+                      <li key={i} className="py-2 text-sm">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-medium">{r.name || "—"}</span>
+                          <span className="text-xs text-muted-foreground">
+                            · {r.relation || "—"}
+                          </span>
+                        </div>
+                        <div className="mt-0.5 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                          {r.mobile && <span className="font-mono">{r.mobile}</span>}
+                          {r.email && <span>{r.email}</span>}
+                          {r.address && <span>{r.address}</span>}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Section>
+
+              <Section title="Languages" icon={LanguagesIcon}>
+                {profile.languages.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No languages listed.</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {profile.languages.map((l, i) => (
+                      <li key={i} className="flex items-center justify-between text-sm">
+                        <span className="font-medium">{l.name || "—"}</span>
+                        <span className="flex gap-1.5 text-[10px] font-semibold uppercase tracking-wider">
+                          {l.read && <Badge variant="outline">Read</Badge>}
+                          {l.write && <Badge variant="outline">Write</Badge>}
+                          {l.speak && <Badge variant="outline">Speak</Badge>}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Section>
+
+              <Section title="Work Experience" icon={Briefcase}>
+                {profile.experiences.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No previous experience recorded.</p>
+                ) : (
+                  <ul className="space-y-3">
+                    {profile.experiences.map((e, i) => (
+                      <li key={i} className="rounded-lg border border-border/70 p-3 text-sm">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="font-semibold">{e.company || "—"}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {e.from || "?"} → {e.to || "Present"}
+                          </span>
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
+                          {e.designation || "—"}
+                          {e.salary ? ` · ₹${e.salary}` : ""}
+                        </div>
+                        {e.reason_for_leaving && (
+                          <div className="mt-1 text-xs italic text-muted-foreground">
+                            Left: {e.reason_for_leaving}
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Section>
+
+              <Section title="Education" icon={GraduationCap}>
+                {profile.educations.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No education records.</p>
+                ) : (
+                  <ul className="divide-y divide-border">
+                    {profile.educations.map((ed, i) => (
+                      <li key={i} className="grid grid-cols-2 gap-3 py-2 text-sm sm:grid-cols-4">
+                        <span className="font-medium">{ed.qualification || "—"}</span>
+                        <span className="text-muted-foreground">{ed.institution || "—"}</span>
+                        <span className="text-muted-foreground">{ed.year || "—"}</span>
+                        <span className="font-semibold">
+                          {ed.percentage ? `${ed.percentage}%` : "—"}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Section>
+
+              <Section title="Physical Health" icon={Heart}>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <InfoRow
+                    label="Height"
+                    value={
+                      profile.physical_health_full.height_cm
+                        ? `${profile.physical_health_full.height_cm} cm`
+                        : ""
+                    }
+                  />
+                  <InfoRow
+                    label="Weight"
+                    value={
+                      profile.physical_health_full.weight_kg
+                        ? `${profile.physical_health_full.weight_kg} kg`
+                        : ""
+                    }
+                  />
+                  <InfoRow label="Blood Group" value={profile.blood_group} />
+
+                  <InfoRow label="Disabilities" value={profile.physical_health_full.disabilities} />
+                  <InfoRow label="Allergies" value={profile.physical_health_full.allergies} />
+                </div>
+              </Section>
+
+              <Section title="Extra Curricular" icon={Activity}>
+                {profile.extra_curricular.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nothing recorded.</p>
+                ) : (
+                  <ul className="space-y-1.5 text-sm">
+                    {profile.extra_curricular.map((x, i) => (
+                      <li key={i} className="flex items-center justify-between">
+                        <span className="font-medium">{x.activity || "—"}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {x.level || "—"}
+                          {x.year ? ` · ${x.year}` : ""}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Section>
+
+              <Section title="Other Info" icon={Sparkles}>
+                {Object.keys(profile.other_info || {}).length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No additional info.</p>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {Object.entries(profile.other_info).map(([k, v]) => (
+                      <InfoRow key={k} label={k.replace(/_/g, " ")} value={String(v ?? "")} />
+                    ))}
+                  </div>
+                )}
+              </Section>
+
+              <Section title="Criminal History" icon={ShieldAlert}>
+                {profile.criminal_history?.has_history ? (
+                  <ul className="space-y-2 text-sm">
+                    {(profile.criminal_history.incidents ?? []).map((inc, i) => (
+                      <li
+                        key={i}
+                        className="rounded-lg border border-destructive/40 bg-destructive/5 p-3"
+                      >
+                        <div className="font-medium">{inc.description || "—"}</div>
+                        <div className="text-xs text-muted-foreground">{inc.year || ""}</div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No criminal history declared.</p>
+                )}
+              </Section>
+
+              <Section title="Stock Available" icon={Package}>
+                {stockBalanceQ.isLoading ? (
+                  <p className="text-sm text-muted-foreground">Loading stock…</p>
+                ) : stockItems.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No stock currently assigned to you.
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-xl border border-border bg-muted/40 p-3">
+                        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          Total Qty
+                        </div>
+                        <div className="mt-1 text-xl font-bold tabular-nums leading-none sm:text-2xl">
+                          {stockItems.reduce((s, it) => s + it.qty, 0)}
+                        </div>
+                      </div>
+                      <div className="rounded-xl border border-border bg-muted/40 p-3">
+                        <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          SKUs
+                        </div>
+                        <div className="mt-1 text-xl font-bold tabular-nums leading-none sm:text-2xl">
+                          {stockItems.length}
+                        </div>
+                      </div>
+                    </div>
+                    <ul className="divide-y divide-border rounded-lg border border-border">
+                      {stockItems.map((it) => (
+                        <li
+                          key={`${it.item_id}-${it.size_value}`}
+                          className="flex items-center justify-between gap-3 p-3 text-sm"
+                        >
+                          <div className="min-w-0">
+                            <div className="font-medium truncate">{it.item_name}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {it.item_code}
+                              {it.size_value ? ` · Size ${it.size_value}` : ""}
+                              {it.unit ? ` · ${it.unit}` : ""}
+                            </div>
+                          </div>
+                          <span className="shrink-0 text-sm font-semibold tabular-nums">
+                            × {it.qty}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      to="/admin/inventory/stock"
                       className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline"
                     >
-                      <Download className="h-3.5 w-3.5" /> Open
-                    </a>
-                  ) : (
-                    <span className="text-xs text-muted-foreground">—</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </Section>
+                      View full stock →
+                    </Link>
+                  </div>
+                )}
+              </Section>
 
-        {profile.offboarding_details && Object.keys(profile.offboarding_details).length > 0 && (
-          <Section title="Offboarding Documents" icon={FileSignature}>
-            <OffboardingRecordsSection details={profile.offboarding_details} hideHeader />
-          </Section>
-        )}
+              <Section title="Other Documents" icon={Upload}>
+                {profile.documents.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No additional documents uploaded.</p>
+                ) : (
+                  <ul className="divide-y divide-border">
+                    {profile.documents.map((d, i) => (
+                      <li key={i} className="flex items-center justify-between gap-3 py-2 text-sm">
+                        <span className="truncate">{d.name || `Document ${i + 1}`}</span>
+                        {d.url ? (
+                          <a
+                            href={d.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline"
+                          >
+                            <Download className="h-3.5 w-3.5" /> Open
+                          </a>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Section>
+
+              {profile.offboarding_details &&
+                Object.keys(profile.offboarding_details).length > 0 && (
+                  <Section title="Offboarding Documents" icon={FileSignature}>
+                    <OffboardingRecordsSection details={profile.offboarding_details} hideHeader />
+                  </Section>
+                )}
+            </div>
+          </div>
+
+          <div className="grid items-stretch gap-4 lg:grid-cols-3 [&>section]:h-full">
+            <Section title="CTC" icon={Wallet} className="lg:col-span-2">
+              {salaryQ.isLoading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Loading…
+                </div>
+              ) : !salaryQ.data ? (
+                <p className="text-sm text-muted-foreground">
+                  No active contract or salary mapping found for your unit and designation. Ask your
+                  admin to map a resource for{" "}
+                  <span className="font-semibold">
+                    {lookups?.designation?.name || "your designation"}
+                  </span>
+                  .
+                </p>
+              ) : !salaryQ.data.resource || !salaryQ.data.wages ? (
+                <p className="text-sm text-muted-foreground">
+                  Contract <span className="font-mono">{salaryQ.data.contract.contract_code}</span>{" "}
+                  exists for your unit but no salary resource is mapped for your designation yet.
+                </p>
+              ) : (
+                (() => {
+                  const w = salaryQ.data.wages;
+                  const c = salaryQ.data.contract;
+                  const p = salaryQ.data.period!;
+                  return (
+                    <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-stretch">
+                      <div className="grid gap-4 rounded-xl border border-border/70 bg-secondary/30 p-4 sm:grid-cols-2">
+                        <div className="min-w-0">
+                          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                            Pay Period
+                          </div>
+                          <div className="text-sm font-semibold">{p.label}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {p.start} → {p.end} · {p.days} days
+                          </div>
+                        </div>
+                        <div className="min-w-0 sm:text-right">
+                          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                            Contract
+                          </div>
+                          <div className="font-mono text-xs">{c.contract_code}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {lookups?.unit?.name || "—"}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex min-w-[190px] flex-col justify-between rounded-xl border border-accent/15 bg-accent/10 p-4 sm:text-right">
+                        <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">
+                          Monthly CTC
+                        </div>
+                        <div className="mt-4 font-display text-3xl font-semibold tabular-nums text-accent">
+                          {fmtINR(w.employerCost)}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()
+              )}
+            </Section>
+
+            <Section title="Signed Documents" icon={FileSignature} className="lg:col-span-1">
+              {docsQ.isLoading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Loading…
+                </div>
+              ) : (docsQ.data?.length ?? 0) === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  You haven't signed any company documents yet.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {docsQ.data!.map((d) => (
+                    <li
+                      key={d.id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/70 p-3 transition-colors hover:border-accent/25 hover:bg-accent/5"
+                    >
+                      <div>
+                        <div className="text-sm font-semibold">
+                          {DOC_TYPE_LABELS[d.doc_type as DocType] ?? d.doc_type}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          v{d.version}
+                          {d.signed_at
+                            ? ` · Signed ${new Date(d.signed_at).toLocaleDateString()}`
+                            : " · Unsigned"}
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={downloadingDoc === d.id}
+                        onClick={() => handleDownloadSigned(d)}
+                      >
+                        {downloadingDoc === d.id ? (
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Download className="mr-1.5 h-3.5 w-3.5" />
+                        )}
+                        Download PDF
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Section>
+          </div>
         </div>
-      </div>
-
-      <div className="grid items-stretch gap-4 lg:grid-cols-3 [&>section]:h-full">
-      <Section title="CTC" icon={Wallet} className="lg:col-span-2">
-        {salaryQ.isLoading ? (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" /> Loading…
-          </div>
-        ) : !salaryQ.data ? (
-          <p className="text-sm text-muted-foreground">
-            No active contract or salary mapping found for your unit and designation. Ask your admin to map a resource for{" "}
-            <span className="font-semibold">{lookups?.designation?.name || "your designation"}</span>.
-          </p>
-        ) : !salaryQ.data.resource || !salaryQ.data.wages ? (
-          <p className="text-sm text-muted-foreground">
-            Contract <span className="font-mono">{salaryQ.data.contract.contract_code}</span> exists for your unit but no salary resource is mapped for your designation yet.
-          </p>
-        ) : (
-          (() => {
-            const w = salaryQ.data.wages;
-            const c = salaryQ.data.contract;
-            const p = salaryQ.data.period!;
-            return (
-              <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-stretch">
-                <div className="grid gap-4 rounded-xl border border-border/70 bg-secondary/30 p-4 sm:grid-cols-2">
-                  <div className="min-w-0">
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                      Pay Period
-                    </div>
-                    <div className="text-sm font-semibold">{p.label}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {p.start} → {p.end} · {p.days} days
-                    </div>
-                  </div>
-                  <div className="min-w-0 sm:text-right">
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                      Contract
-                    </div>
-                    <div className="font-mono text-xs">{c.contract_code}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {lookups?.unit?.name || "—"}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex min-w-[190px] flex-col justify-between rounded-xl border border-accent/15 bg-accent/10 p-4 sm:text-right">
-                  <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-accent">
-                    Monthly CTC
-                  </div>
-                  <div className="mt-4 font-display text-3xl font-semibold tabular-nums text-accent">
-                    {fmtINR(w.employerCost)}
-                  </div>
-                </div>
-              </div>
-            );
-          })()
-        )}
-      </Section>
-
-
-
-      <Section title="Signed Documents" icon={FileSignature} className="lg:col-span-1">
-        {docsQ.isLoading ? (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" /> Loading…
-          </div>
-        ) : (docsQ.data?.length ?? 0) === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            You haven't signed any company documents yet.
-          </p>
-        ) : (
-          <ul className="space-y-2">
-            {docsQ.data!.map((d) => (
-              <li
-                key={d.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/70 p-3 transition-colors hover:border-accent/25 hover:bg-accent/5"
-              >
-                <div>
-                  <div className="text-sm font-semibold">
-                    {DOC_TYPE_LABELS[d.doc_type as DocType] ?? d.doc_type}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    v{d.version}
-                    {d.signed_at
-                      ? ` · Signed ${new Date(d.signed_at).toLocaleDateString()}`
-                      : " · Unsigned"}
-                  </div>
-                </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={downloadingDoc === d.id}
-                  onClick={() => handleDownloadSigned(d)}
-                >
-                  {downloadingDoc === d.id ? (
-                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Download className="mr-1.5 h-3.5 w-3.5" />
-                  )}
-                  Download PDF
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Section>
-      </div>
-      </div>
       </div>
       <div className="lg:hidden">{bottomActions}</div>
     </div>
@@ -1721,7 +1815,9 @@ function LanguagePreferenceCard({ candidateId }: { candidateId: string }) {
         .eq("id", candidateId)
         .maybeSingle();
       if (!alive) return;
-      const code = (data as { preferred_language?: string } | null)?.preferred_language as LangCode | undefined;
+      const code = (data as { preferred_language?: string } | null)?.preferred_language as
+        | LangCode
+        | undefined;
       if (code && ["en", "hi", "mr"].includes(code)) setLang(code);
     })();
     return () => {
