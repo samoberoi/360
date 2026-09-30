@@ -2180,6 +2180,7 @@ nav[data-bottom-nav]::after {
   [data-admin-scroll] {
     overscroll-behavior-y: auto;
     -webkit-overflow-scrolling: touch;
+    scroll-padding-bottom: var(--mobile-dock-clearance);
   }
 
   .sticky-action-bar,
@@ -2197,6 +2198,19 @@ nav[data-bottom-nav]::after {
   [data-slot="sheet-content"] :where(button, [data-slot="button"]):not([data-size="icon"]) {
     min-height: 2.25rem;
   }
+}
+
+/* The installed app keeps its dock at every width. Reserve its full footprint
+   for pages with internal scroll columns so their final actions remain visible. */
+@media (min-width: 1024px) {
+  [data-native-shell="true"] [data-profile-page] {
+    height: calc(100dvh - 4rem - var(--mobile-dock-clearance));
+    min-height: 0;
+  }
+}
+
+[data-dock-flow-spacer] {
+  pointer-events: none;
 }
 [data-app-drawer-grid] {
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;

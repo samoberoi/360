@@ -546,7 +546,7 @@ function AdminLayout() {
     <div className={cn(
       "relative flex min-h-[100dvh] min-w-0 flex-col lg:block lg:min-h-screen",
       (isFieldOfficer || isGuard) && "bg-white dark:bg-neutral-950",
-    )}>
+    )} data-native-shell={nativeShell ? "true" : "false"}>
       <AppleNativeSetupCard autoStart nativeOnly className="hidden" />
       {/* Soft tinted canvas — clean glass backdrop, no grid */}
       {!isFieldOfficer && !isGuard && <div className="pointer-events-none fixed inset-0 z-0 app-canvas" />}
@@ -781,7 +781,11 @@ function AdminLayout() {
 
 
       {/* Main */}
-      <main data-admin-scroll className={cn("relative z-10 min-h-0 min-w-0 flex-1 overflow-y-visible safe-x py-3 !pb-[calc(92px+env(safe-area-inset-bottom))] transition-[margin] duration-300 sm:px-6 sm:py-6 lg:min-h-[calc(100dvh-3.5rem)] lg:py-6 lg:pr-6 lg:!pb-8", mainOffset)}>
+      <main data-admin-scroll className={cn(
+        "relative z-10 min-h-0 min-w-0 flex-1 overflow-y-visible safe-x py-3 !pb-[var(--mobile-dock-clearance)] transition-[margin] duration-300 sm:px-6 sm:py-6 lg:min-h-[calc(100dvh-3.5rem)] lg:py-6 lg:pr-6",
+        !nativeShell && "lg:!pb-8",
+        mainOffset,
+      )}>
 
 
         <div className="mx-auto min-w-0 max-w-[1500px]">
@@ -803,6 +807,12 @@ function AdminLayout() {
           </div>
         </div>
       </main>
+
+      <div
+        aria-hidden="true"
+        data-dock-flow-spacer
+        className={cn("h-[var(--mobile-dock-clearance)] shrink-0", !nativeShell && "lg:hidden")}
+      />
 
       {/* Mobile bottom tab bar — primary destinations + More opens full drawer */}
       {(() => {
