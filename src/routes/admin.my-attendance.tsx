@@ -22,7 +22,9 @@ import { MarkAttendanceCard } from "@/components/MarkAttendanceCard";
 import { PageHeader } from "@/components/PageHeader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { signedSelfieUrl } from "@/lib/selfie";
 
 export const Route = createFileRoute("/admin/my-attendance")({
   component: MyAttendancePage,
@@ -78,6 +80,30 @@ function attendanceDayValue(code: CodeRow | undefined) {
   if (!code) return 0;
   const value = code.day_value == null || Number.isNaN(Number(code.day_value)) ? 1 : Number(code.day_value);
   return Math.max(0, value);
+}
+
+function PunchPhoto({ path, title }: { path: string | null | undefined; title: string }) {
+  const [open, setOpen] = useState(false);
+  const urlQ = useQuery({
+    queryKey: ["attendance-selfie-url", path],
+    enabled: Boolean(path),
+    staleTime: 8 * 60_000,
+    queryFn: () => signedSelfieUrl(path),
+  });
+  if (!path) return null;
+  return (
+    <>
+      <Button type="button" variant="ghost" size="icon" disabled={!urlQ.data} onClick={() => setOpen(true)} className="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-border/60 p-0" aria-label={`View ${title}`}>
+        {urlQ.data ? <img src={urlQ.data} alt="" className="h-full w-full object-cover" loading="lazy" /> : <Clock className="h-3.5 w-3.5 text-muted-foreground" />}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
+          {urlQ.data && <img src={urlQ.data} alt={title} className="w-full rounded-xl" />}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
 
 function MyAttendancePage() {
@@ -379,18 +405,24 @@ function MyAttendancePage() {
                 </div>
 
                 <div className="mt-2 grid grid-cols-2 gap-2">
-                  <div className="rounded-lg bg-secondary/40 px-2.5 py-1.5">
-                    <div className="text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground">In</div>
-                    <div className="mt-0.5 flex items-center gap-1 text-[13px] font-semibold tabular-nums text-foreground">
-                      <Clock className="h-3 w-3 text-muted-foreground" />
-                      {fmtHM(p?.check_in_at ?? null)}
+                  <div className="flex min-w-0 items-center gap-2 rounded-lg bg-secondary/40 px-2.5 py-1.5">
+                    <PunchPhoto path={p?.check_in_selfie_path} title={`${d.date} log in photo`} />
+                    <div className="min-w-0">
+                      <div className="text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground">In</div>
+                      <div className="mt-0.5 flex items-center gap-1 text-[13px] font-semibold tabular-nums text-foreground">
+                        <Clock className="h-3 w-3 text-muted-foreground" />
+                        {fmtHM(p?.check_in_at ?? null)}
+                      </div>
                     </div>
                   </div>
-                  <div className="rounded-lg bg-secondary/40 px-2.5 py-1.5">
-                    <div className="text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground">Out</div>
-                    <div className="mt-0.5 flex items-center gap-1 text-[13px] font-semibold tabular-nums text-foreground">
-                      <Clock className="h-3 w-3 text-muted-foreground" />
-                      {fmtHM(p?.check_out_at ?? null)}
+                  <div className="flex min-w-0 items-center gap-2 rounded-lg bg-secondary/40 px-2.5 py-1.5">
+                    <PunchPhoto path={p?.check_out_selfie_path} title={`${d.date} log out photo`} />
+                    <div className="min-w-0">
+                      <div className="text-[9.5px] font-bold uppercase tracking-wider text-muted-foreground">Out</div>
+                      <div className="mt-0.5 flex items-center gap-1 text-[13px] font-semibold tabular-nums text-foreground">
+                        <Clock className="h-3 w-3 text-muted-foreground" />
+                        {fmtHM(p?.check_out_at ?? null)}
+                      </div>
                     </div>
                   </div>
                 </div>
