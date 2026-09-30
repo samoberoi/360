@@ -629,8 +629,8 @@ function FieldOfficerDashboard() {
 
   return (
     <DashboardShell rightExtras={<FoPeopleInsights />} fixedRightRail>
-      <div className="space-y-5">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+      <div className="space-y-4 sm:space-y-5">
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-4">
           <HeroStat label="Team" value={totalListings} icon={ShieldCheck} tone="blue" to="/admin/my-reportees" />
           <HeroStat label="Present" value={`${attnPresent} (${data?.attendanceRateToday ?? 0}%)`} icon={UserCheck} tone="mint" to="/admin/attendance" badge="Today" />
           <HeroStat label="Inventory" value={totalItems} icon={Warehouse} tone="violet" to="/admin/inventory" className="col-span-2 sm:col-span-1" />
@@ -640,8 +640,8 @@ function FieldOfficerDashboard() {
         {data?.meId && <FieldSenseSummary candidateId={data.meId} />}
 
         {pendingIssuances.length > 0 && (
-        <section className="rounded-3xl border border-primary/20 bg-primary/5 p-4 shadow-sm">
-          <div className="flex items-start gap-3">
+        <section className="rounded-2xl border border-primary/20 bg-primary/5 p-3.5 shadow-sm sm:rounded-3xl sm:p-4">
+          <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 sm:flex">
             <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
               <PackageCheck className="h-5 w-5" />
             </div>
@@ -652,7 +652,7 @@ function FieldOfficerDashboard() {
                 {pendingIssuances[0]?.full_name || "New employee"}{pendingIssuances.length > 1 ? ` and ${pendingIssuances.length - 1} more` : ""} awaiting {pendingAssetCount} asset{pendingAssetCount === 1 ? "" : "s"}.
               </p>
             </div>
-            <Button asChild size="sm" className="h-9 shrink-0 rounded-full px-3 text-xs">
+            <Button asChild size="sm" className="col-span-2 h-9 w-full shrink-0 rounded-full px-3 text-xs sm:w-auto">
               <Link to="/admin/inventory/issuances">Issue</Link>
             </Button>
           </div>
@@ -666,7 +666,7 @@ function FieldOfficerDashboard() {
               <h2 className="mt-1 text-xl font-bold text-foreground">My workspace</h2>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
             <PastelTile
               palette="rose"
               label="Pending onboarding"
@@ -686,15 +686,15 @@ function FieldOfficerDashboard() {
               to="/admin/employees"
               search={{ tab: "candidate" }}
             />
-            <div className="col-span-2 grid grid-cols-2 overflow-hidden rounded-2xl border border-border/50 bg-[rgb(var(--tint-amber))] shadow-sm sm:col-span-2">
+            <div className="col-span-2 grid grid-cols-1 overflow-hidden rounded-2xl border border-border/50 bg-[rgb(var(--tint-amber))] shadow-sm min-[390px]:grid-cols-2 sm:col-span-2">
               <UanFollowUp fieldOfficerUserId={userId} fieldOfficerCandidateId={data?.meId} compact className="rounded-none border-0 border-r border-border/50 bg-transparent shadow-none hover:bg-card/30 hover:shadow-none" />
               <ContractDesignationFollowUp fieldOfficer compact className="rounded-none border-0 bg-transparent shadow-none hover:bg-card/30 hover:shadow-none" />
             </div>
           </div>
         </section>
 
-      <section className="overflow-hidden rounded-3xl border border-border/70 bg-[rgb(var(--tint-slate))] shadow-sm">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border/60 px-5 py-4">
+      <section className="overflow-hidden rounded-2xl border border-border/70 bg-[rgb(var(--tint-slate))] shadow-sm sm:rounded-3xl">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border/60 px-4 py-3.5 sm:px-5 sm:py-4">
           <div className="flex min-w-0 items-center gap-3">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary"><Building2 className="h-5 w-5" /></span>
             <div className="min-w-0">

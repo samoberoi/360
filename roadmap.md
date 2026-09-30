@@ -53,6 +53,7 @@
 - [x] Restyle shared dashboards with the selected crisp-blue soft-glass direction.
 - [x] Keep Live Feed and dashboard side panels below the signed-in navigation at every responsive width.
 - [x] Verify the field dashboard has no horizontal overflow at desktop, tablet, and phone widths; authenticated visual review requires a signed-in preview session.
+- [x] Refine phone spacing, compact attendance states, narrow-screen action rows, and bottom-navigation clearance.
 
 - [x] Reconcile all 12-hour Maharashtra L&T guard contracts to their correct district rate-sheet columns.
 - [x] Show final Billing instead of Gross and remove duplicate Billing/day from resource cards.

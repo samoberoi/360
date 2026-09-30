@@ -746,7 +746,7 @@ function AdminLayout() {
 
       {/* Mobile top bar — compact native-app chrome */}
       <header data-app-header className={cn(
-        "sticky top-0 z-40 grid min-h-[56px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-1 animate-slide-in-top safe-top safe-x",
+        "sticky top-0 z-40 grid min-h-[56px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-2.5 py-1 animate-slide-in-top safe-top safe-x sm:px-3",
         "border-b border-border/60 bg-card/85 shadow-sm backdrop-blur-xl",
         !nativeShell && "lg:hidden",
       )}>
@@ -781,7 +781,7 @@ function AdminLayout() {
 
 
       {/* Main */}
-      <main data-admin-scroll className={cn("relative z-10 min-h-0 min-w-0 flex-1 overflow-y-visible safe-x py-3 !pb-[calc(82px+env(safe-area-inset-bottom))] transition-[margin] duration-300 sm:px-6 sm:py-6 lg:min-h-[calc(100dvh-3.5rem)] lg:py-6 lg:pr-6 lg:!pb-8", mainOffset)}>
+      <main data-admin-scroll className={cn("relative z-10 min-h-0 min-w-0 flex-1 overflow-y-visible safe-x py-3 !pb-[calc(92px+env(safe-area-inset-bottom))] transition-[margin] duration-300 sm:px-6 sm:py-6 lg:min-h-[calc(100dvh-3.5rem)] lg:py-6 lg:pr-6 lg:!pb-8", mainOffset)}>
 
 
         <div className="mx-auto min-w-0 max-w-[1500px]">
