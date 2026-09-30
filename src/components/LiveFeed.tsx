@@ -118,11 +118,12 @@ export function LiveFeed({ className }: { className?: string }) {
       ) : (
         <>
           {/* Featured latest notification — larger, richer */}
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => handleOpen(featured)}
             className={cn(
-              "group relative m-3 mb-2 flex items-start gap-3 rounded-2xl border p-3 text-left transition-all",
+              "group relative m-3 mb-2 h-auto min-h-0 w-auto items-start justify-start gap-3 whitespace-normal rounded-2xl border p-3 text-left transition-all",
               !featured.readAt
                 ? "border-accent bg-accent text-accent-foreground shadow-md hover:shadow-lg"
                 : "border-border/60 bg-card hover:bg-secondary/40",
@@ -168,7 +169,7 @@ export function LiveFeed({ className }: { className?: string }) {
                 </div>
               )}
             </div>
-          </button>
+          </Button>
 
           {/* Compact remainder */}
           {rest.length > 0 && (
@@ -181,11 +182,12 @@ export function LiveFeed({ className }: { className?: string }) {
                   const time = formatDistanceToNow(new Date(n.createdAt), { addSuffix: true });
                   return (
                     <li key={n.id}>
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
                         onClick={() => handleOpen(n)}
                         className={cn(
-                          "group flex w-full items-center gap-2.5 rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-card",
+                          "group h-auto min-h-0 w-full items-center justify-start gap-2.5 whitespace-normal rounded-xl px-2 py-1.5 text-left transition-colors hover:bg-card",
                           !n.readAt && "bg-accent/[0.06]",
                         )}
                       >
@@ -210,7 +212,7 @@ export function LiveFeed({ className }: { className?: string }) {
                         {!n.readAt && (
                           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                         )}
-                      </button>
+                      </Button>
                     </li>
                   );
                 })}
