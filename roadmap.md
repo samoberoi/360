@@ -50,6 +50,10 @@
 
 ## Current request
 
+- [x] Restyle shared dashboards with the selected crisp-blue soft-glass direction.
+- [x] Keep Live Feed and dashboard side panels below the signed-in navigation at every responsive width.
+- [ ] Verify the field dashboard visually at desktop, tablet, and phone widths.
+
 - [x] Reconcile all 12-hour Maharashtra L&T guard contracts to their correct district rate-sheet columns.
 - [x] Show final Billing instead of Gross and remove duplicate Billing/day from resource cards.
 - [x] Show 27-, 26-, 25-, and 24-day billing rates together for every contract resource.

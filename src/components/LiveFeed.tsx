@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { listMyNotifications, markAllRead, markNotificationRead, type Notification } from "@/lib/notifications";
 import { shouldRedirect } from "@/lib/notification-routing";
 import { NotificationDetailDialog } from "@/components/NotificationDetailDialog";
+import { Button } from "@/components/ui/button";
 
 const NQK = ["notifications", "mine"] as const;
 
@@ -53,17 +54,17 @@ export function LiveFeed({ className }: { className?: string }) {
     <aside
 
       className={cn(
-        "flex h-fit max-h-[460px] flex-col overflow-hidden rounded-[24px] border border-border/60 bg-card/70 backdrop-blur-2xl shadow-[0_1px_0_0_rgba(255,255,255,0.85)_inset,0_24px_60px_-30px_rgba(15,23,42,0.22)]",
+        "flex h-fit max-h-[460px] flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/80 shadow-sm backdrop-blur-xl",
         className,
       )}
     >
-      <div className="flex items-center justify-between border-b border-border/50 bg-card px-4 py-3">
+      <div className="flex min-h-16 items-center justify-between border-b border-border/60 bg-card/90 px-5 py-3.5">
         <div className="min-w-0 flex items-center gap-2">
           <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-accent/15 text-accent ring-1 ring-inset ring-accent/20">
             <Bell className="h-3.5 w-3.5" />
           </span>
           <div className="min-w-0">
-            <div className="text-[9px] font-bold uppercase tracking-[0.22em] text-muted-foreground leading-none">
+            <div className="text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground leading-none">
               Live feed
             </div>
             <div className="mt-0.5 flex items-center gap-1.5">
@@ -77,26 +78,30 @@ export function LiveFeed({ className }: { className?: string }) {
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => refetch()}
             aria-label="Refresh"
-            className="grid h-7 w-7 place-items-center rounded-full border border-border/70 bg-card/80 text-muted-foreground transition hover:text-foreground"
+            className="h-8 w-8 rounded-full border border-border/70 bg-card/80 text-muted-foreground hover:text-foreground"
           >
             <RotateCw className={cn("h-3 w-3", isFetching && "animate-spin")} />
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             disabled={unread === 0}
             onClick={async () => {
               await markAllRead();
               qc.invalidateQueries({ queryKey: NQK });
             }}
             aria-label="Mark all read"
-            className="grid h-7 w-7 place-items-center rounded-full border border-border/70 bg-card/80 text-muted-foreground transition hover:text-foreground disabled:opacity-40"
+            className="h-8 w-8 rounded-full border border-border/70 bg-card/80 text-muted-foreground hover:text-foreground disabled:opacity-40"
           >
             <CheckCheck className="h-3 w-3" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -253,15 +258,15 @@ export function DashboardShell({
   fixedRightRail?: boolean;
 }) {
   return (
-    <div className="space-y-6">
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+    <div data-dashboard-shell className="space-y-6">
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_320px] xl:gap-6">
         <div className="min-w-0 space-y-6">{children}</div>
-        <div className="hidden lg:block">
+        <div className="hidden min-w-0 lg:block">
           <div className={cn(
-            "flex flex-col gap-3 overflow-y-auto pr-1",
+            "flex min-w-0 flex-col gap-4 pr-1",
             fixedRightRail
-              ? "fixed bottom-6 right-6 top-6 z-10 w-80 overscroll-contain"
-              : "sticky top-6 h-fit max-h-[calc(100vh-3rem)]",
+              ? "sticky top-[calc(4rem+env(safe-area-inset-top,0px))] max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain"
+              : "sticky top-[calc(4rem+env(safe-area-inset-top,0px))] h-fit max-h-[calc(100dvh-5rem)] overflow-y-auto",
           )}>
             <LiveFeed />
             {rightExtras}
