@@ -50,6 +50,8 @@
 
 ## Current request
 
+- [x] Redesign My Posting & Reporting tiles with clear site banners, location bands, compact hierarchy rows, and direct-call actions.
+- [x] Preserve every site, code, person, phone, role, status, and primary marker across mobile and desktop.
 - [x] Restyle shared dashboards with the selected crisp-blue soft-glass direction.
 - [x] Keep Live Feed and dashboard side panels below the signed-in navigation at every responsive width.
 - [x] Verify the field dashboard has no horizontal overflow at desktop, tablet, and phone widths; authenticated visual review requires a signed-in preview session.
@@ -451,13 +453,16 @@
 - [x] Run TypeScript validation.
 
 ## Add Candidate dialog renders blank (FIXED)
+
 - [x] Fix blank white body when opening Add Candidate from Employees (only Save Draft/Next render)
 - [x] Review all other forms/dialogs for the same blank-content issue
 
 ## Pagination label alignment
+
 - [x] Keep Previous, page numbers, and Next on one horizontal line without clipped text.
 
 ## Candidate-style Control Center forms
+
 - [x] Apply one consistent Candidate-style layout to every Control Center create/edit dialog.
 - [x] Align full-page Control Center forms to the same sections, fields, toggles, and actions.
 - [x] Verify short and long forms on mobile and desktop and run TypeScript validation.
@@ -470,14 +475,17 @@
 - [x] Run TypeScript validation.
 
 ## Manager data scoping to their field officers
+
 - [ ] Operations managers / branch managers / VP Operations see only cumulative data for the field officers reporting to them.
 - [ ] Apply the same subtree scope to the operations overview, radar summary, reportees and people insights.
 - [ ] Run TypeScript validation.
 
 ## Multiple field officers per unit
+
 - [ ] Allow assigning more than one field officer to a unit.
 
 ## Manager data scoping to their field officers
+
 - [x] Shared `useOperationalUnitScope` (field officer own units, manager = units of their field officer reportees)
 - [x] Dashboard headline counts, operations overview, radar summary scoped
 - [x] Reportees page and people insights scoped
@@ -526,6 +534,7 @@
 - L&T Finance billing rates reconciled to the client cost sheet for Gujarat/Rajasthan/Telangana/Karnataka (admin + service charge split, 27-day billing divisor). Armed rates not applied — no armed guard lines exist on L&T sites.
 
 ## Done: CLI4317 attendance swap
+
 - 31 attendance rows at CLI4317 (Nokha) moved from 47068 (Inder Singh) to 48001 (Anil); Anil posted primary at CLI4317; Inder Singh restored primary at CLI4326 (Neem Ka Thana). Migration 20260923100000.
 
 - Merged Jaya Nagar stub employees: "4678048629" Shiroppa -> 48629 Shivappa Bhajantri, "EMP-105" chandro Bahadur -> 46780 Chandra Bahadur Thapa (db/prod-migrations/20260923110500_merge_jaya_nagar_stub_employees.sql).
