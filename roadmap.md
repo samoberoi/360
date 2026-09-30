@@ -1,5 +1,13 @@
 # Mobile app UI re-review
 
+## Android native release readiness
+
+- [x] Replace the stale Radiant Android splash and launcher artwork with PLUS 360 branding.
+- [x] Point the Android shell at the PLUS 360 production site.
+- [x] Add native Android biometric authentication and encrypted phone storage.
+- [x] Auto-prompt biometric sign-in after the first successful OTP enrollment.
+- [x] Confirm camera, foreground location, network, and biometric permissions are declared.
+
 ## Lightweight attendance proof photos
 
 - [x] Show punch-in and punch-out photos beside today's attendance time and location.

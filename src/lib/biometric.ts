@@ -1,18 +1,17 @@
 /**
  * Native Face ID / Touch ID helper.
  *
- * Uses only the custom `RadiantBiometrics` and `RadiantNativeAuthStore`
- * Swift plugins registered in AppDelegate.swift. This keeps the surface
- * area tiny — no third-party biometric SDKs to fail to link.
+ * Uses the custom `RadiantBiometrics` and `RadiantNativeAuthStore` plugins
+ * registered by the iOS and Android shells.
  *
- * Flow (iPhone):
+ * Flow (installed app):
  *   1. User logs in with phone + OTP.
  *   2. After OTP verify, `enableBiometric(phone)` runs → iOS prompts
  *      Face ID → phone is saved in the Keychain.
  *   3. Next launch, the Sign-in page shows a "Sign in with Face ID"
- *      button that reads the phone back from the Keychain and signs in.
- *   4. Logout / kill-app clears the local "enabled" flag but keeps the
- *      Keychain entry, so Face ID stays available until the user
+ *      prompt reads the phone from secure device storage and signs in.
+ *   4. Killing the app keeps the secure entry, so biometric unlock remains
+ *      available until the user
  *      explicitly disables it from My Profile.
  */
 import { Capacitor } from "@capacitor/core";
@@ -96,7 +95,7 @@ export async function isBiometricAvailable(): Promise<boolean> {
   return !!info?.available;
 }
 
-/** Returns the phone currently saved in the iOS Keychain, or null. */
+/** Returns the phone currently saved in secure native storage, or null. */
 export async function getStoredBiometricPhone(): Promise<string | null> {
   const s = store();
   if (!s) return null;
@@ -121,7 +120,7 @@ export async function getBiometricStatus(): Promise<{
       available: false,
       enabled: false,
       saved: false,
-      message: "Open the installed iOS app to use Face ID.",
+      message: "Open the installed app to use biometric unlock.",
     };
   }
 
@@ -132,7 +131,7 @@ export async function getBiometricStatus(): Promise<{
       available: false,
       enabled: false,
       saved: false,
-      message: `Face ID plugin not loaded (platform: ${Capacitor.getPlatform()}). Reinstall the app after the latest build.`,
+      message: `Biometric plugin not loaded (platform: ${Capacitor.getPlatform()}). Reinstall the app after the latest build.`,
     };
   }
 
@@ -165,20 +164,20 @@ export async function getBiometricStatus(): Promise<{
   };
 }
 
-/** Prompt Face ID, then save the phone in the iOS Keychain. */
+/** Prompt native biometrics, then save the phone in secure device storage. */
 export async function enableBiometric(phone: string): Promise<void> {
   const plugin = biometrics();
   const s = store();
   if (!plugin || !s) {
     throw new Error(
-      "Face ID is only available in the installed iOS app. Reinstall after the latest build.",
+      "Biometric unlock is only available in the installed app. Reinstall after the latest build.",
     );
   }
 
   const info = await plugin.check();
   logNativeEvent("biometric", "enable check", info);
   if (!info.available) {
-    throw new Error(info.reason || "Face ID is not available on this iPhone.");
+    throw new Error(info.reason || "Biometric unlock is not available on this device.");
   }
 
   const auth = await plugin.authenticate({
