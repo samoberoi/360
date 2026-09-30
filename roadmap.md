@@ -539,4 +539,4 @@
 - [x] Import accessible clients, sites, contracts, employees, attendance, and configuration into this project's isolated backend.
 - [x] Validate imported counts and relationships, app checks, sign-in, and old-project isolation.
 - [x] Import SITE_WISE_DATA: Reliance Retail Ltd, 185 stores, field officer → operation manager → Sandip Raghav mapping
-- [ ] Map Surender (9756891595) to 8 Bulandshahr/Khurja stores — needs his record
+- [x] Map Surender (9756891595) to 8 Bulandshahr/Khurja stores; Ashish Sharma (tech manager) on all 186 stores
