@@ -118,7 +118,7 @@ function AttendanceSelfie({ path, title }: { path: string | null | undefined; ti
         disabled={!urlQ.data}
         onClick={() => setOpen(true)}
         className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border/60 bg-muted/40 p-0"
-        aria-label={`View ${title} photo`}
+        aria-label={`View ${title.replace(/\s*photo$/i, "")} photo`}
       >
         {urlQ.data ? <img src={urlQ.data} alt="" className="h-full w-full object-cover" loading="lazy" /> : <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
       </Button>
