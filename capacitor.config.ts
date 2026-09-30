@@ -4,16 +4,14 @@ import type { CapacitorConfig } from "@capacitor/cli";
  * Capacitor config for PLUS 360 FAHRENHEIT SOLUTIONS.
  *
  * TanStack Start is server-rendered, so the native shell loads the hosted app
- * via `server.url` instead of bundling static assets. The iOS app intentionally
- * loads the production Vercel/custom-domain app; Apple push calls are bridged
- * back to the Lovable-hosted native API where the APNs secrets live.
+ * via `server.url` instead of bundling static assets.
  */
 const config: CapacitorConfig = {
   appId: "app.com.radiantguard",
   appName: "PLUS 360",
   webDir: "capacitor-web",
   server: {
-    url: "https://radiant.hyperrevamp.com",
+    url: "https://plus360.hyperrevamp.com",
     cleartext: false,
     androidScheme: "https",
     iosScheme: "https",

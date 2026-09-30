@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { isNativePlatform, logNativeEvent } from "@/lib/native";
+import { authenticateNativeBiometric } from "@/lib/biometric";
 
 export type SelfPunch = {
   id: string;
@@ -82,36 +83,16 @@ export async function getCurrentPosition(): Promise<Geo> {
   });
 }
 
-type BioPlugin = {
-  check(): Promise<{ available: boolean; reason?: string; label?: string }>;
-  authenticate(o: { reason: string }): Promise<{ success: boolean }>;
-};
-
-function biometricsPlugin(): BioPlugin | null {
-  if (!isNativePlatform()) return null;
-  try {
-    const cap = (window as unknown as { Capacitor?: { Plugins?: Record<string, unknown> } }).Capacitor;
-    return (cap?.Plugins?.RadiantBiometrics as BioPlugin | undefined) ?? null;
-  } catch {
-    return null;
-  }
-}
-
 /**
  * Prompt Face ID / Touch ID before marking attendance. On native devices this
  * MUST succeed. On web (no biometric API) we return false but don't block; the
  * caller records `face_verified: false`.
  */
 export async function verifyFaceForAttendance(reason: string): Promise<boolean> {
-  const plugin = biometricsPlugin();
-  if (!plugin) return false;
-  const info = await plugin.check();
-  if (!info.available) {
-    throw new Error(info.reason || "Face ID is not available on this device.");
-  }
-  const res = await plugin.authenticate({ reason });
-  logNativeEvent("biometric", "self-attendance", res);
-  if (!res?.success) throw new Error("Face ID was not confirmed.");
+  if (!isNativePlatform()) return false;
+  const success = await authenticateNativeBiometric(reason);
+  logNativeEvent("biometric", "self-attendance", { success });
+  if (!success) throw new Error("Biometric identity was not confirmed.");
   return true;
 }
 

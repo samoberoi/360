@@ -71,6 +71,7 @@ function LoginPage() {
   const requestOtpAgain = useServerFn(resendLoginOtp);
   const checkOtp = useServerFn(verifyLoginOtp);
   const verifyInFlightRef = useRef(false);
+  const autoBiometricAttemptedRef = useRef(false);
 
   const [step, setStep] = useState<Step>("phone");
   const [phone, setPhone] = useState("");
@@ -107,6 +108,12 @@ function LoginPage() {
       setBioEnabled(status.enabled);
     });
   }, []);
+
+  useEffect(() => {
+    if (!splashDone || user || !bioAvailable || !bioEnabled || autoBiometricAttemptedRef.current) return;
+    autoBiometricAttemptedRef.current = true;
+    void handleBiometricLogin();
+  }, [bioAvailable, bioEnabled, splashDone, user]);
 
   useEffect(() => {
     void loadMsg91Widget().catch(() => undefined);
