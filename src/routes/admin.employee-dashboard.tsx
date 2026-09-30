@@ -461,7 +461,7 @@ function EmployeeDashboard() {
 
   return (
     <DashboardShell rightExtras={insights} fixedRightRail>
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div className="flex flex-col gap-4">
           <header className="flex min-w-0 flex-col gap-2 px-1 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
@@ -593,7 +593,7 @@ function SidePanel({
   children: React.ReactNode;
 }) {
   return (
-    <section className="overflow-hidden rounded-[24px] border border-border/60 bg-card/70 backdrop-blur-2xl shadow-[0_1px_0_0_rgba(255,255,255,0.85)_inset,0_24px_60px_-30px_rgba(15,23,42,0.22)]">
+    <section className="overflow-hidden rounded-2xl border border-border/70 bg-card/80 shadow-sm backdrop-blur-xl">
       <header className="flex items-center gap-3 border-b border-border/50 bg-card px-5 py-3.5">
         <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl ring-1 ring-inset ${ACCENT_CHIP[accent]}`}>
           <Icon className="h-3.5 w-3.5" />
@@ -657,7 +657,7 @@ function HeroStat({ label, value, icon: Icon, tone, to }: { label: string; value
     amber: "bg-[rgb(var(--tint-amber))]",
   }[tone];
   const content = (
-    <div className={cn("flex min-w-0 flex-col justify-between rounded-2xl border border-border/60 p-3 shadow-sm transition-transform hover:-translate-y-0.5 sm:min-h-[96px] sm:p-4", surface)}>
+    <div className={cn("flex min-w-0 flex-col justify-between rounded-xl border border-border/60 p-3 transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-accent/30 hover:shadow-sm sm:min-h-[140px] sm:rounded-2xl sm:p-5", surface)}>
       <div className="flex items-start justify-between gap-2"><span className="truncate text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{label}</span><Icon className="h-4 w-4 shrink-0 text-primary" /></div>
       <div className="mt-2 font-display text-[22px] font-bold tabular-nums leading-none text-foreground sm:text-3xl">{value}</div>
     </div>

@@ -115,6 +115,8 @@
   --surface-glass-alpha: 0.7;
   --surface-glass-strong-alpha: 0.84;
   --surface-border-alpha: 0.6;
+  --dashboard-glass: color-mix(in oklab, var(--card) 82%, transparent);
+  --dashboard-shadow: 0 16px 38px -28px color-mix(in oklab, var(--foreground) 28%, transparent);
 
   /* Quiet paper washes keep metrics distinct without competing with data. */
   --tint-blue:    236 242 255;
@@ -215,6 +217,28 @@
   --surface-glass-alpha: 0.72;
   --surface-glass-strong-alpha: 0.88;
   --surface-border-alpha: 0.22;
+  --dashboard-glass: color-mix(in oklab, var(--card) 86%, transparent);
+  --dashboard-shadow: 0 16px 38px -28px color-mix(in oklab, var(--foreground) 70%, transparent);
+}
+
+[data-dashboard-shell] {
+  isolation: isolate;
+}
+
+[data-dashboard-shell] :where(section, aside) {
+  scroll-margin-top: calc(4.5rem + env(safe-area-inset-top, 0px));
+}
+
+@media (min-width: 1024px) {
+  [data-dashboard-shell] {
+    padding-top: 0.125rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  [data-dashboard-shell] {
+    padding-top: 0.125rem;
+  }
 }
 
 

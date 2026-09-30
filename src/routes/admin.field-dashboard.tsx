@@ -47,6 +47,16 @@ import { VisitProofs } from "@/components/VisitProofs";
 
 
 export const Route = createFileRoute("/admin/field-dashboard")({
+  head: () => ({
+    meta: [
+      { title: "Field Dashboard | PLUS 360 FAHRENHEIT SOLUTIONS" },
+      { name: "description", content: "Field operations attendance, assigned sites, inventory, visits, and team activity." },
+      { property: "og:title", content: "Field Dashboard | PLUS 360 FAHRENHEIT SOLUTIONS" },
+      { property: "og:description", content: "Field operations attendance, assigned sites, inventory, visits, and team activity." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: FieldOfficerDashboard,
 });
 
@@ -619,8 +629,8 @@ function FieldOfficerDashboard() {
 
   return (
     <DashboardShell rightExtras={<FoPeopleInsights />} fixedRightRail>
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="space-y-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           <HeroStat label="Team" value={totalListings} icon={ShieldCheck} tone="blue" to="/admin/my-reportees" />
           <HeroStat label="Present" value={`${attnPresent} (${data?.attendanceRateToday ?? 0}%)`} icon={UserCheck} tone="mint" to="/admin/attendance" badge="Today" />
           <HeroStat label="Inventory" value={totalItems} icon={Warehouse} tone="violet" to="/admin/inventory" className="col-span-2 sm:col-span-1" />
@@ -1017,7 +1027,7 @@ function HeroStat({ label, value, icon: Icon, tone, to, badge, className }: { la
     violet: "bg-[rgb(var(--tint-violet))]",
   }[tone];
   return (
-    <Link to={to} className={cn("group relative flex min-h-[108px] min-w-0 flex-col justify-between rounded-2xl border border-border/50 p-3.5 shadow-sm transition hover:border-primary/35 hover:shadow-md sm:min-h-[116px] sm:rounded-3xl sm:p-5", surface, className)}>
+    <Link to={to} className={cn("group relative flex min-h-[108px] min-w-0 flex-col justify-between rounded-xl border border-border/60 p-3.5 transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-accent/30 hover:shadow-sm sm:min-h-[140px] sm:rounded-2xl sm:p-5", surface, className)}>
       <div className="flex items-start justify-between gap-2">
         <div className="grid h-9 w-9 place-items-center rounded-xl bg-card/80 text-primary shadow-sm">
           <Icon className="h-4 w-4" />
@@ -1026,7 +1036,7 @@ function HeroStat({ label, value, icon: Icon, tone, to, badge, className }: { la
       </div>
       <div className="mt-4 flex items-end justify-between gap-3">
         <span className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{label}</span>
-        <span className="text-lg font-bold tabular-nums leading-none text-foreground sm:text-3xl">{value}</span>
+        <span className="whitespace-nowrap text-lg font-medium tabular-nums leading-none text-foreground sm:text-3xl">{value}</span>
       </div>
       {!badge ? <ArrowUpRight className="absolute right-4 top-4 h-4 w-4 text-primary opacity-0 transition group-hover:opacity-100" /> : null}
     </Link>
