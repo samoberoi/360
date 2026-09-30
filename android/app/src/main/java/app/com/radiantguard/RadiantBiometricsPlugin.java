@@ -3,6 +3,7 @@ package app.com.radiantguard;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -35,7 +36,7 @@ public class RadiantBiometricsPlugin extends Plugin {
     getActivity().runOnUiThread(() -> {
       Executor executor = ContextCompat.getMainExecutor(getContext());
       BiometricPrompt prompt = new BiometricPrompt(
-        getActivity(),
+        (FragmentActivity) getActivity(),
         executor,
         new BiometricPrompt.AuthenticationCallback() {
           @Override

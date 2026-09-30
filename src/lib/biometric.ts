@@ -14,7 +14,7 @@
  *      available until the user
  *      explicitly disables it from My Profile.
  */
-import { Capacitor } from "@capacitor/core";
+import { Capacitor, registerPlugin } from "@capacitor/core";
 import { isNativePlatform, logNativeEvent } from "./native";
 
 const ENABLED_KEY = "radiant.biometric.enabled";
@@ -40,6 +40,9 @@ type RadiantNativeAuthStorePlugin = {
   clearPhone(): Promise<{ cleared: boolean }>;
 };
 
+const nativeBiometrics = registerPlugin<RadiantBiometricsPlugin>("RadiantBiometrics");
+const nativeAuthStore = registerPlugin<RadiantNativeAuthStorePlugin>("RadiantNativeAuthStore");
+
 function getPlugin<T>(name: string): T | null {
   if (!isNativePlatform()) return null;
   try {
@@ -63,11 +66,13 @@ function getPlugin<T>(name: string): T | null {
 }
 
 function biometrics(): RadiantBiometricsPlugin | null {
-  return getPlugin<RadiantBiometricsPlugin>("RadiantBiometrics");
+  if (!isNativePlatform() || !Capacitor.isPluginAvailable("RadiantBiometrics")) return null;
+  return nativeBiometrics;
 }
 
 function store(): RadiantNativeAuthStorePlugin | null {
-  return getPlugin<RadiantNativeAuthStorePlugin>("RadiantNativeAuthStore");
+  if (!isNativePlatform() || !Capacitor.isPluginAvailable("RadiantNativeAuthStore")) return null;
+  return nativeAuthStore;
 }
 
 async function checkNative(): Promise<RadiantBiometricCheck | null> {
@@ -93,6 +98,16 @@ export function isBiometricEnabled(): boolean {
 export async function isBiometricAvailable(): Promise<boolean> {
   const info = await checkNative();
   return !!info?.available;
+}
+
+/** Require the device's enrolled face or fingerprint for a sensitive action. */
+export async function authenticateNativeBiometric(reason: string): Promise<boolean> {
+  const plugin = biometrics();
+  if (!plugin) return false;
+  const info = await plugin.check();
+  if (!info.available) throw new Error(info.reason || "Biometric authentication is unavailable.");
+  const result = await plugin.authenticate({ reason });
+  return result.success;
 }
 
 /** Returns the phone currently saved in secure native storage, or null. */
