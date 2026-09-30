@@ -50,6 +50,8 @@
 
 ## Current request
 
+- [x] Redesign My Posting & Reporting tiles with clear site banners, location bands, compact hierarchy rows, and direct-call actions.
+- [x] Preserve every site, code, person, phone, role, status, and primary marker across mobile and desktop.
 - [x] Restyle shared dashboards with the selected crisp-blue soft-glass direction.
 - [x] Keep Live Feed and dashboard side panels below the signed-in navigation at every responsive width.
 - [x] Verify the field dashboard has no horizontal overflow at desktop, tablet, and phone widths; authenticated visual review requires a signed-in preview session.

@@ -67,9 +67,9 @@ export const Route = createFileRoute("/admin/profile")({
   head: () => ({
     meta: [
       { title: "My Profile | PLUS 360 FAHRENHEIT SOLUTIONS" },
-      { name: "description", content: "View your Radiant employee profile, posting, CTC, and documents." },
+      { name: "description", content: "View your PLUS 360 employee profile, posting, CTC, and documents." },
       { property: "og:title", content: "My Profile | PLUS 360 FAHRENHEIT SOLUTIONS" },
-      { property: "og:description", content: "View your Radiant employee profile, posting, CTC, and documents." },
+      { property: "og:description", content: "View your PLUS 360 employee profile, posting, CTC, and documents." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -975,7 +975,7 @@ function ProfilePage() {
         ) : (
           <div className="space-y-4">
             {postings.length > 0 && (
-              <div className="grid gap-3 md:grid-cols-2">
+              <div className="grid gap-4 xl:grid-cols-2">
                 {postings.map((u: any) => {
                   const officers = Array.isArray(u.reporting_officers)
                     ? u.reporting_officers
@@ -983,51 +983,101 @@ function ProfilePage() {
                   const cityState = [u.billing_city, u.billing_state]
                     .filter(Boolean)
                     .join(", ");
+                  const siteDetails = [u.customer?.name, u.branch?.name, u.location || cityState]
+                    .filter(Boolean);
+                  const initials = (name: string) =>
+                    name
+                      .split(/\s+/)
+                      .filter(Boolean)
+                      .slice(0, 2)
+                      .map((part: string) => part[0]?.toUpperCase() ?? "")
+                      .join("") || "?";
                   return (
                     <div
                       key={u.id}
-                      className="rounded-xl border border-border bg-secondary/30 p-4"
+                      className="group overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm transition duration-200 hover:border-accent/30 hover:shadow-md"
                     >
-                      <div className="flex flex-wrap items-center gap-2">
-                        <div className="text-sm font-semibold">{u.name}</div>
+                      <div className="flex min-h-[74px] items-start justify-between gap-3 bg-primary px-4 py-4 text-primary-foreground sm:px-5">
+                        <div className="min-w-0">
+                          <div className="font-display text-[13px] font-bold leading-snug sm:text-sm">
+                            {u.name}
+                          </div>
+                          {u.code && (
+                            <div className="mt-1 font-mono text-[10px] font-semibold text-accent-secondary">
+                              {u.code}
+                            </div>
+                          )}
+                        </div>
                         {u.is_primary && (
-                          <Badge className="bg-accent/15 text-accent">Primary posting</Badge>
+                          <span className="shrink-0 rounded-md border border-accent-secondary/30 bg-accent-secondary/15 px-2 py-1 text-[9px] font-bold uppercase text-accent-secondary">
+                            Primary posting
+                          </span>
                         )}
-                        {u.code && (
-                          <Badge variant="outline" className="text-[10px]">{u.code}</Badge>
-                        )}
-                      </div>
-                      <div className="mt-1 text-xs text-muted-foreground">
-                        {[u.customer?.name, u.branch?.name, u.location || cityState]
-                          .filter(Boolean)
-                          .join(" · ") || "—"}
                       </div>
 
-                      <div className="mt-3">
-                        <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                          Field Officers / Reporting Officers
+                      <div className="flex items-start gap-2 border-b border-border/70 bg-secondary/45 px-4 py-3 text-xs text-muted-foreground sm:px-5">
+                        <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent" />
+                        <span className="min-w-0 break-words font-medium">
+                          {siteDetails.join(" · ") || "Location not available"}
+                        </span>
+                      </div>
+
+                      <div className="px-4 py-4 sm:px-5">
+                        <div className="mb-2.5 flex items-center justify-between gap-3">
+                          <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                            Reporting hierarchy
+                          </div>
+                          <span className="text-[10px] font-semibold text-accent">
+                            {officers.length} {officers.length === 1 ? "person" : "people"}
+                          </span>
                         </div>
                         {officers.length === 0 ? (
-                          <div className="mt-1 text-xs text-muted-foreground">
+                          <div className="rounded-lg border border-dashed border-border bg-secondary/30 px-3 py-4 text-xs text-muted-foreground">
                             None listed for this unit.
                           </div>
                         ) : (
-                          <ul className="mt-1 space-y-1">
+                          <ul className="divide-y divide-border/60 overflow-hidden rounded-lg border border-border/70">
                             {officers.map((o: any, idx: number) => (
                               <li
-                                key={idx}
-                                className="flex flex-wrap items-center gap-2 text-sm"
+                                key={`${o.name || "officer"}-${o.mobile || idx}-${idx}`}
+                                className="flex min-w-0 items-center gap-3 bg-card px-3 py-2.5 transition-colors hover:bg-accent/5"
                               >
-                                <UserCheck className="h-3.5 w-3.5 text-accent" />
-                                <span className="font-medium">{o.name || "—"}</span>
-                                {o.is_primary && (
-                                  <Badge className="bg-primary/15 text-primary text-[10px]">Primary</Badge>
-                                )}
-                                {o.is_active === false && (
-                                  <Badge variant="outline" className="text-[10px]">Inactive</Badge>
-                                )}
+                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-secondary text-[10px] font-bold text-foreground ring-1 ring-inset ring-border">
+                                  {initials(o.name || "")}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                                    <span className="truncate text-[13px] font-semibold text-foreground">
+                                      {o.name || "—"}
+                                    </span>
+                                    {o.is_primary && (
+                                      <span className="rounded bg-accent px-1.5 py-0.5 text-[9px] font-bold uppercase text-accent-foreground">
+                                        Primary
+                                      </span>
+                                    )}
+                                    {o.is_active === false && (
+                                      <span className="rounded border border-border px-1.5 py-0.5 text-[9px] font-bold uppercase text-muted-foreground">
+                                        Inactive
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 text-[11px] text-muted-foreground">
+                                    {o.mobile && <span className="tabular-nums">{o.mobile}</span>}
+                                    {o.mobile && (o.role || o.designation) && <span aria-hidden>·</span>}
+                                    {(o.role || o.designation) && (
+                                      <span className="font-medium text-accent">{o.role || o.designation}</span>
+                                    )}
+                                  </div>
+                                </div>
                                 {o.mobile && (
-                                  <span className="text-xs text-muted-foreground">· {o.mobile}</span>
+                                  <a
+                                    href={`tel:${o.mobile}`}
+                                    aria-label={`Call ${o.name || o.mobile}`}
+                                    title={`Call ${o.name || o.mobile}`}
+                                    className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-accent transition-colors hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                  >
+                                    <PhoneIcon className="h-3.5 w-3.5" />
+                                  </a>
                                 )}
                               </li>
                             ))}
