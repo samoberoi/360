@@ -23,7 +23,8 @@ import {
 } from "@/lib/self-attendance";
 
 import { isNativePlatform } from "@/lib/native";
-import { captureAndUploadSelfie } from "@/lib/selfie";
+import { captureAndUploadSelfie, signedSelfieUrl } from "@/lib/selfie";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAttendanceRule } from "@/lib/attendance-rules";
 import { useCurrentUserRole } from "@/lib/use-current-user-role";
 import { cn } from "@/lib/utils";
@@ -96,6 +97,38 @@ function MapLink({
         <ExternalLink className="h-2.5 w-2.5 opacity-70" />
       </span>
     </a>
+  );
+}
+
+function AttendanceSelfie({ path, title }: { path: string | null | undefined; title: string }) {
+  const [open, setOpen] = useState(false);
+  const urlQ = useQuery({
+    queryKey: ["attendance-selfie-url", path],
+    enabled: Boolean(path),
+    staleTime: 8 * 60_000,
+    queryFn: () => signedSelfieUrl(path),
+  });
+  if (!path) return null;
+  return (
+    <>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        disabled={!urlQ.data}
+        onClick={() => setOpen(true)}
+        className="h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border/60 bg-muted/40 p-0"
+        aria-label={`View ${title} photo`}
+      >
+        {urlQ.data ? <img src={urlQ.data} alt="" className="h-full w-full object-cover" loading="lazy" /> : <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
+          {urlQ.data && <img src={urlQ.data} alt={title} className="w-full rounded-xl" />}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 function LiveTelemetryStrip({ punch }: { punch: SelfPunch }) {
@@ -513,27 +546,33 @@ export function MarkAttendanceCard({
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-4 sm:gap-3">
-        <div className="rounded-xl border border-border/50 bg-background/40 p-2.5">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Log in</div>
-          <div className="mt-0.5 font-display text-base font-bold tabular-nums text-foreground sm:text-lg">
-            {timeStr(punch?.check_in_at ?? null)}
-          </div>
-          {punch?.check_in_lat != null && (
-            <div className="mt-1 truncate">
-              <MapLink lat={punch.check_in_lat} lng={punch.check_in_lng} />
+        <div className="flex min-w-0 items-start gap-2 rounded-xl border border-border/50 bg-background/40 p-2.5">
+          <AttendanceSelfie path={punch?.check_in_selfie_path} title="Log in photo" />
+          <div className="min-w-0 flex-1">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Log in</div>
+            <div className="mt-0.5 font-display text-base font-bold tabular-nums text-foreground sm:text-lg">
+              {timeStr(punch?.check_in_at ?? null)}
             </div>
-          )}
+            {punch?.check_in_lat != null && (
+              <div className="mt-1 truncate">
+                <MapLink lat={punch.check_in_lat} lng={punch.check_in_lng} />
+              </div>
+            )}
+          </div>
         </div>
-        <div className="rounded-xl border border-border/50 bg-background/40 p-2.5">
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Log out</div>
-          <div className="mt-0.5 font-display text-base font-bold tabular-nums text-foreground sm:text-lg">
-            {timeStr(punch?.check_out_at ?? null)}
-          </div>
-          {punch?.check_out_lat != null && (
-            <div className="mt-1 truncate">
-              <MapLink lat={punch.check_out_lat} lng={punch.check_out_lng} />
+        <div className="flex min-w-0 items-start gap-2 rounded-xl border border-border/50 bg-background/40 p-2.5">
+          <AttendanceSelfie path={punch?.check_out_selfie_path} title="Log out photo" />
+          <div className="min-w-0 flex-1">
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Log out</div>
+            <div className="mt-0.5 font-display text-base font-bold tabular-nums text-foreground sm:text-lg">
+              {timeStr(punch?.check_out_at ?? null)}
             </div>
-          )}
+            {punch?.check_out_lat != null && (
+              <div className="mt-1 truncate">
+                <MapLink lat={punch.check_out_lat} lng={punch.check_out_lng} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

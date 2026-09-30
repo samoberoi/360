@@ -102,9 +102,31 @@ export function stampFrame(
   return canvas.toDataURL("image/jpeg", 0.82);
 }
 
+/** Make attendance proof deliberately tiny before upload to reduce storage and transfer. */
+export async function compressAttendanceSelfie(dataUrl: string): Promise<Blob> {
+  const source = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("Could not prepare the attendance photo."));
+    image.src = dataUrl;
+  });
+  const maxEdge = 480;
+  const longest = Math.max(source.naturalWidth, source.naturalHeight);
+  const scale = longest > maxEdge ? maxEdge / longest : 1;
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(source.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(source.naturalHeight * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Could not prepare the attendance photo.");
+  ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.38));
+  if (!blob) throw new Error("Could not prepare the attendance photo.");
+  return blob;
+}
+
 /** Upload a stamped selfie to the private proofs bucket; returns the storage path. */
 export async function uploadSelfie(candidateId: string, kind: string, dataUrl: string): Promise<string> {
-  const blob = await (await fetch(dataUrl)).blob();
+  const blob = await compressAttendanceSelfie(dataUrl);
   const path = `${candidateId}/selfies/${new Date().toISOString().slice(0, 10)}/${kind}-${Date.now()}.jpg`;
   const { error } = await supabase.storage
     .from("field-visit-proofs")

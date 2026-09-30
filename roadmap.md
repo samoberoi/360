@@ -1,5 +1,11 @@
 # Mobile app UI re-review
 
+## Lightweight attendance proof photos
+
+- [x] Show punch-in and punch-out photos beside today's attendance time and location.
+- [x] Show the same photos in each employee's monthly attendance history.
+- [x] Compress new attendance proof photos to an ultra-low-bandwidth format before upload.
+
 ## PLUS 360 company settings
 
 - [x] Diagnose why Company Settings shows no organization details.
