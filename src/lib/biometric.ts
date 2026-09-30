@@ -43,28 +43,6 @@ type RadiantNativeAuthStorePlugin = {
 const nativeBiometrics = registerPlugin<RadiantBiometricsPlugin>("RadiantBiometrics");
 const nativeAuthStore = registerPlugin<RadiantNativeAuthStorePlugin>("RadiantNativeAuthStore");
 
-function getPlugin<T>(name: string): T | null {
-  if (!isNativePlatform()) return null;
-  try {
-    // Access via the runtime bridge so we don't hard-fail if the plugin
-    // isn't registered yet (e.g. old installed build).
-    const cap = (window as unknown as {
-      Capacitor?: { Plugins?: Record<string, unknown> };
-    }).Capacitor;
-    const plugin = cap?.Plugins?.[name] as T | undefined;
-    if (!plugin) {
-      logNativeEvent("biometric", `plugin ${name} not registered`);
-      return null;
-    }
-    return plugin;
-  } catch (err) {
-    logNativeEvent("biometric", `plugin ${name} lookup failed`, {
-      error: err instanceof Error ? err.message : String(err),
-    });
-    return null;
-  }
-}
-
 function biometrics(): RadiantBiometricsPlugin | null {
   if (!isNativePlatform() || !Capacitor.isPluginAvailable("RadiantBiometrics")) return null;
   return nativeBiometrics;
