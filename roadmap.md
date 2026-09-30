@@ -7,6 +7,8 @@
 - [x] Add native Android biometric authentication and encrypted phone storage.
 - [x] Auto-prompt biometric sign-in after the first successful OTP enrollment.
 - [x] Confirm camera, foreground location, network, and biometric permissions are declared.
+- [ ] Repair iOS camera dependency resolution and verify mobile sync completes.
+- [ ] Compile the synchronized Android native project.
 
 ## Lightweight attendance proof photos
 
