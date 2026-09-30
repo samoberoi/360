@@ -13,7 +13,10 @@ import java.util.concurrent.Executor;
 
 @CapacitorPlugin(name = "RadiantBiometrics")
 public class RadiantBiometricsPlugin extends Plugin {
-  private static final int AUTHENTICATORS = BiometricManager.Authenticators.BIOMETRIC_STRONG;
+  // Android face unlock is classed as WEAK on many otherwise supported phones.
+  // The attendance flow also captures a fresh stamped face photo, so accepting
+  // any enrolled native biometric gives broad device compatibility here.
+  private static final int AUTHENTICATORS = BiometricManager.Authenticators.BIOMETRIC_WEAK;
 
   @PluginMethod
   public void check(PluginCall call) {
