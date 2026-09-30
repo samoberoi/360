@@ -1494,6 +1494,17 @@
    and never produces a horizontal-scroll page.
    ========================================================= */
 @media (max-width: 640px) {
+  [data-admin-scroll] {
+    padding-left: max(0.5rem, env(safe-area-inset-left)) !important;
+    padding-right: max(0.5rem, env(safe-area-inset-right)) !important;
+  }
+
+  [data-dashboard-shell],
+  [data-dashboard-shell] section {
+    width: 100%;
+    min-width: 0;
+  }
+
   /* Tabs, toolbars, chip rows: allow horizontal swipe when they overflow
      instead of clipping or forcing wraps that break layout. */
   [role="tablist"] {

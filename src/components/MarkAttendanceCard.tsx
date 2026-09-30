@@ -518,10 +518,10 @@ export function MarkAttendanceCard({
     <section
       className={cn(
         "rounded-2xl border border-border/60 bg-card/90 shadow-sm backdrop-blur-xl sm:rounded-3xl",
-        compact ? "p-3.5 sm:p-4" : "p-4 sm:p-6",
+        compact ? "p-3.5 sm:p-4" : "p-3.5 sm:p-6",
       )}
     >
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2.5 sm:gap-3">
         <div className="flex min-w-0 items-start gap-3">
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
             <Fingerprint className="h-5 w-5" />
@@ -529,12 +529,12 @@ export function MarkAttendanceCard({
           <div className="min-w-0">
             <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Today</div>
             <h3 className="mt-0.5 text-lg font-bold text-foreground sm:text-xl">My attendance</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground sm:text-xs">
               {isNativePlatform() ? "Biometric and GPS check." : "GPS check. Biometric is available in the app."}
             </p>
           </div>
         </div>
-        <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1", pillClass)}>
+        <span className={cn("inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold ring-1 sm:px-2.5 sm:text-[11px]", pillClass)}>
           {state === "done" ? (
             <><CheckCircle2 className="h-3.5 w-3.5" /> Completed</>
           ) : state === "in" ? (
@@ -546,7 +546,7 @@ export function MarkAttendanceCard({
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-4 sm:gap-3">
-        <div className="flex min-w-0 items-start gap-2 rounded-xl border border-border/50 bg-background/40 p-2.5">
+        <div className="flex min-w-0 items-start gap-2 rounded-xl border border-border/50 bg-background/40 p-2 sm:p-2.5">
           <AttendanceSelfie path={punch?.check_in_selfie_path} title="Log in photo" />
           <div className="min-w-0 flex-1">
             <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Log in</div>
@@ -560,7 +560,7 @@ export function MarkAttendanceCard({
             )}
           </div>
         </div>
-        <div className="flex min-w-0 items-start gap-2 rounded-xl border border-border/50 bg-background/40 p-2.5">
+        <div className="flex min-w-0 items-start gap-2 rounded-xl border border-border/50 bg-background/40 p-2 sm:p-2.5">
           <AttendanceSelfie path={punch?.check_out_selfie_path} title="Log out photo" />
           <div className="min-w-0 flex-1">
             <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Log out</div>
@@ -659,7 +659,7 @@ export function MarkAttendanceCard({
       {state === "in" && punch && <LiveTelemetryStrip punch={punch} />}
 
       {locState && locState !== "granted" && state !== "done" && (
-        <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-destructive/20 bg-destructive/5 px-3 py-2.5">
+        <div className="mt-3 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 gap-y-2 rounded-xl border border-destructive/20 bg-destructive/5 px-3 py-2.5 sm:flex sm:flex-wrap sm:items-center">
           <AlertTriangle className="h-4 w-4 shrink-0 text-destructive" />
           <p className="min-w-0 flex-1 text-[11px] font-semibold text-destructive">
             {locState === "unavailable"
@@ -670,7 +670,7 @@ export function MarkAttendanceCard({
             <Button
               size="sm"
               variant="outline"
-              className="h-9 rounded-lg text-xs font-semibold"
+              className="col-span-2 h-9 w-full rounded-lg text-xs font-semibold sm:w-auto"
               disabled={askingLoc}
               onClick={() => void enableLocation()}
             >
