@@ -846,7 +846,7 @@ function ProfilePage() {
   const directReports = postingsQ.data?.directReports ?? [];
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-4 pb-6 lg:h-[calc(100dvh-4rem)] lg:overflow-hidden lg:pb-0">
+    <div data-profile-page className="flex w-full min-w-0 flex-col gap-4 pb-6 lg:h-[calc(100dvh-4rem)] lg:overflow-hidden lg:pb-0">
       <PageHeader
         title="My Profile"
         description="Work details, records and documents."
@@ -877,6 +877,7 @@ function ProfilePage() {
                   type="button"
                   size="icon"
                   disabled={uploadingPhoto}
+                  aria-label="Change profile photo"
                   className="absolute -bottom-1 -right-1 h-9 w-9 rounded-full border-2 border-background bg-accent text-accent-foreground shadow-md hover:bg-accent/90"
                   title="Change photo"
                 >
@@ -963,7 +964,7 @@ function ProfilePage() {
       <div className="hidden lg:block">{bottomActions}</div>
       </aside>
 
-      <main className="min-w-0 space-y-4 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+      <div className="min-w-0 space-y-4 lg:h-full lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
       <Section title="My Posting & Reporting" icon={Building2}>
         {postingsQ.isLoading ? (
           <div className="text-sm text-muted-foreground">Loading posting details…</div>
@@ -1651,7 +1652,7 @@ function ProfilePage() {
         )}
       </Section>
       </div>
-      </main>
+      </div>
       </div>
       <div className="lg:hidden">{bottomActions}</div>
     </div>
