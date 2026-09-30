@@ -91,7 +91,11 @@ export function isNativePlatform(): boolean {
     /* noop */
   }
   const platform = cap?.getPlatform?.();
-  return platform === "ios" || platform === "android" || !!cap?.Plugins?.RadiantBiometrics;
+  if (platform === "ios" || platform === "android") return true;
+  // registerPlugin() also adds proxies to Capacitor.Plugins in a normal
+  // browser, so a plugin entry only counts when the platform isn't "web".
+  if (platform === "web") return false;
+  return !!cap?.Plugins?.RadiantBiometrics;
 }
 
 export function getNativeRuntimeSnapshot() {
