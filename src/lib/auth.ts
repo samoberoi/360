@@ -161,10 +161,29 @@ async function ensureSupabaseSession(
   );
   if (!signIn.error) return;
 
-  const tokens = await withTimeout(
-    restore({ data: { phone: digits } }),
-    "Account restoration is taking too long. Please try again.",
-  );
+  // Approved users are pre-provisioned, so a credential failure means this
+  // number is not registered/enabled. Never fall back to the privileged
+  // restore path — externally hosted builds have no server keys.
+  const msg = signIn.error.message ?? "";
+  if (/invalid login credentials|email not confirmed|user not found/i.test(msg)) {
+    throw new Error(
+      "This mobile number is not registered for PLUS 360. Please contact your administrator.",
+    );
+  }
+
+  let tokens: { accessToken: string; refreshToken: string };
+  try {
+    tokens = await withTimeout(
+      restore({ data: { phone: digits } }),
+      "Account restoration is taking too long. Please try again.",
+    );
+  } catch (err) {
+    const text = err instanceof Error ? err.message : String(err);
+    if (/supabase|environment variable|service_role/i.test(text)) {
+      throw new Error("Sign-in is temporarily unavailable. Please try again in a moment.");
+    }
+    throw err;
+  }
   const restored = await supabase.auth.setSession({
     access_token: tokens.accessToken,
     refresh_token: tokens.refreshToken,
