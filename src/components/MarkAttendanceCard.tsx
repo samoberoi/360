@@ -345,7 +345,7 @@ export function MarkAttendanceCard({
       if (!canPunch) throw new Error("Only field officers can log in and log out from their location.");
       let face = false;
       if (isNativePlatform()) {
-        face = await verifyFaceForAttendance("Attendance login");
+        face = await verifyFaceForAttendance("Attendance login", faceRequired);
       }
       // Location is MANDATORY for every attendance punch. Attendance cannot be
       // marked while GPS / location permission is off.
@@ -438,7 +438,7 @@ export function MarkAttendanceCard({
       if (openVisitQ.data?.id) throw new Error("Complete your active client visit before logging out.");
       let face = false;
       if (isNativePlatform()) {
-        face = await verifyFaceForAttendance("Attendance logout");
+        face = await verifyFaceForAttendance("Attendance logout", faceRequired);
       }
       const geo = await getCurrentPosition();
       const nearest = (allowedUnits ?? [])

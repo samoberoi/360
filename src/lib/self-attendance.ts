@@ -84,16 +84,43 @@ export async function getCurrentPosition(): Promise<Geo> {
 }
 
 /**
- * Prompt Face ID / Touch ID before marking attendance. On native devices this
- * MUST succeed. On web (no biometric API) we return false but don't block; the
- * caller records `face_verified: false`.
+ * Prompt Face ID / fingerprint before marking attendance.
+ *
+ * Android cancels the biometric sheet when it opens while the confirmation
+ * dialog is still closing, and many Android phones don't expose face unlock
+ * to apps at all. So we wait for the dialog to close, retry once, and — when
+ * the role requires a stamped face photo — fall back to that photo as the
+ * identity proof (recorded as `face_verified: false`) instead of blocking.
  */
-export async function verifyFaceForAttendance(reason: string): Promise<boolean> {
+export async function verifyFaceForAttendance(
+  reason: string,
+  photoFallback = false,
+): Promise<boolean> {
   if (!isNativePlatform()) return false;
-  const success = await authenticateNativeBiometric(reason);
-  logNativeEvent("biometric", "self-attendance", { success });
-  if (!success) throw new Error("Biometric identity was not confirmed.");
-  return true;
+  let lastError: unknown = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    await new Promise((r) => setTimeout(r, attempt === 0 ? 350 : 600));
+    try {
+      const success = await authenticateNativeBiometric(reason);
+      logNativeEvent("biometric", "self-attendance", { success, attempt });
+      if (success) return true;
+    } catch (err) {
+      lastError = err;
+      logNativeEvent("biometric", "self-attendance error", {
+        attempt,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+  if (photoFallback) {
+    logNativeEvent("biometric", "self-attendance photo fallback", {});
+    return false;
+  }
+  throw new Error(
+    lastError instanceof Error && lastError.message
+      ? lastError.message
+      : "Fingerprint / face unlock was not confirmed. Please try again.",
+  );
 }
 
 function today() {
