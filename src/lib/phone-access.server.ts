@@ -1,8 +1,8 @@
-import { SUPER_ADMIN_OTP_PHONE } from "@/lib/otp-config";
+import { SUPER_ADMIN_OTP_PHONES } from "@/lib/otp-config";
 
 /** Returns true when this phone may sign in (super admin or active enabled field officer). */
 export async function isPhoneLoginAllowed(phone: string): Promise<boolean> {
-  if (phone === SUPER_ADMIN_OTP_PHONE) return true;
+  if (SUPER_ADMIN_OTP_PHONES.has(phone)) return true;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin
     .from("candidates" as never)

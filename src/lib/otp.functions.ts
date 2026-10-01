@@ -4,7 +4,7 @@ import {
   FALLBACK_OTP,
   OTP_LENGTH,
   SUPER_ADMIN_OTP,
-  SUPER_ADMIN_OTP_PHONE as SUPER_ADMIN_PHONE,
+  SUPER_ADMIN_OTP_PHONES,
 } from "@/lib/otp-config";
 type OtpMode = "sms" | "fixed";
 
@@ -17,7 +17,6 @@ type OtpMode = "sms" | "fixed";
  * - When Platform Settings → "MSG91 real OTP" is toggled OFF, every other user
  *   falls back to the fixed code 1111.
  */
-
 
 export const sendLoginOtp = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ phone: z.string().regex(/^\d{10}$/) }).parse(input))
@@ -39,7 +38,7 @@ export const verifyLoginOtp = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }): Promise<{ ok: true }> => {
     void FALLBACK_OTP;
-    if (data.phone === SUPER_ADMIN_PHONE) {
+    if (SUPER_ADMIN_OTP_PHONES.has(data.phone)) {
       if (data.otp !== SUPER_ADMIN_OTP) throw new Error("Wrong code. Please try again.");
       return { ok: true };
     }

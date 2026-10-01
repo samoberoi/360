@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth, SUPER_ADMIN_PHONE } from "@/lib/auth";
+import { useAuth, isSuperAdminPhone } from "@/lib/auth";
 
 export type MeProfile = {
   id: string | null;
@@ -15,7 +15,7 @@ function toInitials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (!parts.length) return "";
   const first = parts[0][0] ?? "";
-  const last = parts.length > 1 ? parts[parts.length - 1][0] ?? "" : "";
+  const last = parts.length > 1 ? (parts[parts.length - 1][0] ?? "") : "";
   return (first + last).toUpperCase();
 }
 
@@ -27,7 +27,7 @@ function toInitials(name: string) {
 export function useMe(): MeProfile & { isLoading: boolean } {
   const { user } = useAuth();
   const phone = user?.phone?.replace(/\D/g, "").slice(-10) ?? "";
-  const isSuperAdmin = phone === SUPER_ADMIN_PHONE;
+  const isSuperAdmin = isSuperAdminPhone(phone);
 
   const q = useQuery({
     queryKey: ["me-profile", phone],
@@ -59,9 +59,7 @@ export function useMe(): MeProfile & { isLoading: boolean } {
     },
   });
 
-  const fullName = isSuperAdmin
-    ? "Super Admin"
-    : q.data?.fullName || "";
+  const fullName = isSuperAdmin ? "Super Admin" : q.data?.fullName || "";
   const designation = isSuperAdmin
     ? "System Owner"
     : q.data?.designation || (q.data?.roleKey ? q.data.roleKey.replace(/_/g, " ") : "");
