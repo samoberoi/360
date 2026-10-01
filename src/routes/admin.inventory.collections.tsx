@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { postMovements, type LocationType } from "@/lib/inv-helpers";
-import { useAuth, SUPER_ADMIN_PHONE } from "@/lib/auth";
+import { useAuth, isSuperAdminPhone } from "@/lib/auth";
 
 export const Route = createFileRoute("/admin/inventory/collections")({ component: CollectionsPage });
 
@@ -54,7 +54,7 @@ type Balance = { location_type: string; location_id: string; item_id: string; si
 function CollectionsPage() {
   const { user } = useAuth();
   const myPhone = user?.phone?.replace(/\D/g, "").slice(-10) ?? "";
-  const isSuperAdmin = myPhone === SUPER_ADMIN_PHONE;
+  const isSuperAdmin = isSuperAdminPhone(myPhone);
 
   const { data: me = null, isLoading: meLoading } = useQuery({
     queryKey: ["candidate-by-phone", myPhone],

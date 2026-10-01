@@ -4,7 +4,7 @@ import {
   FALLBACK_OTP,
   OTP_LENGTH,
   SUPER_ADMIN_OTP,
-  SUPER_ADMIN_OTP_PHONE as SUPER_ADMIN_PHONE,
+  SUPER_ADMIN_OTP_PHONES,
 } from "@/lib/otp-config";
 type OtpMode = "sms" | "fixed";
 
@@ -39,7 +39,7 @@ export const verifyLoginOtp = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }): Promise<{ ok: true }> => {
     void FALLBACK_OTP;
-    if (data.phone === SUPER_ADMIN_PHONE) {
+    if (SUPER_ADMIN_OTP_PHONES.has(data.phone)) {
       if (data.otp !== SUPER_ADMIN_OTP) throw new Error("Wrong code. Please try again.");
       return { ok: true };
     }

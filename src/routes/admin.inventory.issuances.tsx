@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { nextSeq, fmtNumber, postMovements, statusBadgeClass, type LocationType } from "@/lib/inv-helpers";
 import { useUserBranchScope } from "@/lib/use-user-branch-scope";
-import { useAuth, SUPER_ADMIN_PHONE } from "@/lib/auth";
+import { useAuth, isSuperAdminPhone } from "@/lib/auth";
 import { useCurrentUserRole } from "@/lib/use-current-user-role";
 import { useDemandRequesters } from "@/lib/use-demand-requesters";
 import { useDocItemSummaries } from "@/lib/inv-doc-summary";
@@ -124,7 +124,7 @@ function IssuancesPage() {
 
   const { user } = useAuth();
   const myPhone = user?.phone?.replace(/\D/g, "").slice(-10) ?? "";
-  const isSuperAdmin = myPhone === SUPER_ADMIN_PHONE;
+  const isSuperAdmin = isSuperAdminPhone(myPhone);
   const role = useCurrentUserRole();
   const { data: me = null } = useQuery({
     queryKey: ["candidate-by-phone", myPhone],

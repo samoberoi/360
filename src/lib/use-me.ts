@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth, SUPER_ADMIN_PHONE } from "@/lib/auth";
+import { useAuth, isSuperAdminPhone } from "@/lib/auth";
 
 export type MeProfile = {
   id: string | null;
@@ -27,7 +27,7 @@ function toInitials(name: string) {
 export function useMe(): MeProfile & { isLoading: boolean } {
   const { user } = useAuth();
   const phone = user?.phone?.replace(/\D/g, "").slice(-10) ?? "";
-  const isSuperAdmin = phone === SUPER_ADMIN_PHONE;
+  const isSuperAdmin = isSuperAdminPhone(phone);
 
   const q = useQuery({
     queryKey: ["me-profile", phone],

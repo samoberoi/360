@@ -110,7 +110,7 @@ export function hasFromMap(
 
 // ---------------- Runtime enforcement ----------------
 import { useQuery } from "@tanstack/react-query";
-import { readStoredAuthUser, useAuth, SUPER_ADMIN_PHONE } from "@/lib/auth";
+import { readStoredAuthUser, useAuth, isSuperAdminPhone } from "@/lib/auth";
 import {
   isAdminConsoleRole,
   isFieldOfficerRole,
@@ -165,7 +165,7 @@ export function useCurrentPermissions(): {
   // Phone allowlist retained as a bootstrap bypass: the three super-admin
   // phones don't exist as candidate rows so removing this would lock them
   // out. DB `is_admin_user()` mirrors the same allowlist.
-  const isSuperAdminByPhone = phone === SUPER_ADMIN_PHONE;
+  const isSuperAdminByPhone = isSuperAdminPhone(phone);
   // The authenticated app role is written synchronously by the successful
   // login flow. Honour it as well as the phone bootstrap so routing cannot
   // briefly demote a restored super-admin session while role data hydrates.

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth, SUPER_ADMIN_PHONE } from "@/lib/auth";
+import { useAuth, isSuperAdminPhone } from "@/lib/auth";
 
 export type UserBranchScope = {
   isLoading: boolean;
@@ -20,7 +20,7 @@ export type UserBranchScope = {
 export function useUserBranchScope(): UserBranchScope {
   const { user } = useAuth();
   const phone = user?.phone?.replace(/\D/g, "").slice(-10) ?? "";
-  const isSuperAdmin = phone === SUPER_ADMIN_PHONE;
+  const isSuperAdmin = isSuperAdminPhone(phone);
 
   const q = useQuery({
     queryKey: ["user-branch-scope", phone],

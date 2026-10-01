@@ -145,7 +145,7 @@ async function authUserFromSession(): Promise<AuthUser | null> {
   const phone = `+91${match[1]}`;
   const user: AuthUser = {
     phone,
-    role: match[1] === SUPER_ADMIN_PHONE ? "super_admin" : "user",
+    role: isSuperAdminPhone(match[1]) ? "super_admin" : "user",
   };
 
   if (typeof window !== "undefined") {
@@ -294,7 +294,7 @@ export function useAuth() {
 
       const nextUser: AuthUser = {
         phone: `+91${match[1]}`,
-        role: match[1] === SUPER_ADMIN_PHONE ? "super_admin" : "user",
+        role: isSuperAdminPhone(match[1]) ? "super_admin" : "user",
       };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
       setUser(nextUser);
@@ -329,8 +329,9 @@ export function useAuth() {
 
   const login = useCallback(async (phone: string) => {
     const digits = phone.replace(/\D/g, "").slice(-10);
-    const role: AuthUser["role"] =
-      digits === SUPER_ADMIN_PHONE ? "super_admin" : "user";
+    const role: AuthUser["role"] = isSuperAdminPhone(digits)
+      ? "super_admin"
+      : "user";
     const ipPromise = resolveClientIpQuickly();
     manualSignOut = false;
     try {

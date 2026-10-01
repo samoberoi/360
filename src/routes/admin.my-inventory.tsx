@@ -5,7 +5,7 @@ import { Package, KeyRound, Check } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth, SUPER_ADMIN_PHONE } from "@/lib/auth";
+import { useAuth, isSuperAdminPhone } from "@/lib/auth";
 import { logActivity } from "@/lib/activity-log";
 import { PageHeader } from "@/components/PageHeader";
 import { DashboardShell } from "@/components/LiveFeed";
@@ -31,7 +31,7 @@ function MyInventoryPage() {
   const qc = useQueryClient();
   const { user } = useAuth();
   const phone = user?.phone?.replace(/\D/g, "").slice(-10) ?? "";
-  const isSuperAdmin = phone === SUPER_ADMIN_PHONE;
+  const isSuperAdmin = isSuperAdminPhone(phone);
 
   const { data: me = null, isLoading: meLoading } = useQuery({
     queryKey: ["candidate-by-phone", phone],
