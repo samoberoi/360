@@ -14,7 +14,9 @@ export function useCurrentUserRole() {
     queryKey: ["current-user-role", phone],
     enabled: !!phone && !isSuperAdmin,
     queryFn: async () => {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
+      const {
+        data: { user: authUser },
+      } = await supabase.auth.getUser();
       const { data: cand } = await supabase
         .from("candidates")
         .select("id,role_key")

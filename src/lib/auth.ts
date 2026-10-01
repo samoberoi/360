@@ -22,8 +22,7 @@ const IP_LOOKUP_TIMEOUT_MS = 1_500;
  *   VITE_SUPER_ADMIN_PHONE   (default: "8373914073")
  */
 export const SUPER_ADMIN_PHONE =
-  (import.meta.env.VITE_SUPER_ADMIN_PHONE as string | undefined) ??
-  "8373914073";
+  (import.meta.env.VITE_SUPER_ADMIN_PHONE as string | undefined) ?? "8373914073";
 
 /** Phones with full super-admin access (last 10 digits). */
 export const SUPER_ADMIN_PHONES: ReadonlySet<string> = new Set([
@@ -164,7 +163,6 @@ async function ensureSupabaseSession(
   const digits = phone.replace(/\D/g, "").slice(-10);
   // Access (super admin / active field officers) is enforced server-side.
 
-
   const { email, password } = credsForPhone(phone);
   const signIn = await withTimeout(
     supabase.auth.signInWithPassword({ email, password }),
@@ -224,7 +222,6 @@ export function useAuth() {
       if (!active) return;
       setUser(readStoredAuthUser());
     };
-
 
     const syncFromSession = async () => {
       try {
@@ -327,16 +324,48 @@ export function useAuth() {
     };
   }, []);
 
-  const login = useCallback(async (phone: string) => {
-    const digits = phone.replace(/\D/g, "").slice(-10);
-    const role: AuthUser["role"] = isSuperAdminPhone(digits)
-      ? "super_admin"
-      : "user";
-    const ipPromise = resolveClientIpQuickly();
-    manualSignOut = false;
-    try {
-      await ensureSupabaseSession(phone, restoreSession);
-    } catch (e) {
+  const login = useCallback(
+    async (phone: string) => {
+      const digits = phone.replace(/\D/g, "").slice(-10);
+      const role: AuthUser["role"] = isSuperAdminPhone(digits) ? "super_admin" : "user";
+      const ipPromise = resolveClientIpQuickly();
+      manualSignOut = false;
+      try {
+        await ensureSupabaseSession(phone, restoreSession);
+      } catch (e) {
+        void ipPromise.then((ip) =>
+          logActivity({
+            module: "Authentication",
+            action: "login",
+            entityType: "user",
+            entityLabel: phone,
+            userPhone: phone,
+            userRole: role,
+            ip,
+            status: "failure",
+            errorMessage: e instanceof Error ? e.message : String(e),
+          }),
+        );
+        throw e;
+      }
+      const u: AuthUser = { phone, role };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
+      // If a different phone had biometric enabled on this device, wipe it so
+      // the next Face ID prompt can't sign in as the previous user.
+      void (async () => {
+        try {
+          const { getStoredBiometricPhone, disableBiometric } = await import("./biometric");
+          const stored = await getStoredBiometricPhone();
+          if (stored) {
+            const storedDigits = stored.replace(/\D/g, "").slice(-10);
+            if (storedDigits && storedDigits !== digits) {
+              await disableBiometric();
+            }
+          }
+        } catch {
+          /* noop */
+        }
+      })();
       void ipPromise.then((ip) =>
         logActivity({
           module: "Authentication",
@@ -346,43 +375,12 @@ export function useAuth() {
           userPhone: phone,
           userRole: role,
           ip,
-          status: "failure",
-          errorMessage: e instanceof Error ? e.message : String(e),
         }),
       );
-      throw e;
-    }
-    const u: AuthUser = { phone, role };
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
-    // If a different phone had biometric enabled on this device, wipe it so
-    // the next Face ID prompt can't sign in as the previous user.
-    void (async () => {
-      try {
-        const { getStoredBiometricPhone, disableBiometric } = await import("./biometric");
-        const stored = await getStoredBiometricPhone();
-        if (stored) {
-          const storedDigits = stored.replace(/\D/g, "").slice(-10);
-          if (storedDigits && storedDigits !== digits) {
-            await disableBiometric();
-          }
-        }
-      } catch {
-        /* noop */
-      }
-    })();
-    void ipPromise.then((ip) =>
-      logActivity({
-        module: "Authentication",
-        action: "login",
-        entityType: "user",
-        entityLabel: phone,
-        userPhone: phone,
-        userRole: role,
-        ip,
-      }),
-    );
-    emit();
-  }, [restoreSession]);
+      emit();
+    },
+    [restoreSession],
+  );
 
   const logout = useCallback(() => {
     const current = readStoredAuthUser();

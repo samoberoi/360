@@ -52,10 +52,7 @@ export async function fetchRolePermissions(roleKey: string): Promise<PermissionR
   return (data ?? []) as PermissionRow[];
 }
 
-export async function saveRolePermissions(
-  roleKey: string,
-  rows: PermissionRow[],
-): Promise<void> {
+export async function saveRolePermissions(roleKey: string, rows: PermissionRow[]): Promise<void> {
   // Replace all rows for the role in one shot — simplest & matches editor UX.
   const del = await supabase.from("role_permissions").delete().eq("role_key", roleKey);
   if (del.error) throw del.error;
@@ -111,12 +108,7 @@ export function hasFromMap(
 // ---------------- Runtime enforcement ----------------
 import { useQuery } from "@tanstack/react-query";
 import { readStoredAuthUser, useAuth, isSuperAdminPhone } from "@/lib/auth";
-import {
-  isAdminConsoleRole,
-  isFieldOfficerRole,
-  isGuardRole,
-  ROLE_KEYS,
-} from "@/lib/role-keys";
+import { isAdminConsoleRole, isFieldOfficerRole, isGuardRole, ROLE_KEYS } from "@/lib/role-keys";
 
 // Tiny local snapshot of the signed-in user's role + permissions. Purely a
 // paint accelerator: every read still revalidates against the server, and the
@@ -144,7 +136,11 @@ function writeCache(key: string, value: unknown) {
 }
 
 export type PermCheck = (moduleKey: string, action?: PermissionAction) => boolean;
-export type SubPermCheck = (moduleKey: string, subModuleKey: string, action?: PermissionAction) => boolean;
+export type SubPermCheck = (
+  moduleKey: string,
+  subModuleKey: string,
+  action?: PermissionAction,
+) => boolean;
 
 export function useCurrentPermissions(): {
   isLoading: boolean;
@@ -210,7 +206,7 @@ export function useCurrentPermissions(): {
       return rows;
     },
     initialData: () =>
-      roleKey ? readCache<PermissionRow[]>(permsCacheKey(roleKey)) ?? undefined : undefined,
+      roleKey ? (readCache<PermissionRow[]>(permsCacheKey(roleKey)) ?? undefined) : undefined,
     initialDataUpdatedAt: 0,
     staleTime: 5 * 60_000,
     gcTime: 60 * 60_000,
@@ -238,7 +234,8 @@ export function useCurrentPermissions(): {
     if (valueFor(m, action)) return true;
     // Any sub-module granted counts as access to parent group
     for (const [k, r] of map) {
-      if (k.startsWith(`${moduleKey}::`) && k !== `${moduleKey}::` && valueFor(r, action)) return true;
+      if (k.startsWith(`${moduleKey}::`) && k !== `${moduleKey}::` && valueFor(r, action))
+        return true;
     }
     return false;
   };
@@ -263,7 +260,9 @@ export function useCurrentPermissions(): {
   return {
     // Cached values prevent blank screens, but routing must wait for the live
     // role and permission reads so an old device cache cannot select a stale dashboard.
-    isLoading: !isSuperAdmin && (roleQ.isLoading || roleQ.isFetching || permsQ.isLoading || permsQ.isFetching),
+    isLoading:
+      !isSuperAdmin &&
+      (roleQ.isLoading || roleQ.isFetching || permsQ.isLoading || permsQ.isFetching),
     isSuperAdmin,
     isAdminConsole: isSuperAdmin || isAdminConsoleRole(roleKey),
     isFieldOfficer: !isSuperAdmin && isFieldOfficerRole(roleKey),

@@ -18,7 +18,6 @@ type OtpMode = "sms" | "fixed";
  *   falls back to the fixed code 1111.
  */
 
-
 export const sendLoginOtp = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ phone: z.string().regex(/^\d{10}$/) }).parse(input))
   .handler(async (): Promise<{ mode: OtpMode }> => ({ mode: "fixed" }));

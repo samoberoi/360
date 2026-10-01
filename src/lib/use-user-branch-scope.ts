@@ -4,9 +4,9 @@ import { useAuth, isSuperAdminPhone } from "@/lib/auth";
 
 export type UserBranchScope = {
   isLoading: boolean;
-  isScoped: boolean;        // true if the current user is locked to a single branch
-  branchId: string | null;  // the branch UUID they are scoped to
-  branchLabel: string;      // human label, e.g. "BR2 – BANGALORE"
+  isScoped: boolean; // true if the current user is locked to a single branch
+  branchId: string | null; // the branch UUID they are scoped to
+  branchLabel: string; // human label, e.g. "BR2 – BANGALORE"
 };
 
 /**
@@ -62,14 +62,18 @@ export function useUserBranchScope(): UserBranchScope {
           .eq("candidate_id", cand.id)
           .eq("scope_type", "unit");
         if (uErr) throw uErr;
-        const unitIds = (unitRows ?? []).map((r: { scope_id: string }) => r.scope_id).filter(Boolean);
+        const unitIds = (unitRows ?? [])
+          .map((r: { scope_id: string }) => r.scope_id)
+          .filter(Boolean);
         if (unitIds.length) {
           const { data: units, error: unErr } = await supabase
             .from("units")
             .select("branch_id")
             .in("id", unitIds);
           if (unErr) throw unErr;
-          const branchId = (units ?? []).map((u: { branch_id: string | null }) => u.branch_id).find((b): b is string => !!b);
+          const branchId = (units ?? [])
+            .map((u: { branch_id: string | null }) => u.branch_id)
+            .find((b): b is string => !!b);
           if (branchId) {
             const { data: br } = await supabase
               .from("branches")
@@ -77,7 +81,9 @@ export function useUserBranchScope(): UserBranchScope {
               .eq("id", branchId)
               .maybeSingle();
             const b = br as { name?: string; code?: string } | null;
-            const label = b ? `${b.code ?? ""}${b.code && b.name ? " – " : ""}${b.name ?? ""}`.trim() : "";
+            const label = b
+              ? `${b.code ?? ""}${b.code && b.name ? " – " : ""}${b.name ?? ""}`.trim()
+              : "";
             return { scope_id: branchId, scope_label: label };
           }
         }
@@ -98,7 +104,9 @@ export function useUserBranchScope(): UserBranchScope {
             .from("units")
             .select("branch_id")
             .in("id", unitIds2);
-          const branchId = (units2 ?? []).map((u: { branch_id: string | null }) => u.branch_id).find((b): b is string => !!b);
+          const branchId = (units2 ?? [])
+            .map((u: { branch_id: string | null }) => u.branch_id)
+            .find((b): b is string => !!b);
           if (branchId) {
             const { data: br } = await supabase
               .from("branches")
@@ -106,7 +114,9 @@ export function useUserBranchScope(): UserBranchScope {
               .eq("id", branchId)
               .maybeSingle();
             const b = br as { name?: string; code?: string } | null;
-            const label = b ? `${b.code ?? ""}${b.code && b.name ? " – " : ""}${b.name ?? ""}`.trim() : "";
+            const label = b
+              ? `${b.code ?? ""}${b.code && b.name ? " – " : ""}${b.name ?? ""}`.trim()
+              : "";
             return { scope_id: branchId, scope_label: label };
           }
         }
