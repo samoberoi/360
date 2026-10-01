@@ -25,6 +25,17 @@ export const SUPER_ADMIN_PHONE =
   (import.meta.env.VITE_SUPER_ADMIN_PHONE as string | undefined) ??
   "8373914073";
 
+/** Phones with full super-admin access (last 10 digits). */
+export const SUPER_ADMIN_PHONES: ReadonlySet<string> = new Set([
+  SUPER_ADMIN_PHONE,
+  "7982863818", // SANDIP RAGHAV
+]);
+
+export function isSuperAdminPhone(phone: string | null | undefined) {
+  if (!phone) return false;
+  return SUPER_ADMIN_PHONES.has(phone.replace(/\D/g, "").slice(-10));
+}
+
 export type AuthUser = { phone: string; role: "super_admin" | "user" };
 
 export function readStoredAuthUser(): AuthUser | null {
