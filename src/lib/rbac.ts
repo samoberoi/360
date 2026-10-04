@@ -149,6 +149,8 @@ export function useCurrentPermissions(): {
   isFieldOfficer: boolean;
   isGuard: boolean;
   roleKey: string | null;
+  accessUnresolved: boolean;
+  reloadAccess: () => void;
   can: PermCheck;
   canSub: SubPermCheck;
 } {
