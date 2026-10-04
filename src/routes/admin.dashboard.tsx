@@ -236,7 +236,7 @@ export const Route = createFileRoute("/admin/dashboard")({
     ],
   }),
   component: DashboardPage,
-  errorComponent: DashboardErrorState,
+  errorComponent: DashboardErrorState as never,
 });
 
 const MONTH_NAMES = [

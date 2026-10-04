@@ -57,27 +57,28 @@ function resolveRequiredModule(pathname: string): RequiredPermission | null {
 }
 
 function isAlwaysAllowed(pathname: string): boolean {
-  return ALWAYS_ALLOW_PREFIXES.some(
-    (p) => pathname === p || pathname.startsWith(p + "/"),
-  );
+  return ALWAYS_ALLOW_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
 export function RoutePermissionGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const pathname = location.pathname;
-  const { can, canSub, isSuperAdmin, isLoading } = useCurrentPermissions();
+  const { can, canSub, isSuperAdmin, isLoading, accessUnresolved, reloadAccess } =
+    useCurrentPermissions();
   const role = useCurrentUserRole();
 
   const decision = useMemo(() => {
     if (isAlwaysAllowed(pathname)) return { allow: true as const };
-    if (role.isFieldOfficer && (
-      pathname === "/admin/inventory" ||
-      pathname === "/admin/inventory/" ||
-      pathname.startsWith("/admin/inventory/demands") ||
-      pathname.startsWith("/admin/inventory/goods-receipts") ||
-      pathname.startsWith("/admin/inventory/issuances") ||
-      pathname.startsWith("/admin/inventory/collections")
-    )) return { allow: true as const };
+    if (
+      role.isFieldOfficer &&
+      (pathname === "/admin/inventory" ||
+        pathname === "/admin/inventory/" ||
+        pathname.startsWith("/admin/inventory/demands") ||
+        pathname.startsWith("/admin/inventory/goods-receipts") ||
+        pathname.startsWith("/admin/inventory/issuances") ||
+        pathname.startsWith("/admin/inventory/collections"))
+    )
+      return { allow: true as const };
     if (isSuperAdmin) return { allow: true as const };
     const required = resolveRequiredModule(pathname);
     if (!required) return { allow: true as const, unmapped: true };
@@ -95,6 +96,24 @@ export function RoutePermissionGuard({ children }: { children: React.ReactNode }
     );
   }
 
+  if (!decision.allow && accessUnresolved) {
+    return (
+      <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 px-6 text-center">
+        <div className="text-lg font-semibold text-foreground">Loading your access…</div>
+        <div className="text-sm text-muted-foreground">
+          We couldn't confirm your permissions yet. Check your connection and try again.
+        </div>
+        <button
+          type="button"
+          onClick={reloadAccess}
+          className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
   if (!decision.allow) {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 px-6 text-center">
@@ -104,8 +123,8 @@ export function RoutePermissionGuard({ children }: { children: React.ReactNode }
         <div className="space-y-1">
           <div className="text-lg font-semibold text-foreground">Access denied</div>
           <div className="text-sm text-muted-foreground">
-            You don't have permission to view this page. Ask your administrator
-            to grant access to the <span className="font-medium">{decision.module}</span> module.
+            You don't have permission to view this page. Ask your administrator to grant access to
+            the <span className="font-medium">{decision.module}</span> module.
           </div>
         </div>
         <Link
