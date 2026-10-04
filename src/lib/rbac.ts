@@ -188,6 +188,8 @@ export function useCurrentPermissions(): {
     staleTime: 5 * 60_000,
     gcTime: 60 * 60_000,
     refetchOnWindowFocus: false,
+    retry: 4,
+    retryDelay: (n) => Math.min(800 * 2 ** n, 6000),
   });
 
   const roleKey = roleQ.data ?? null;
@@ -211,6 +213,8 @@ export function useCurrentPermissions(): {
     staleTime: 5 * 60_000,
     gcTime: 60 * 60_000,
     refetchOnWindowFocus: false,
+    retry: 4,
+    retryDelay: (n) => Math.min(800 * 2 ** n, 6000),
   });
 
   const map = new Map<string, PermissionRow>();
@@ -268,6 +272,15 @@ export function useCurrentPermissions(): {
     isFieldOfficer: !isSuperAdmin && isFieldOfficerRole(roleKey),
     isGuard: !isSuperAdmin && isGuardRole(roleKey),
     roleKey,
+    // True when the live role/permission read failed or returned nothing, so
+    // guards can retry instead of showing a false "Access denied".
+    accessUnresolved:
+      !isSuperAdmin &&
+      (roleQ.isError || permsQ.isError || !roleKey || (permsQ.data ?? []).length === 0),
+    reloadAccess: () => {
+      void roleQ.refetch();
+      void permsQ.refetch();
+    },
     can,
     canSub,
   };
