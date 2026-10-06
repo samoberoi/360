@@ -1606,7 +1606,7 @@ function EmployeeSearchInput({
       <Input
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
-        placeholder="Search name, Aadhaar, mobile, code…"
+        placeholder="Search name, mobile, code, designation, role…"
         autoComplete="off"
         className="h-10 rounded-xl border-border/70 bg-card pl-11 text-sm shadow-sm focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/10 sm:h-11"
       />
@@ -2595,6 +2595,10 @@ function EmployeesPage() {
       c.email,
       c.candidate_code,
       c.employee_code,
+      c.designation_id ? desigMap.get(c.designation_id)?.name : null,
+      c.department_id ? String(deptMap.get(c.department_id) ?? "") : null,
+      c.role_key ? rolesList.find((r) => r.key === c.role_key)?.name : null,
+      c.role_key?.replace(/_/g, " "),
     ].some((v) => (v ?? "").toLowerCase().includes(q));
   };
 
