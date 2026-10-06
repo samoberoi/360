@@ -293,6 +293,9 @@ export function MarkAttendanceCard({
     enabled: !!candidateId,
     queryFn: async () => {
       if (!candidateId) return null;
+      // Sweep first: any visit left open on an earlier day is auto-closed at
+      // 23:59 of its own date, so it can never block logout again.
+      try { await closeStaleVisits(candidateId); } catch { /* noop */ }
       // Only today's open visit can block logout — a visit left open on an
       // earlier day is invisible in Radar and would lock the officer out forever.
       const d = new Date();
