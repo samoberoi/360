@@ -122,7 +122,7 @@ function FieldSensePage() {
   }
   // Operations manager: own site check-in (union of his officers' sites) on top
   // of a Radar view scoped to just his team.
-  if (roleKey === ROLE_KEYS.OPERATIONS_MANAGER && candidateId) {
+  if ((roleKey === ROLE_KEYS.OPERATIONS_MANAGER || roleKey === "branch_manager" || roleKey === "dgm") && candidateId) {
     return (
       <div className="space-y-6">
         <PageHeader
