@@ -243,7 +243,7 @@ function MyTeamPage() {
           status,
         };
       });
-      return { rows, total: fos.length };
+      return { rows, total: fos.length, geoByCand: Object.fromEntries([...geoByCand].map(([k, v]) => [k, v])) };
     },
   });
 
