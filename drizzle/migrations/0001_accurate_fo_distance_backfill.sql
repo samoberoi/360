@@ -38,7 +38,6 @@ BEGIN
     secs := greatest(1, extract(epoch FROM (r.recorded_at - a.recorded_at)));
     IF d < greatest(20, coalesce(r.accuracy,0), coalesce(a.accuracy,0)) OR d / secs > 35 THEN
       UPDATE field_track_points SET counted=false, step_m=0 WHERE id=r.id; CONTINUE; END IF;
-    IF d > 5000 AND secs > 600 THEN a := r; UPDATE field_track_points SET counted=true, step_m=0 WHERE id=r.id; CONTINUE; END IF;
     total := total + d; a := r;
     UPDATE field_track_points SET counted=true, step_m=round(d,1) WHERE id=r.id;
   END LOOP;
