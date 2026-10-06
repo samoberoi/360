@@ -108,6 +108,11 @@ function MyTeamPage() {
   const [query, setQuery] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
+  // Operations managers see only the field officers reporting to them.
+  const mgrScope = useManagerFieldOfficerScope();
+  const scopeKey = mgrScope.isScoped
+    ? [...mgrScope.fieldOfficerIds].sort().join(",")
+    : "all";
 
   // Live: refresh the moment any officer's telemetry changes.
   useEffect(() => selectedDate !== todayIso() ? undefined : subscribeLivePunches(() => {
