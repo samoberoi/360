@@ -439,6 +439,8 @@ function haversineM(a: { lat: number; lng: number }, b: { lat: number; lng: numb
 }
 
 function FieldSenseLeaderboards() {
+  const mgrScope = useManagerFieldOfficerScope();
+  const lbScopeKey = mgrScope.isScoped ? [...mgrScope.fieldOfficerIds].sort().join(",") : "all";
   const [preset, setPreset] = useState<LbPreset>("this_month");
   const [customStart, setCustomStart] = useState<string>("");
   const [customEnd, setCustomEnd] = useState<string>("");
@@ -449,7 +451,8 @@ function FieldSenseLeaderboards() {
   );
 
   const dataQ = useQuery({
-    queryKey: ["field-sense-lb", resolved.start, resolved.end],
+    queryKey: ["field-sense-lb", resolved.start, resolved.end, lbScopeKey],
+    enabled: !mgrScope.isLoading,
     staleTime: 30_000,
     queryFn: async () => {
       const [foRes, visitsRes, tracksRes, unitsRes, custRes, punchesRes] = await Promise.all([
@@ -479,8 +482,9 @@ function FieldSenseLeaderboards() {
           .lte("punch_date", resolved.end),
       ]);
 
-      const fos = ((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>;
-      const visits = ((visitsRes.data ?? []) as unknown) as Array<{
+      const inScope = (id: string) => !mgrScope.isScoped || mgrScope.fieldOfficerIds.has(id);
+      const fos = (((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>).filter((f) => inScope(f.id));
+      const visits = (((visitsRes.data ?? []) as unknown) as Array<{ candidate_id: string }>).filter((v) => inScope(v.candidate_id)) as unknown as Array<{
         candidate_id: string;
         unit_id: string;
         customer_rating: number | null;
