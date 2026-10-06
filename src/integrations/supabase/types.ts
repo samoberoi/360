@@ -5632,6 +5632,7 @@ export type Database = {
           ph_multiplier: number
           recruitment_fee_amount: number
           recruitment_fee_enabled: boolean
+          reporting_manager_id: string | null
           reporting_officers: Json
           security_service_mobile: string
           security_service_name: string
@@ -5702,6 +5703,7 @@ export type Database = {
           ph_multiplier?: number
           recruitment_fee_amount?: number
           recruitment_fee_enabled?: boolean
+          reporting_manager_id?: string | null
           reporting_officers?: Json
           security_service_mobile?: string
           security_service_name?: string
@@ -5772,6 +5774,7 @@ export type Database = {
           ph_multiplier?: number
           recruitment_fee_amount?: number
           recruitment_fee_enabled?: boolean
+          reporting_manager_id?: string | null
           reporting_officers?: Json
           security_service_mobile?: string
           security_service_name?: string
@@ -5812,6 +5815,13 @@ export type Database = {
             columns: ["esic_branch_id"]
             isOneToOne: false
             referencedRelation: "esic_branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "units_reporting_manager_id_fkey"
+            columns: ["reporting_manager_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
             referencedColumns: ["id"]
           },
         ]
