@@ -318,6 +318,31 @@ function MyTeamPage() {
           >
             Today
           </button>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search name or code…"
+            className="w-44 rounded-md border border-border bg-background px-2 py-1 text-[12px] font-semibold text-foreground placeholder:font-normal placeholder:text-muted-foreground"
+          />
+          <select
+            value={stateFilter}
+            onChange={(e) => { setStateFilter(e.target.value); setCityFilter(""); }}
+            className="rounded-md border border-border bg-background px-2 py-1 text-[12px] font-semibold text-foreground"
+            aria-label="Filter by state"
+          >
+            <option value="">All states</option>
+            {stateOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <select
+            value={cityFilter}
+            onChange={(e) => setCityFilter(e.target.value)}
+            className="rounded-md border border-border bg-background px-2 py-1 text-[12px] font-semibold text-foreground"
+            aria-label="Filter by city"
+          >
+            <option value="">All cities</option>
+            {cityOptions.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
           <div className="ml-auto flex flex-wrap items-center gap-x-6 gap-y-2">
             <Counter label="Punched-In" value={`${punchedIn}/${total}`} tone="sky" />
             <Counter label="In Meeting" value={inMeeting} tone="emerald" />
