@@ -881,6 +881,7 @@ function CheckInDialog({
   const [selectedId, setSelectedId] = useState<string>(
     preselectUnitId ?? nearest?.unit.unit_id ?? units[0]?.unit_id ?? "",
   );
+  const [sitePickerOpen, setSitePickerOpen] = useState(false);
 
   const selectedUnit = useMemo(
     () => units.find((u) => u.unit_id === selectedId) ?? null,
