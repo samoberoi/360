@@ -69,6 +69,7 @@ async function load() {
     else roots.push(p);
   }
   const label = (p: P) =>
+    (p.role_key && !["field_officer", ...GUARD_ROLES].includes(p.role_key) && roleName.get(p.role_key)) ||
     (p.designation_id && desig.get(p.designation_id)) ||
     (p.role_key && roleName.get(p.role_key)) ||
     (p.role_key && GUARD_ROLES.includes(p.role_key) ? "Security Guard" : p.role_key) ||
@@ -113,7 +114,8 @@ function Node({ p, kids, label, open, toggle, match }: {
       <Card p={p} label={label(p)} total={total} isOpen={isOpen} hasKids={children.length > 0} onClick={() => children.length && toggle(p.id)} />
       {isOpen && children.length > 0 && (allLeaves ? (
         <div className="org-leaves">
-          <div className="mx-auto w-48 rounded-xl border border-dashed border-border/70 bg-muted/30 p-1.5">
+          <div className="mx-auto max-h-72 w-52 overflow-y-auto rounded-xl border border-dashed border-border/70 bg-muted/30 p-1.5">
+            <div className="px-1.5 pb-1 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">{children.length} direct reports</div>
             {children.map((c) => (
               <div key={c.id} className="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-left hover:bg-muted/60">
                 <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/60" />
