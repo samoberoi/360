@@ -707,8 +707,9 @@ function MusterRollPage() {
     return ids;
   }, [entries, manualRosterIds]);
   const employees = useMemo(
-    () => (rosterEmployees ?? []).filter((e) => periodRosterIds.has(e.id)),
-    [rosterEmployees, periodRosterIds],
+    // Home units list every mapped non-billable staff member, even before their first punch.
+    () => (rosterEmployees ?? []).filter((e) => periodRosterIds.has(e.id) || (HOME_UNIT_IDS.has(unitId) && e.is_home_mapped)),
+    [rosterEmployees, periodRosterIds, unitId],
   );
   const [mobileDate, setMobileDate] = useState(() => {
     const requested =
