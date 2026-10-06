@@ -231,6 +231,49 @@ async function loadFoUnits(candidateId: string): Promise<FoUnit[]> {
     rows = ((fresh.data ?? []) as unknown) as ScopeRow[];
   }
   const units = toFoUnits(rows);
+  // Operations manager: his check-in list is the union of every site mapped to
+  // the field officers reporting to him (candidate_reporting_managers →
+  // candidate_units), merged with anything assigned to him directly.
+  const { data: meRow } = await supabase
+    .from("candidates" as never)
+    .select("role_key")
+    .eq("id", candidateId)
+    .maybeSingle();
+  if (((meRow as unknown) as { role_key?: string } | null)?.role_key === "operations_manager") {
+    const { data: reportees } = await supabase
+      .from("candidate_reporting_managers" as never)
+      .select("candidate_id")
+      .eq("manager_id", candidateId);
+    const foIds = (((reportees ?? []) as unknown) as Array<{ candidate_id: string }>).map((r) => r.candidate_id);
+    if (foIds.length) {
+      const { data: cu } = await supabase
+        .from("candidate_units" as never)
+        .select("unit_id")
+        .in("candidate_id", foIds);
+      const have = new Set(units.map((u) => u.unit_id));
+      const missing = [...new Set((((cu ?? []) as unknown) as Array<{ unit_id: string }>).map((r) => r.unit_id))].filter(
+        (id) => !have.has(id),
+      );
+      if (missing.length) {
+        const { data: extra } = await supabase
+          .from("units" as never)
+          .select("id, name, code, shipping_address1, latitude, longitude, customers(name)")
+          .in("id", missing);
+        for (const u of ((extra ?? []) as unknown) as Array<{ id: string; name: string; code: string | null; shipping_address1: string | null; latitude: number | null; longitude: number | null; customers: { name: string } | null }>) {
+          units.push({
+            unit_id: u.id,
+            unit_name: u.name,
+            unit_code: u.code,
+            customer_name: u.customers?.name ?? null,
+            branch_name: null,
+            address: u.shipping_address1,
+            latitude: u.latitude,
+            longitude: u.longitude,
+          } as FoUnit);
+        }
+      }
+    }
+  }
   writeUnitsSnapshot(candidateId, units);
   return units;
 }

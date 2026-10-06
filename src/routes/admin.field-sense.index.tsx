@@ -12,6 +12,8 @@ import { AdminVisitProgressCard } from "@/components/AdminVisitProgressCard";
 import { AdminFieldOfficerUnitsCard } from "@/components/AdminFieldOfficerUnitsCard";
 import { OperationsDeployments } from "@/components/OperationsDeployments";
 import { AdminEscalationRequestsCard } from "@/components/AdminEscalationRequestsCard";
+import { useManagerFieldOfficerScope } from "@/lib/use-manager-scope";
+import { ROLE_KEYS } from "@/lib/role-keys";
 
 
 
@@ -100,7 +102,7 @@ function popupHtml(r: LivePunch): string {
 }
 
 function FieldSensePage() {
-  const { isFieldOfficer, candidateId, isLoading } = useCurrentUserRole();
+  const { isFieldOfficer, roleKey, candidateId, isLoading } = useCurrentUserRole();
   if (isLoading) {
     return <div className="p-6 text-sm text-muted-foreground">Loading…</div>;
   }
@@ -113,6 +115,21 @@ function FieldSensePage() {
           crumbs={[{ label: "Admin", to: "/admin/field-dashboard" }, { label: "Site Visits" }]}
         />
         <FieldOfficerFieldSense candidateId={candidateId} />
+      </div>
+    );
+  }
+  // Operations manager: own site check-in (union of his officers' sites) on top
+  // of a Radar view scoped to just his team.
+  if (roleKey === ROLE_KEYS.OPERATIONS_MANAGER && candidateId) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="My Team Radar"
+          description="Your field officers' live status, plus your own site check-ins across all their sites."
+          crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Radar" }]}
+        />
+        <FieldOfficerFieldSense candidateId={candidateId} />
+        <AdminFieldSense />
       </div>
     );
   }
@@ -131,8 +148,14 @@ function AdminFieldSense() {
 
 
 
+  // Operations managers see only their reporting field officers on the map.
+  const mgrScope = useManagerFieldOfficerScope();
+  const scopeKey = mgrScope.isScoped
+    ? [...mgrScope.fieldOfficerIds].sort().join(",")
+    : "all";
+
   const q = useQuery({
-    queryKey: ["field-sense-live", today()],
+    queryKey: ["field-sense-live", today(), scopeKey],
     refetchInterval: 15_000,
     queryFn: async (): Promise<LivePunch[]> => {
       const { data, error } = await supabase
@@ -146,14 +169,18 @@ function AdminFieldSense() {
         .eq("candidate.role_key", "field_officer")
         .order("last_seen_at", { ascending: false, nullsFirst: false });
       if (error) throw error;
-      return (data ?? []) as unknown as LivePunch[];
+      const rows = (data ?? []) as unknown as LivePunch[];
+      return mgrScope.isScoped
+        ? rows.filter((r) => mgrScope.fieldOfficerIds.has(r.candidate_id))
+        : rows;
     },
   });
 
   const totalsQ = useQuery({
-    queryKey: ["field-sense-totals"],
+    queryKey: ["field-sense-totals", scopeKey],
     staleTime: 60_000,
     queryFn: async () => {
+      if (mgrScope.isScoped) return { fo: mgrScope.fieldOfficerIds.size };
       const fo = await supabase
         .from("candidates" as never)
         .select("id", { count: "exact", head: true })

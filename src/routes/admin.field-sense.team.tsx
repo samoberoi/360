@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/PageHeader";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { signedSelfieUrl } from "@/lib/selfie";
+import { useManagerFieldOfficerScope } from "@/lib/use-manager-scope";
 
 function SelfieThumb({ path, title, initial }: { path: string | null; title: string; initial?: string }) {
   const [open, setOpen] = useState(false);
@@ -107,6 +108,11 @@ function MyTeamPage() {
   const [query, setQuery] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
+  // Operations managers see only the field officers reporting to them.
+  const mgrScope = useManagerFieldOfficerScope();
+  const scopeKey = mgrScope.isScoped
+    ? [...mgrScope.fieldOfficerIds].sort().join(",")
+    : "all";
 
   // Live: refresh the moment any officer's telemetry changes.
   useEffect(() => selectedDate !== todayIso() ? undefined : subscribeLivePunches(() => {
@@ -114,7 +120,7 @@ function MyTeamPage() {
   }), [qc, selectedDate]);
 
   const dataQ = useQuery({
-    queryKey: ["field-sense-team", selectedDate],
+    queryKey: ["field-sense-team", selectedDate, scopeKey],
     refetchInterval: selectedDate === todayIso() ? 15_000 : false,
     staleTime: selectedDate === todayIso() ? 15_000 : 5 * 60_000,
     placeholderData: (prev) => prev,
@@ -142,7 +148,11 @@ function MyTeamPage() {
         ? await supabase.from("candidate_units" as never).select("candidate_id, unit_id").in("candidate_id", foIds)
         : { data: [] as unknown[] };
 
-      const fos = ((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>;
+      const allFos = ((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>;
+      // Operations managers: only their reporting field officers.
+      const fos = mgrScope.isScoped
+        ? allFos.filter((f) => mgrScope.fieldOfficerIds.has(f.id))
+        : allFos;
       const punches = ((punchRes.data ?? []) as unknown) as Array<{
         candidate_id: string;
         check_in_at: string | null;
