@@ -36,7 +36,7 @@ async function fetchPeople(): Promise<Person[]> {
 
 export async function loadUnitMapping(unitId: string): Promise<UnitMappingValue> {
   const [{ data: unit }, { data: links }] = await Promise.all([
-    supabase.from("units").select("reporting_manager_id").eq("id", unitId).maybeSingle(),
+    supabase.from("units").select("reporting_manager_id, field_officer_id").eq("id", unitId).maybeSingle(),
     supabase
       .from("candidate_units")
       .select("candidate_id, candidates!inner(role_key)")
@@ -44,7 +44,7 @@ export async function loadUnitMapping(unitId: string): Promise<UnitMappingValue>
       .eq("candidates.role_key", "field_officer"),
   ]);
   return {
-    fieldOfficerId: (links?.[0] as { candidate_id: string } | undefined)?.candidate_id ?? null,
+    fieldOfficerId: (unit as { field_officer_id: string | null } | null)?.field_officer_id ?? (links?.[0] as { candidate_id: string } | undefined)?.candidate_id ?? null,
     reportingManagerId: (unit as { reporting_manager_id: string | null } | null)?.reporting_manager_id ?? null,
   };
 }
@@ -52,10 +52,10 @@ export async function loadUnitMapping(unitId: string): Promise<UnitMappingValue>
 /** Saves the mapping. Field officer reuses the same candidate_units link as Radar. */
 export async function saveUnitMapping(unitId: string, label: string, value: UnitMappingValue) {
   const before = await loadUnitMapping(unitId);
-  if (before.reportingManagerId !== value.reportingManagerId) {
+  if (before.reportingManagerId !== value.reportingManagerId || before.fieldOfficerId !== value.fieldOfficerId) {
     const { error } = await supabase
       .from("units")
-      .update({ reporting_manager_id: value.reportingManagerId } as never)
+      .update({ reporting_manager_id: value.reportingManagerId, field_officer_id: value.fieldOfficerId } as never)
       .eq("id", unitId);
     if (error) throw error;
   }
