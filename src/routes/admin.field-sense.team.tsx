@@ -104,6 +104,9 @@ function MyTeamPage() {
   const search = Route.useSearch();
   const qc = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<string>(search.date || todayIso());
+  const [query, setQuery] = useState("");
+  const [stateFilter, setStateFilter] = useState("");
+  const [cityFilter, setCityFilter] = useState("");
 
   // Live: refresh the moment any officer's telemetry changes.
   useEffect(() => selectedDate !== todayIso() ? undefined : subscribeLivePunches(() => {
