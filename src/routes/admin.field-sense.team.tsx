@@ -104,6 +104,9 @@ function MyTeamPage() {
   const search = Route.useSearch();
   const qc = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<string>(search.date || todayIso());
+  const [query, setQuery] = useState("");
+  const [stateFilter, setStateFilter] = useState("");
+  const [cityFilter, setCityFilter] = useState("");
 
   // Live: refresh the moment any officer's telemetry changes.
   useEffect(() => selectedDate !== todayIso() ? undefined : subscribeLivePunches(() => {
@@ -115,7 +118,7 @@ function MyTeamPage() {
     refetchInterval: selectedDate === todayIso() ? 15_000 : false,
     staleTime: selectedDate === todayIso() ? 15_000 : 5 * 60_000,
     placeholderData: (prev) => prev,
-    queryFn: async (): Promise<{ rows: Row[]; total: number }> => {
+    queryFn: async (): Promise<{ rows: Row[]; total: number; geoByCand: Record<string, Array<{ state: string; city: string }>> }> => {
       const [foRes, punchRes, visitsRes, tracksRes, unitsRes] = await Promise.all([
         supabase
           .from("candidates" as never)
@@ -132,8 +135,12 @@ function MyTeamPage() {
           .select("candidate_id, unit_id, check_in_at, check_out_at")
           .eq("visit_date", selectedDate),
         Promise.resolve({ data: [] as unknown[] }),
-        supabase.from("units" as never).select("id, name").limit(5000),
+        supabase.from("units" as never).select("id, name, shipping_state, shipping_city, billing_state, billing_city").limit(5000),
       ]);
+      const foIds = (((foRes.data ?? []) as unknown) as Array<{ id: string }>).map((f) => f.id);
+      const cuRes = foIds.length
+        ? await supabase.from("candidate_units" as never).select("candidate_id, unit_id").in("candidate_id", foIds)
+        : { data: [] as unknown[] };
 
       const fos = ((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>;
       const punches = ((punchRes.data ?? []) as unknown) as Array<{
@@ -161,6 +168,20 @@ function MyTeamPage() {
       const unitMap = new Map(
         (((unitsRes.data ?? []) as unknown) as Array<{ id: string; name: string }>).map((u) => [u.id, u.name]),
       );
+      const unitGeo = new Map(
+        (((unitsRes.data ?? []) as unknown) as Array<{ id: string; shipping_state: string | null; shipping_city: string | null; billing_state: string | null; billing_city: string | null }>).map((u) => [
+          u.id,
+          { state: (u.shipping_state || u.billing_state || "").trim(), city: (u.shipping_city || u.billing_city || "").trim() },
+        ]),
+      );
+      const geoByCand = new Map<string, Array<{ state: string; city: string }>>();
+      for (const cu of ((cuRes.data ?? []) as unknown) as Array<{ candidate_id: string; unit_id: string }>) {
+        const g = unitGeo.get(cu.unit_id);
+        if (!g || !g.state) continue;
+        const arr = geoByCand.get(cu.candidate_id) ?? [];
+        arr.push(g);
+        geoByCand.set(cu.candidate_id, arr);
+      }
 
       const punchByCand = new Map(punches.map((p) => [p.candidate_id, p]));
       const activeVisitByCand = new Map<string, string>();
@@ -222,13 +243,44 @@ function MyTeamPage() {
           status,
         };
       });
-      return { rows, total: fos.length };
+      return { rows, total: fos.length, geoByCand: Object.fromEntries([...geoByCand].map(([k, v]) => [k, v])) };
     },
   });
 
 
-  const rows = dataQ.data?.rows ?? [];
+  const allRows = dataQ.data?.rows ?? [];
+  const geoByCand = (dataQ.data?.geoByCand ?? {}) as Record<string, Array<{ state: string; city: string }>>;
   const total = dataQ.data?.total ?? 0;
+
+  const stateOptions = useMemo(() => {
+    const s = new Set<string>();
+    for (const arr of Object.values(geoByCand)) for (const g of arr) if (g.state) s.add(g.state);
+    return [...s].sort();
+  }, [geoByCand]);
+  const cityOptions = useMemo(() => {
+    const s = new Set<string>();
+    for (const arr of Object.values(geoByCand)) {
+      for (const g of arr) {
+        if (!g.city) continue;
+        if (stateFilter && g.state !== stateFilter) continue;
+        s.add(g.city);
+      }
+    }
+    return [...s].sort();
+  }, [geoByCand, stateFilter]);
+
+  const rows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return allRows.filter((r) => {
+      if (q && !r.full_name.toLowerCase().includes(q) && !(r.employee_code ?? "").toLowerCase().includes(q)) return false;
+      if (stateFilter || cityFilter) {
+        const geos = geoByCand[r.id] ?? [];
+        const match = geos.some((g) => (!stateFilter || g.state === stateFilter) && (!cityFilter || g.city === cityFilter));
+        if (!match) return false;
+      }
+      return true;
+    });
+  }, [allRows, query, stateFilter, cityFilter, geoByCand]);
   const isPast = selectedDate < todayIso();
   const punchedIn = rows.filter((r) => r.punch_in && !r.punch_out).length;
   const inMeeting = rows.filter((r) => r.status === "in_meeting").length;
@@ -266,6 +318,31 @@ function MyTeamPage() {
           >
             Today
           </button>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search name or code…"
+            className="w-44 rounded-md border border-border bg-background px-2 py-1 text-[12px] font-semibold text-foreground placeholder:font-normal placeholder:text-muted-foreground"
+          />
+          <select
+            value={stateFilter}
+            onChange={(e) => { setStateFilter(e.target.value); setCityFilter(""); }}
+            className="rounded-md border border-border bg-background px-2 py-1 text-[12px] font-semibold text-foreground"
+            aria-label="Filter by state"
+          >
+            <option value="">All states</option>
+            {stateOptions.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <select
+            value={cityFilter}
+            onChange={(e) => setCityFilter(e.target.value)}
+            className="rounded-md border border-border bg-background px-2 py-1 text-[12px] font-semibold text-foreground"
+            aria-label="Filter by city"
+          >
+            <option value="">All cities</option>
+            {cityOptions.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
           <div className="ml-auto flex flex-wrap items-center gap-x-6 gap-y-2">
             <Counter label="Punched-In" value={`${punchedIn}/${total}`} tone="sky" />
             <Counter label="In Meeting" value={inMeeting} tone="emerald" />
