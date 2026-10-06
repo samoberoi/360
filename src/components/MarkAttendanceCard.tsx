@@ -293,10 +293,16 @@ export function MarkAttendanceCard({
     enabled: !!candidateId,
     queryFn: async () => {
       if (!candidateId) return null;
+      // Only today's open visit can block logout — a visit left open on an
+      // earlier day is invisible in Radar and would lock the officer out forever.
+      const d = new Date();
+      const p = (n: number) => String(n).padStart(2, "0");
+      const todayIso = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
       const { data, error } = await supabase
         .from("field_visits" as never)
         .select("id")
         .eq("candidate_id", candidateId)
+        .eq("visit_date", todayIso)
         .is("check_out_at", null)
         .limit(1)
         .maybeSingle();
