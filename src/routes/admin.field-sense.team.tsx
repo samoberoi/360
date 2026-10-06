@@ -148,7 +148,11 @@ function MyTeamPage() {
         ? await supabase.from("candidate_units" as never).select("candidate_id, unit_id").in("candidate_id", foIds)
         : { data: [] as unknown[] };
 
-      const fos = ((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>;
+      const allFos = ((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>;
+      // Operations managers: only their reporting field officers.
+      const fos = mgrScope.isScoped
+        ? allFos.filter((f) => mgrScope.fieldOfficerIds.has(f.id))
+        : allFos;
       const punches = ((punchRes.data ?? []) as unknown) as Array<{
         candidate_id: string;
         check_in_at: string | null;
