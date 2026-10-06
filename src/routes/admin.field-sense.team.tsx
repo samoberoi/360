@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/PageHeader";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { signedSelfieUrl } from "@/lib/selfie";
+import { useManagerFieldOfficerScope } from "@/lib/use-manager-scope";
 
 function SelfieThumb({ path, title, initial }: { path: string | null; title: string; initial?: string }) {
   const [open, setOpen] = useState(false);
