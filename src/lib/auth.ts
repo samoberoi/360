@@ -27,7 +27,6 @@ export const SUPER_ADMIN_PHONE =
 /** Phones with full super-admin access (last 10 digits). */
 export const SUPER_ADMIN_PHONES: ReadonlySet<string> = new Set([
   SUPER_ADMIN_PHONE,
-  "7982863818", // SANDIP RAGHAV
 ]);
 
 export function isSuperAdminPhone(phone: string | null | undefined) {
