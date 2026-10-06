@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { HeroTile } from "@/components/HeroTile";
 import { Button } from "@/components/ui/button";
-import { LabeledMultiSelectFilter } from "@/components/MultiSelectFilter";
+import { useCharterGeoFilters } from "@/components/CharterGeoFilters";
 import { ListSkeleton } from "@/components/Skeletons";
 import { FinanceCharter } from "@/components/FinanceCharter";
 import { PayrollWindowPeriodPicker } from "@/components/PayrollWindowPeriodPicker";
@@ -44,6 +44,7 @@ function InvoiceUnitsPage() {
   const periodSelection = usePayrollWindowSelection(units.map((unit) => unit.id), search);
   const { monthIdx, year, selectedKey, windowsByUnit, unitIdsForWindow } = periodSelection;
   const windowUnits = useMemo(() => units.filter((unit) => unitIdsForWindow.has(unit.id)), [units, unitIdsForWindow]);
+  const geo = useCharterGeoFilters(windowUnits);
   const unitOptions = useMemo(
     () =>
       windowUnits.filter(
@@ -66,8 +67,7 @@ function InvoiceUnitsPage() {
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     return windowUnits.filter((u) => {
-      if (orgFilter.length > 0 && !orgFilter.includes(u.customer_id || u.customer_name)) return false;
-      if (unitFilter.length > 0 && !unitFilter.includes(u.id)) return false;
+      if (!geo.apply(u)) return false;
       if (term) {
         const hay = [u.customer_name, u.customer_code, u.name, u.code, u.location, ...u.contract_codes]
           .join(" ")
@@ -76,9 +76,9 @@ function InvoiceUnitsPage() {
       }
       return true;
     });
-  }, [q, orgFilter, unitFilter, windowUnits]);
+  }, [q, geo, windowUnits]);
 
-  const anyFilter = orgFilter.length > 0 || unitFilter.length > 0 || statusFilter !== "all" || q.trim().length > 0;
+  const anyFilter = geo.active || statusFilter !== "all" || q.trim().length > 0;
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -112,36 +112,7 @@ function InvoiceUnitsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <LabeledMultiSelectFilter
-              label="Organization"
-              selected={orgFilter}
-              onChange={(v) => {
-                setOrgFilter(v);
-                setUnitFilter((prev) =>
-                  prev.filter((id) => {
-                    const u = windowUnits.find((x) => x.id === id);
-                    return !u || v.length === 0 || v.includes(u.customer_id || u.customer_name);
-                  }),
-                );
-              }}
-              options={organizations.map((o) => ({
-                value: o.id,
-                label: o.code ? `${o.code} · ${o.name}` : o.name,
-              }))}
-              allLabel={`All organizations (${organizations.length})`}
-            />
-            <LabeledMultiSelectFilter
-              label="Unit"
-              selected={unitFilter}
-              onChange={setUnitFilter}
-              options={unitOptions.map((u) => ({
-                value: u.id,
-                label: `${u.name || u.code}${u.customer_name ? ` · ${u.customer_name}` : ""}`,
-              }))}
-              allLabel={`All units (${unitOptions.length})`}
-            />
-          </div>
+          {geo.render(organizations)}
 
           {anyFilter && (
             <div className="flex items-center justify-between rounded-xl bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
@@ -154,8 +125,7 @@ function InvoiceUnitsPage() {
                 className="h-7 gap-1.5 text-xs"
                 onClick={() => {
                   setQ("");
-                  setOrgFilter([]);
-                  setUnitFilter([]);
+                  geo.clear();
                   setStatusFilter("all");
                 }}
               >

@@ -7,7 +7,7 @@ import { Search, X } from "lucide-react";
 import { HeroTile } from "@/components/HeroTile";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LabeledMultiSelectFilter } from "@/components/MultiSelectFilter";
+import { useCharterGeoFilters } from "@/components/CharterGeoFilters";
 import { useOperationalUnitScope } from "@/lib/use-manager-scope";
 import { ListSkeleton } from "@/components/Skeletons";
 import { AttendanceCharter } from "@/components/AttendanceCharter";
@@ -106,6 +106,7 @@ function AttendanceUnitsPage() {
   const periodSelection = usePayrollWindowSelection(units.map((unit) => unit.id), search);
   const { monthIdx, year, selectedKey, windowsByUnit, unitIdsForWindow } = periodSelection;
   const windowUnits = useMemo(() => units.filter((unit) => unitIdsForWindow.has(unit.id)), [units, unitIdsForWindow]);
+  const geo = useCharterGeoFilters(windowUnits);
   const unitOptions = useMemo(
     () =>
       windowUnits.filter(
@@ -132,8 +133,7 @@ function AttendanceUnitsPage() {
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     return windowUnits.filter((u) => {
-      if (orgFilter.length > 0 && !orgFilter.includes(u.customer_id || u.customer_name)) return false;
-      if (unitFilter.length > 0 && !unitFilter.includes(u.id)) return false;
+      if (!geo.apply(u)) return false;
       if (term) {
         const hay = [
           u.customer_name,
@@ -150,9 +150,9 @@ function AttendanceUnitsPage() {
       }
       return true;
     });
-  }, [q, orgFilter, unitFilter, windowUnits]);
+  }, [q, geo, windowUnits]);
 
-  const anyFilter = orgFilter.length > 0 || unitFilter.length > 0 || statusFilter !== "all" || q.trim().length > 0;
+  const anyFilter = geo.active || statusFilter !== "all" || q.trim().length > 0;
 
 
 
@@ -218,36 +218,7 @@ function AttendanceUnitsPage() {
               onStatusFilterChange={setStatusFilter}
               filters={
                 <div className="space-y-2">
-                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                    <LabeledMultiSelectFilter
-                      label="Organization"
-                      selected={orgFilter}
-                      onChange={(v) => {
-                        setOrgFilter(v);
-                        setUnitFilter((prev) =>
-                          prev.filter((id) => {
-                            const u = windowUnits.find((x) => x.id === id);
-                            return !u || v.length === 0 || v.includes(u.customer_id || u.customer_name);
-                          }),
-                        );
-                      }}
-                      options={organizations.map((o) => ({
-                        value: o.id,
-                        label: o.code ? `${o.code} · ${o.name}` : o.name,
-                      }))}
-                      allLabel={`All organizations (${organizations.length})`}
-                    />
-                    <LabeledMultiSelectFilter
-                      label="Unit"
-                      selected={unitFilter}
-                      onChange={setUnitFilter}
-                      options={unitOptions.map((u) => ({
-                        value: u.id,
-                        label: `${u.name || u.code}${u.customer_name ? ` · ${u.customer_name}` : ""}`,
-                      }))}
-                      allLabel={`All units (${unitOptions.length})`}
-                    />
-                  </div>
+                  {geo.render(organizations)}
                   {anyFilter && (
                     <div className="flex items-center justify-between rounded-xl bg-secondary/40 px-3 py-2 text-xs text-muted-foreground">
                       <span>
@@ -260,8 +231,7 @@ function AttendanceUnitsPage() {
                         className="h-7 gap-1.5 text-xs"
                         onClick={() => {
                           setQ("");
-                          setOrgFilter([]);
-                          setUnitFilter([]);
+                          geo.clear();
                           setStatusFilter("all");
                         }}
                       >
