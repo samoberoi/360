@@ -168,6 +168,20 @@ function MyTeamPage() {
       const unitMap = new Map(
         (((unitsRes.data ?? []) as unknown) as Array<{ id: string; name: string }>).map((u) => [u.id, u.name]),
       );
+      const unitGeo = new Map(
+        (((unitsRes.data ?? []) as unknown) as Array<{ id: string; shipping_state: string | null; shipping_city: string | null; billing_state: string | null; billing_city: string | null }>).map((u) => [
+          u.id,
+          { state: (u.shipping_state || u.billing_state || "").trim(), city: (u.shipping_city || u.billing_city || "").trim() },
+        ]),
+      );
+      const geoByCand = new Map<string, Array<{ state: string; city: string }>>();
+      for (const cu of ((cuRes.data ?? []) as unknown) as Array<{ candidate_id: string; unit_id: string }>) {
+        const g = unitGeo.get(cu.unit_id);
+        if (!g || !g.state) continue;
+        const arr = geoByCand.get(cu.candidate_id) ?? [];
+        arr.push(g);
+        geoByCand.set(cu.candidate_id, arr);
+      }
 
       const punchByCand = new Map(punches.map((p) => [p.candidate_id, p]));
       const activeVisitByCand = new Map<string, string>();
