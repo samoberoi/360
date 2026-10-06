@@ -223,7 +223,9 @@ export function MarkAttendanceCard({
 }) {
   const qc = useQueryClient();
   const role = useCurrentUserRole();
-  const canPunch = role.isFieldOfficer;
+  // Field officers punch in; operations managers also punch in since they
+  // visit sites alongside their teams.
+  const canPunch = role.isFieldOfficer || role.roleKey === "operations_manager";
   const { rule: attendanceRule } = useAttendanceRule(role.roleKey);
   const faceRequired = attendanceRule.face_photo_required;
   const [busy, setBusy] = useState<"in" | "out" | null>(null);
