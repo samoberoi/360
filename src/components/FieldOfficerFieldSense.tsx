@@ -188,6 +188,29 @@ function toFoUnits(rows: ScopeRow[]): FoUnit[] {
 }
 
 async function loadFoUnits(candidateId: string): Promise<FoUnit[]> {
+  const me = await supabase.rpc("current_user_candidate_id" as never);
+  if ((me.data as string | null) !== candidateId) {
+    // Viewer is an admin/manager looking at another officer: load THAT officer's sites.
+    const cu = await supabase.from("candidate_units" as never).select("unit_id").eq("candidate_id", candidateId);
+    const ids = (((cu.data ?? []) as unknown) as Array<{ unit_id: string }>).map((r) => r.unit_id);
+    const fv = await supabase.from("field_visits" as never).select("unit_id").eq("candidate_id", candidateId).limit(1000);
+    for (const r of ((fv.data ?? []) as unknown) as Array<{ unit_id: string }>) if (!ids.includes(r.unit_id)) ids.push(r.unit_id);
+    if (!ids.length) return [];
+    const { data: us } = await supabase
+      .from("units" as never)
+      .select("id, name, code, shipping_address1, latitude, longitude, customers(name)")
+      .in("id", ids);
+    return ((((us ?? []) as unknown) as Array<{ id: string; name: string; code: string | null; shipping_address1: string | null; latitude: number | null; longitude: number | null; customers: { name: string } | null }>)).map((u) => ({
+      unit_id: u.id,
+      unit_name: u.name,
+      unit_code: u.code,
+      customer_name: u.customers?.name ?? null,
+      branch_name: null,
+      address: u.shipping_address1,
+      latitude: u.latitude,
+      longitude: u.longitude,
+    })) as FoUnit[];
+  }
   const { data, error } = await supabase.rpc("get_my_field_scope" as never);
   let rows = ((data ?? []) as unknown) as ScopeRow[];
   if (error) throw error;
@@ -199,6 +222,38 @@ async function loadFoUnits(candidateId: string): Promise<FoUnit[]> {
   const units = toFoUnits(rows);
   writeUnitsSnapshot(candidateId, units);
   return units;
+}
+
+function ProofThumb({ path, label }: { path: string | null | undefined; label: string }) {
+  const q = useQuery({
+    queryKey: ["fv-proof", path],
+    enabled: !!path,
+    staleTime: 8 * 60_000,
+    queryFn: async () => (await supabase.storage.from("field-visit-proofs").createSignedUrl(path!, 600)).data?.signedUrl ?? null,
+  });
+  return (
+    <div className="flex flex-col items-center gap-1">
+      {q.data ? (
+        <a href={q.data} target="_blank" rel="noreferrer">
+          <img src={q.data} alt={label} className="h-16 w-16 rounded-md border border-border bg-background object-cover" />
+        </a>
+      ) : (
+        <div className="flex h-16 w-16 items-center justify-center rounded-md border border-dashed border-border text-[9px] text-muted-foreground">
+          {path ? "…" : "None"}
+        </div>
+      )}
+      <span className="text-[9px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
+    </div>
+  );
+}
+
+function GeoLink({ label, lat, lng }: { label: string; lat: number | null; lng: number | null }) {
+  if (lat == null || lng == null) return <span className="text-muted-foreground">{label}: —</span>;
+  return (
+    <a className="text-primary underline" target="_blank" rel="noreferrer" href={`https://www.google.com/maps?q=${lat},${lng}`}>
+      {label}: {Number(lat).toFixed(5)}, {Number(lng).toFixed(5)}
+    </a>
+  );
 }
 
 
@@ -1521,6 +1576,16 @@ function RangeInsightsPanel({
                       "{v.visit_notes}"
                     </div>
                   )}
+                  <div className="mt-2 flex flex-wrap items-start gap-3">
+                    <ProofThumb path={v.check_in_selfie_path} label="Check-in selfie" />
+                    <ProofThumb path={v.client_photo_url} label="Client photo" />
+                    <ProofThumb path={v.client_signature_url} label="Signature" />
+                    <div className="flex min-w-0 flex-col gap-1 text-[11px]">
+                      {v.client_name && <span className="font-semibold text-foreground">Client: {v.client_name}</span>}
+                      <GeoLink label="In" lat={v.check_in_lat} lng={v.check_in_lng} />
+                      <GeoLink label="Out" lat={v.check_out_lat} lng={v.check_out_lng} />
+                    </div>
+                  </div>
                 </li>
               );
             })}
