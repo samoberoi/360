@@ -256,7 +256,7 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
     queryFn: async () => {
       const { data, error } = await supabase
         .from("self_attendance_punches" as never)
-        .select("id, check_in_at, check_in_lat, check_in_lng, check_out_at, check_out_lat, check_out_lng")
+        .select("id, check_in_at, check_in_lat, check_in_lng, check_out_at, check_out_lat, check_out_lng, distance_km")
         .eq("candidate_id", candidateId)
         .eq("punch_date", effectiveDate)
         .maybeSingle();
@@ -269,6 +269,7 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
         check_out_at: string | null;
         check_out_lat: number | null;
         check_out_lng: number | null;
+        distance_km: number | string | null;
       } | null) ?? null;
     },
     refetchInterval: isHistorical ? false : 30_000,
@@ -305,6 +306,18 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
     enabled: !isHistorical,
   });
 
+  // Only the officer themselves can record a visit (enforced in the database
+  // too). Viewers with Radar access see the same day read-only.
+  const myCandidateQ = useQuery({
+    queryKey: ["my-candidate-id"],
+    staleTime: 10 * 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("current_user_candidate_id" as never);
+      if (error) throw error;
+      return (data as string | null) ?? null;
+    },
+  });
+  const isSelf = !myCandidateQ.isLoading && myCandidateQ.data === candidateId;
   const units = unitsQ.data ?? [];
   const visits = visitsQ.data ?? [];
   const openVisit = visits.find((v) => !v.check_out_at) ?? null;
@@ -314,11 +327,12 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
     () => (openVisit ? units.find((u) => u.unit_id === openVisit.unit_id) ?? null : null),
     [openVisit, units],
   );
-  const snappedPosition = useMemo(() => unitGeo(openVisitUnit) ?? pos, [openVisitUnit, pos]);
+  const snappedPosition = useMemo(() => unitGeo(openVisitUnit) ?? (isSelf ? pos : null), [openVisitUnit, pos, isSelf]);
 
   // Initial geolocation + polling for telemetry + track points (live only)
   useEffect(() => {
-    if (isHistorical) return;
+    // Only the officer's own device reads GPS; viewers must never inject their position.
+    if (isHistorical || !isSelf) return;
     let cancelled = false;
     let timer: number | null = null;
 
@@ -357,7 +371,7 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
       cancelled = true;
       if (timer) window.clearInterval(timer);
     };
-  }, [candidateId, isOnDuty, punchQ.data?.id, openVisit?.id, qc]);
+  }, [candidateId, isOnDuty, isSelf, punchQ.data?.id, openVisit?.id, qc]);
 
   const track = trackQ.data ?? [];
   const routeCoords = useMemo(() => {
@@ -456,21 +470,9 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
   }, [routeCoords]);
   // Server-calculated distance (filters GPS jitter, poor fixes and jumps).
   const serverKm = Number((punchQ.data as { distance_km?: number | string | null } | null | undefined)?.distance_km);
-  const totalKmToday = Number.isFinite(serverKm) && punchQ.data ? serverKm : routeKm;
+  const totalKmToday = punchQ.data?.distance_km != null && Number.isFinite(serverKm) ? serverKm : routeKm;
 
 
-  // Only the officer themselves can record a visit (enforced in the database
-  // too). Viewers with Radar access see the same day read-only.
-  const myCandidateQ = useQuery({
-    queryKey: ["my-candidate-id"],
-    staleTime: 10 * 60_000,
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc("current_user_candidate_id" as never);
-      if (error) throw error;
-      return (data as string | null) ?? null;
-    },
-  });
-  const isSelf = !myCandidateQ.isLoading && myCandidateQ.data === candidateId;
   const canRecord = isSelf && !isHistorical;
 
   // Check-in / Check-out dialogs
