@@ -498,7 +498,7 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
     const p = punchQ.data;
     const login = p?.check_in_at && hasGeo(p.check_in_lat, p.check_in_lng) ? { lat: Number(p.check_in_lat), lng: Number(p.check_in_lng) } : null;
     const logout = p?.check_out_at && hasGeo(p.check_out_lat, p.check_out_lng) ? { lat: Number(p.check_out_lat), lng: Number(p.check_out_lng) } : null;
-    const trail = track.map((t) => ({ lat: Number(t.lat), lng: Number(t.lng) })).filter((t) => Number.isFinite(t.lat) && Number.isFinite(t.lng));
+    const trail = track.filter((t) => (t as { counted?: boolean }).counted !== false).map((t) => ({ lat: Number(t.lat), lng: Number(t.lng) })).filter((t) => Number.isFinite(t.lat) && Number.isFinite(t.lng));
     const mapVisits = visits.flatMap((v) => {
       const u = units.find((x) => x.unit_id === v.unit_id) ?? null;
       const g = unitGeo(u) ?? (hasGeo(v.check_in_lat, v.check_in_lng) ? { lat: Number(v.check_in_lat), lng: Number(v.check_in_lng) } : null);

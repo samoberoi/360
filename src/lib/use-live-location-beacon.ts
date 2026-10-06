@@ -5,9 +5,9 @@ import { fetchTodayPunch, pushTelemetry, readBattery, readNetworkType, distanceM
 import { insertTrackPoint } from "@/lib/field-visits";
 
 /** How often (ms) we push the officer's position while on duty. */
-const BEACON_INTERVAL_MS = 25_000;
+const BEACON_INTERVAL_MS = 30_000;
 /** Minimum movement (m) before a new track point is stored. */
-const MIN_MOVE_METERS = 25;
+const MIN_MOVE_METERS = 15;
 /** Re-check the punch state at this cadence so check-in/out is picked up without a reload. */
 const PUNCH_POLL_MS = 60_000;
 
