@@ -120,7 +120,7 @@ function MyTeamPage() {
   }), [qc, selectedDate]);
 
   const dataQ = useQuery({
-    queryKey: ["field-sense-team", selectedDate],
+    queryKey: ["field-sense-team", selectedDate, scopeKey],
     refetchInterval: selectedDate === todayIso() ? 15_000 : false,
     staleTime: selectedDate === todayIso() ? 15_000 : 5 * 60_000,
     placeholderData: (prev) => prev,
