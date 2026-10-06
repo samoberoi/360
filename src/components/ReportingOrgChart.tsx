@@ -78,6 +78,7 @@ async function load() {
     else roots.push(p);
   }
   const label = (p: P) =>
+    (p.designation_id && p.role_key !== "field_officer" && desig.get(p.designation_id) !== "Field Officer" && desig.get(p.designation_id)) ||
     (p.role_key && !["field_officer", ...GUARD_ROLES].includes(p.role_key) && roleName.get(p.role_key)) ||
     (p.designation_id && desig.get(p.designation_id)) ||
     (p.role_key && roleName.get(p.role_key)) ||

@@ -78,6 +78,13 @@
       "when": 1791280326249,
       "tag": "0010_managers_read_team_proofs",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791282520563,
+      "tag": "0011_notify_admins_by_role_and_hierarchy",
+      "breakpoints": true
     }
   ]
 }

@@ -12,3 +12,4 @@
 
 ## Open
 - [ ] Publish all pending changes to the live site
+- [x] Push notifications targeted by role + reporting hierarchy (currently everyone gets everything)
