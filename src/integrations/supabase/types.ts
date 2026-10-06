@@ -6374,6 +6374,10 @@ export type Database = {
           unit_id: string
         }[]
       }
+      fo_recompute_distance: {
+        Args: { _cand: string; _date: string }
+        Returns: number
+      }
       generate_final_invoice: {
         Args: {
           _billing_state: string
