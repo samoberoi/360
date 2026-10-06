@@ -7,33 +7,60 @@ export type DayMapVisit = { id: string; seq: number; lat: number; lng: number; l
 const STREET = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const SAT = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
-/** Snap a GPS trail onto real roads (OSRM map-matching), chunked; falls back to raw points. */
-async function snapToRoads(path: [number, number][], signal: AbortSignal): Promise<[number, number][]> {
-  if (path.length < 2) return path;
+/** Thin points closer than `min` metres so routing requests stay small. */
+function thin(path: [number, number][], min = 40): [number, number][] {
   const out: [number, number][] = [];
-  const CH = 80;
-  for (let i = 0; i < path.length - 1; i += CH - 1) {
-    const chunk = path.slice(i, i + CH);
-    if (chunk.length < 2) break;
-    const coords = chunk.map(([la, ln]) => `${ln.toFixed(6)},${la.toFixed(6)}`).join(";");
-    const rad = chunk.map(() => "35").join(";");
-    try {
-      const r = await fetch(
-        `https://router.project-osrm.org/match/v1/driving/${coords}?geometries=geojson&overview=full&radiuses=${rad}&gaps=ignore&tidy=true`,
-        { signal },
-      );
-      const j = r.ok ? await r.json() : null;
-      const ms = (j?.matchings ?? []) as Array<{ geometry: { coordinates: [number, number][] } }>;
-      if (j?.code === "Ok" && ms.length) {
-        for (const m of ms) for (const [ln, la] of m.geometry.coordinates) out.push([la, ln]);
-        continue;
-      }
-    } catch (e) {
-      if (signal.aborted) throw e;
-    }
-    out.push(...chunk);
+  for (const p of path) {
+    const q = out[out.length - 1];
+    if (!q) { out.push(p); continue; }
+    const dy = (p[0] - q[0]) * 111_000;
+    const dx = (p[1] - q[1]) * 111_000 * Math.cos((p[0] * Math.PI) / 180);
+    if (Math.hypot(dx, dy) >= min) out.push(p);
   }
-  return out.length > 1 ? out : path;
+  const last = path[path.length - 1];
+  if (last && out[out.length - 1] !== last) out.push(last);
+  return out;
+}
+
+async function osrm(kind: "match" | "route", chunk: [number, number][], signal: AbortSignal): Promise<[number, number][] | null> {
+  const coords = chunk.map(([la, ln]) => `${ln.toFixed(6)},${la.toFixed(6)}`).join(";");
+  const extra = kind === "match" ? `&radiuses=${chunk.map(() => "40").join(";")}&gaps=split&tidy=true` : "&continue_straight=false";
+  const r = await fetch(`https://router.project-osrm.org/${kind}/v1/driving/${coords}?geometries=geojson&overview=full${extra}`, { signal });
+  if (!r.ok) return null;
+  const j = await r.json();
+  const list = (kind === "match" ? j?.matchings : j?.routes) as Array<{ geometry: { coordinates: [number, number][] } }> | undefined;
+  if (j?.code !== "Ok" || !list?.length) return null;
+  const pts: [number, number][] = [];
+  for (const m of kind === "match" ? list : list.slice(0, 1)) for (const [ln, la] of m.geometry.coordinates) pts.push([la, ln]);
+  // A split match leaves holes — only trust it if it reaches both ends.
+  if (kind === "match" && list.length > 1) return null;
+  return pts.length > 1 ? pts : null;
+}
+
+/** Draw the trail on real roads: map-match the GPS, and route any part that can't be matched. Never straight lines. */
+async function snapToRoads(path: [number, number][], signal: AbortSignal): Promise<[number, number][]> {
+  const pts = thin(path);
+  if (pts.length < 2) return pts;
+  const out: [number, number][] = [];
+  const CH = 25;
+  for (let i = 0; i < pts.length - 1; i += CH - 1) {
+    const chunk = pts.slice(i, i + CH);
+    if (chunk.length < 2) break;
+    let seg: [number, number][] | null = null;
+    try { seg = await osrm("match", chunk, signal); } catch (e) { if (signal.aborted) throw e; }
+    if (!seg) { try { seg = await osrm("route", chunk, signal); } catch (e) { if (signal.aborted) throw e; } }
+    if (!seg) {
+      // Route each hop on its own as a last resort.
+      seg = [];
+      for (let k = 1; k < chunk.length; k += 1) {
+        let hop: [number, number][] | null = null;
+        try { hop = await osrm("route", [chunk[k - 1], chunk[k]], signal); } catch (e) { if (signal.aborted) throw e; }
+        seg.push(...(hop ?? [chunk[k - 1], chunk[k]]));
+      }
+    }
+    out.push(...seg);
+  }
+  return out.length > 1 ? out : pts;
 }
 
 /** Day trail map: login, visits (numbered), logout, and the GPS trail / live position. */
@@ -63,11 +90,12 @@ export function OfficerDayMap({
   const [ready, setReady] = useState(false);
   const [sat, setSat] = useState(false);
   const [roadPath, setRoadPath] = useState<[number, number][] | null>(null);
-  const rawKey = `${login?.lat},${login?.lng}|${trail.length}|${trail[trail.length - 1]?.lat}|${logout?.lat}`;
+  const rawKey = `${login?.lat},${login?.lng}|${trail.length}|${trail[trail.length - 1]?.lat}|${logout?.lat}|${live?.lat?.toFixed(4)},${live?.lng?.toFixed(4)}`;
   useEffect(() => {
     const path: [number, number][] = [];
     if (login) path.push([login.lat, login.lng]);
     for (const p of trail) path.push([p.lat, p.lng]);
+    if (live && !logout) path.push([live.lat, live.lng]);
     if (logout) path.push([logout.lat, logout.lng]);
     if (path.length < 2) { setRoadPath(null); return; }
     const ac = new AbortController();
@@ -118,8 +146,8 @@ export function OfficerDayMap({
     for (const p of trail) path.push([p.lat, p.lng]);
     if (live && !logout) path.push([live.lat, live.lng]);
     if (logout) path.push([logout.lat, logout.lng]);
-    const drawn: [number, number][] = roadPath ? [...roadPath] : path;
-    if (roadPath && live && !logout) drawn.push([live.lat, live.lng]);
+    // Only draw road-routed geometry; never a straight connector.
+    const drawn: [number, number][] = roadPath ?? [];
     if (drawn.length > 1) L.polyline(drawn, { color: "#3b82f6", weight: 4, opacity: 0.85 }).addTo(layer);
     bounds.push(...path);
 
