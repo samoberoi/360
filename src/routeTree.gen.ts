@@ -9,145 +9,125 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WelcomeRouteImport } from './routes/welcome'
-import { Route as RequestDataDeletionRouteImport } from './routes/request-data-deletion'
-import { Route as PrivacypolicyRouteImport } from './routes/privacypolicy'
-import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DigilockerCallbackRouteImport } from './routes/digilocker.callback'
-import { Route as AdminWorkflowManagerRouteImport } from './routes/admin.workflow-manager'
-import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
-import { Route as AdminSystemLogsRouteImport } from './routes/admin.system-logs'
-import { Route as AdminServiceTypeManagerRouteImport } from './routes/admin.service-type-manager'
-import { Route as AdminRolesManagerRouteImport } from './routes/admin.roles-manager'
-import { Route as AdminRbacRouteImport } from './routes/admin.rbac'
-import { Route as AdminPublicHolidayManagerRouteImport } from './routes/admin.public-holiday-manager'
-import { Route as AdminProfileRouteImport } from './routes/admin.profile'
-import { Route as AdminProfessionalTaxManagerRouteImport } from './routes/admin.professional-tax-manager'
-import { Route as AdminPolicyManagerRouteImport } from './routes/admin.policy-manager'
-import { Route as AdminPlatformSettingsRouteImport } from './routes/admin.platform-settings'
-import { Route as AdminPayrollManagerRouteImport } from './routes/admin.payroll-manager'
-import { Route as AdminPayrollDaysManagerRouteImport } from './routes/admin.payroll-days-manager'
-import { Route as AdminPayrollRouteImport } from './routes/admin.payroll'
-import { Route as AdminOrgSettingsRouteImport } from './routes/admin.org-settings'
-import { Route as AdminOffboardingReasonManagerRouteImport } from './routes/admin.offboarding-reason-manager'
-import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
-import { Route as AdminMyReporteesRouteImport } from './routes/admin.my-reportees'
-import { Route as AdminMyInventoryRouteImport } from './routes/admin.my-inventory'
-import { Route as AdminMyAttendanceRouteImport } from './routes/admin.my-attendance'
-import { Route as AdminMisManagerRouteImport } from './routes/admin.mis-manager'
-import { Route as AdminMigrationUtilityRouteImport } from './routes/admin.migration-utility'
-import { Route as AdminLwfManagerRouteImport } from './routes/admin.lwf-manager'
-import { Route as AdminLanguageManagerRouteImport } from './routes/admin.language-manager'
-import { Route as AdminInvoiceNumberingRouteImport } from './routes/admin.invoice-numbering'
-import { Route as AdminInvoiceRouteImport } from './routes/admin.invoice'
-import { Route as AdminInventoryRouteImport } from './routes/admin.inventory'
-import { Route as AdminFieldDashboardRouteImport } from './routes/admin.field-dashboard'
-import { Route as AdminExServiceManagerRouteImport } from './routes/admin.ex-service-manager'
-import { Route as AdminEsicBranchManagerRouteImport } from './routes/admin.esic-branch-manager'
-import { Route as AdminEmployerContributionsRouteImport } from './routes/admin.employer-contributions'
-import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
-import { Route as AdminEmployeeDashboardRouteImport } from './routes/admin.employee-dashboard'
-import { Route as AdminDutyManagerRouteImport } from './routes/admin.duty-manager'
-import { Route as AdminDesignationManagerRouteImport } from './routes/admin.designation-manager'
-import { Route as AdminDepartmentManagerRouteImport } from './routes/admin.department-manager'
-import { Route as AdminDeductionsRouteImport } from './routes/admin.deductions'
-import { Route as AdminDeductionTypeManagerRouteImport } from './routes/admin.deduction-type-manager'
-import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
-import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
-import { Route as AdminCostComponentManagerRouteImport } from './routes/admin.cost-component-manager'
-import { Route as AdminControlCenterRouteImport } from './routes/admin.control-center'
-import { Route as AdminCompliancePtRouteImport } from './routes/admin.compliance-pt'
-import { Route as AdminComplianceLwfRouteImport } from './routes/admin.compliance-lwf'
-import { Route as AdminComplianceInsuranceRouteImport } from './routes/admin.compliance-insurance'
-import { Route as AdminComplianceGpaipRegisterRouteImport } from './routes/admin.compliance-gpaip-register'
-import { Route as AdminComplianceRouteImport } from './routes/admin.compliance'
-import { Route as AdminCompanyDocumentsRouteImport } from './routes/admin.company-documents'
-import { Route as AdminBillingTypeManagerRouteImport } from './routes/admin.billing-type-manager'
-import { Route as AdminAttendanceCodeManagerRouteImport } from './routes/admin.attendance-code-manager'
-import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
-import { Route as AdminAssetsRouteImport } from './routes/admin.assets'
-import { Route as AdminAssetManagerRouteImport } from './routes/admin.asset-manager'
-import { Route as AdminAllowanceManagerRouteImport } from './routes/admin.allowance-manager'
-import { Route as AdminAdditionsRouteImport } from './routes/admin.additions'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as PrivacypolicyRouteImport } from './routes/privacypolicy'
+import { Route as RequestDataDeletionRouteImport } from './routes/request-data-deletion'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as AdminAdditionTypeManagerRouteImport } from './routes/admin.addition-type-manager'
-import { Route as AdminPayrollIndexRouteImport } from './routes/admin.payroll.index'
-import { Route as AdminInvoiceIndexRouteImport } from './routes/admin.invoice.index'
-import { Route as AdminFieldSenseIndexRouteImport } from './routes/admin.field-sense.index'
-import { Route as AdminCustomersIndexRouteImport } from './routes/admin.customers.index'
-import { Route as AdminAttendanceIndexRouteImport } from './routes/admin.attendance.index'
-import { Route as ApiPublicSheetOcrRouteImport } from './routes/api/public/sheet-ocr'
-import { Route as ApiPublicOtpHealthRouteImport } from './routes/api/public/otp-health'
-import { Route as ApiPublicDataDeletionRequestRouteImport } from './routes/api/public/data-deletion-request'
-import { Route as AdminVehiclesServiceManagerRouteImport } from './routes/admin.vehicles.service-manager'
-import { Route as AdminVehiclesPucsRouteImport } from './routes/admin.vehicles.pucs'
-import { Route as AdminVehiclesInventoryRouteImport } from './routes/admin.vehicles.inventory'
-import { Route as AdminVehiclesInsurancesRouteImport } from './routes/admin.vehicles.insurances'
-import { Route as AdminVehiclesInsightLabRouteImport } from './routes/admin.vehicles.insight-lab'
-import { Route as AdminVehiclesFastagsRouteImport } from './routes/admin.vehicles.fastags'
-import { Route as AdminVehiclesExpenseManagerRouteImport } from './routes/admin.vehicles.expense-manager'
-import { Route as AdminPayrollUnitIdRouteImport } from './routes/admin.payroll.$unitId'
-import { Route as AdminInvoiceUnitIdRouteImport } from './routes/admin.invoice.$unitId'
-import { Route as AdminInventoryWorkflowsRouteImport } from './routes/admin.inventory.workflows'
-import { Route as AdminInventoryWarehousesRouteImport } from './routes/admin.inventory.warehouses'
-import { Route as AdminInventoryVendorsRouteImport } from './routes/admin.inventory.vendors'
-import { Route as AdminInventoryTransfersRouteImport } from './routes/admin.inventory.transfers'
-import { Route as AdminInventoryStockLedgerRouteImport } from './routes/admin.inventory.stock-ledger'
-import { Route as AdminInventoryStockRouteImport } from './routes/admin.inventory.stock'
-import { Route as AdminInventoryRateCardsRouteImport } from './routes/admin.inventory.rate-cards'
-import { Route as AdminInventoryPurchaseOrdersRouteImport } from './routes/admin.inventory.purchase-orders'
-import { Route as AdminInventoryItemsRouteImport } from './routes/admin.inventory.items'
-import { Route as AdminInventoryIssuancesRouteImport } from './routes/admin.inventory.issuances'
-import { Route as AdminInventoryGoodsReceiptsRouteImport } from './routes/admin.inventory.goods-receipts'
-import { Route as AdminInventoryDemandsRouteImport } from './routes/admin.inventory.demands'
-import { Route as AdminInventoryDashboardRouteImport } from './routes/admin.inventory.dashboard'
-import { Route as AdminInventoryCollectionsRouteImport } from './routes/admin.inventory.collections'
-import { Route as AdminInventoryCapsRouteImport } from './routes/admin.inventory.caps'
-import { Route as AdminFieldSenseTeamRouteImport } from './routes/admin.field-sense.team'
-import { Route as AdminFieldSenseReportsRouteImport } from './routes/admin.field-sense.reports'
-import { Route as AdminFieldSenseExpensesRouteImport } from './routes/admin.field-sense.expenses'
-import { Route as AdminFieldSenseAttendanceRulesRouteImport } from './routes/admin.field-sense.attendance-rules'
-import { Route as AdminCustomersUnitManagerRouteImport } from './routes/admin.customers.unit-manager'
-import { Route as AdminCustomersStateManagerRouteImport } from './routes/admin.customers.state-manager'
-import { Route as AdminCustomersCustomerManagerRouteImport } from './routes/admin.customers.customer-manager'
-import { Route as AdminCustomersBranchManagerRouteImport } from './routes/admin.customers.branch-manager'
-import { Route as AdminContractsClientContractsRouteImport } from './routes/admin.contracts.client-contracts'
-import { Route as AdminCandidatesRehireRouteImport } from './routes/admin.candidates.rehire'
-import { Route as AdminAttendanceEmployeeRouteImport } from './routes/admin.attendance.employee'
-import { Route as AdminAttendanceUnitIdRouteImport } from './routes/admin.attendance.$unitId'
-import { Route as AdminAssetsLoanManagerRouteImport } from './routes/admin.assets.loan-manager'
-import { Route as AdminAssetsInventoryRouteImport } from './routes/admin.assets.inventory'
+import { Route as AdminAdditionsRouteImport } from './routes/admin.additions'
+import { Route as AdminAllowanceManagerRouteImport } from './routes/admin.allowance-manager'
+import { Route as AdminAssetManagerRouteImport } from './routes/admin.asset-manager'
+import { Route as AdminAssetsRouteImport } from './routes/admin.assets'
+import { Route as AdminAttendanceRouteImport } from './routes/admin.attendance'
+import { Route as AdminAttendanceCodeManagerRouteImport } from './routes/admin.attendance-code-manager'
+import { Route as AdminBillingTypeManagerRouteImport } from './routes/admin.billing-type-manager'
+import { Route as AdminCompanyDocumentsRouteImport } from './routes/admin.company-documents'
+import { Route as AdminComplianceRouteImport } from './routes/admin.compliance'
+import { Route as AdminComplianceGpaipRegisterRouteImport } from './routes/admin.compliance-gpaip-register'
+import { Route as AdminComplianceInsuranceRouteImport } from './routes/admin.compliance-insurance'
+import { Route as AdminComplianceLwfRouteImport } from './routes/admin.compliance-lwf'
+import { Route as AdminCompliancePtRouteImport } from './routes/admin.compliance-pt'
+import { Route as AdminControlCenterRouteImport } from './routes/admin.control-center'
+import { Route as AdminCostComponentManagerRouteImport } from './routes/admin.cost-component-manager'
+import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminDeductionTypeManagerRouteImport } from './routes/admin.deduction-type-manager'
+import { Route as AdminDeductionsRouteImport } from './routes/admin.deductions'
+import { Route as AdminDepartmentManagerRouteImport } from './routes/admin.department-manager'
+import { Route as AdminDesignationManagerRouteImport } from './routes/admin.designation-manager'
+import { Route as AdminDutyManagerRouteImport } from './routes/admin.duty-manager'
+import { Route as AdminEmployeeDashboardRouteImport } from './routes/admin.employee-dashboard'
+import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
+import { Route as AdminEmployerContributionsRouteImport } from './routes/admin.employer-contributions'
+import { Route as AdminEsicBranchManagerRouteImport } from './routes/admin.esic-branch-manager'
+import { Route as AdminExServiceManagerRouteImport } from './routes/admin.ex-service-manager'
+import { Route as AdminFieldDashboardRouteImport } from './routes/admin.field-dashboard'
+import { Route as AdminInventoryRouteImport } from './routes/admin.inventory'
+import { Route as AdminInvoiceRouteImport } from './routes/admin.invoice'
+import { Route as AdminInvoiceNumberingRouteImport } from './routes/admin.invoice-numbering'
+import { Route as AdminLanguageManagerRouteImport } from './routes/admin.language-manager'
+import { Route as AdminLwfManagerRouteImport } from './routes/admin.lwf-manager'
+import { Route as AdminMigrationUtilityRouteImport } from './routes/admin.migration-utility'
+import { Route as AdminMisManagerRouteImport } from './routes/admin.mis-manager'
+import { Route as AdminMyAttendanceRouteImport } from './routes/admin.my-attendance'
+import { Route as AdminMyInventoryRouteImport } from './routes/admin.my-inventory'
+import { Route as AdminMyReporteesRouteImport } from './routes/admin.my-reportees'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
+import { Route as AdminOffboardingReasonManagerRouteImport } from './routes/admin.offboarding-reason-manager'
+import { Route as AdminOrgSettingsRouteImport } from './routes/admin.org-settings'
+import { Route as AdminPayrollRouteImport } from './routes/admin.payroll'
+import { Route as AdminPayrollDaysManagerRouteImport } from './routes/admin.payroll-days-manager'
+import { Route as AdminPayrollManagerRouteImport } from './routes/admin.payroll-manager'
+import { Route as AdminPlatformSettingsRouteImport } from './routes/admin.platform-settings'
+import { Route as AdminPolicyManagerRouteImport } from './routes/admin.policy-manager'
+import { Route as AdminProfessionalTaxManagerRouteImport } from './routes/admin.professional-tax-manager'
+import { Route as AdminProfileRouteImport } from './routes/admin.profile'
+import { Route as AdminPublicHolidayManagerRouteImport } from './routes/admin.public-holiday-manager'
+import { Route as AdminRbacRouteImport } from './routes/admin.rbac'
+import { Route as AdminRolesManagerRouteImport } from './routes/admin.roles-manager'
+import { Route as AdminServiceTypeManagerRouteImport } from './routes/admin.service-type-manager'
+import { Route as AdminSystemLogsRouteImport } from './routes/admin.system-logs'
+import { Route as AdminVehiclesRouteImport } from './routes/admin.vehicles'
+import { Route as AdminWorkflowManagerRouteImport } from './routes/admin.workflow-manager'
+import { Route as DigilockerCallbackRouteImport } from './routes/digilocker.callback'
 import { Route as AdminAssetsExpenseManagerRouteImport } from './routes/admin.assets.expense-manager'
-import { Route as ApiPublicNativePushRouteImport } from './routes/api/public/native/push'
-import { Route as ApiPublicHooksDailyPeoplePingsRouteImport } from './routes/api/public/hooks/daily-people-pings'
-import { Route as AdminFieldSenseOfficerIdRouteImport } from './routes/admin.field-sense.officer.$id'
+import { Route as AdminAssetsInventoryRouteImport } from './routes/admin.assets.inventory'
+import { Route as AdminAssetsLoanManagerRouteImport } from './routes/admin.assets.loan-manager'
+import { Route as AdminAttendanceIndexRouteImport } from './routes/admin.attendance.index'
+import { Route as AdminAttendanceUnitIdRouteImport } from './routes/admin.attendance.$unitId'
+import { Route as AdminAttendanceEmployeeRouteImport } from './routes/admin.attendance.employee'
+import { Route as AdminCandidatesRehireRouteImport } from './routes/admin.candidates.rehire'
+import { Route as AdminContractsClientContractsRouteImport } from './routes/admin.contracts.client-contracts'
+import { Route as AdminCustomersIndexRouteImport } from './routes/admin.customers.index'
+import { Route as AdminCustomersBranchManagerRouteImport } from './routes/admin.customers.branch-manager'
+import { Route as AdminCustomersCustomerManagerRouteImport } from './routes/admin.customers.customer-manager'
+import { Route as AdminCustomersStateManagerRouteImport } from './routes/admin.customers.state-manager'
+import { Route as AdminCustomersUnitManagerRouteImport } from './routes/admin.customers.unit-manager'
+import { Route as AdminFieldSenseIndexRouteImport } from './routes/admin.field-sense.index'
+import { Route as AdminFieldSenseAttendanceRulesRouteImport } from './routes/admin.field-sense.attendance-rules'
+import { Route as AdminFieldSenseExpensesRouteImport } from './routes/admin.field-sense.expenses'
+import { Route as AdminFieldSenseReportsRouteImport } from './routes/admin.field-sense.reports'
+import { Route as AdminFieldSenseTeamRouteImport } from './routes/admin.field-sense.team'
+import { Route as AdminInventoryCapsRouteImport } from './routes/admin.inventory.caps'
+import { Route as AdminInventoryCollectionsRouteImport } from './routes/admin.inventory.collections'
+import { Route as AdminInventoryDashboardRouteImport } from './routes/admin.inventory.dashboard'
+import { Route as AdminInventoryDemandsRouteImport } from './routes/admin.inventory.demands'
+import { Route as AdminInventoryGoodsReceiptsRouteImport } from './routes/admin.inventory.goods-receipts'
+import { Route as AdminInventoryIssuancesRouteImport } from './routes/admin.inventory.issuances'
+import { Route as AdminInventoryItemsRouteImport } from './routes/admin.inventory.items'
+import { Route as AdminInventoryPurchaseOrdersRouteImport } from './routes/admin.inventory.purchase-orders'
+import { Route as AdminInventoryRateCardsRouteImport } from './routes/admin.inventory.rate-cards'
+import { Route as AdminInventoryStockRouteImport } from './routes/admin.inventory.stock'
+import { Route as AdminInventoryStockLedgerRouteImport } from './routes/admin.inventory.stock-ledger'
+import { Route as AdminInventoryTransfersRouteImport } from './routes/admin.inventory.transfers'
+import { Route as AdminInventoryVendorsRouteImport } from './routes/admin.inventory.vendors'
+import { Route as AdminInventoryWarehousesRouteImport } from './routes/admin.inventory.warehouses'
+import { Route as AdminInventoryWorkflowsRouteImport } from './routes/admin.inventory.workflows'
+import { Route as AdminInvoiceIndexRouteImport } from './routes/admin.invoice.index'
+import { Route as AdminInvoiceUnitIdRouteImport } from './routes/admin.invoice.$unitId'
+import { Route as AdminPayrollIndexRouteImport } from './routes/admin.payroll.index'
+import { Route as AdminPayrollUnitIdRouteImport } from './routes/admin.payroll.$unitId'
+import { Route as AdminVehiclesExpenseManagerRouteImport } from './routes/admin.vehicles.expense-manager'
+import { Route as AdminVehiclesFastagsRouteImport } from './routes/admin.vehicles.fastags'
+import { Route as AdminVehiclesInsightLabRouteImport } from './routes/admin.vehicles.insight-lab'
+import { Route as AdminVehiclesInsurancesRouteImport } from './routes/admin.vehicles.insurances'
+import { Route as AdminVehiclesInventoryRouteImport } from './routes/admin.vehicles.inventory'
+import { Route as AdminVehiclesPucsRouteImport } from './routes/admin.vehicles.pucs'
+import { Route as AdminVehiclesServiceManagerRouteImport } from './routes/admin.vehicles.service-manager'
+import { Route as ApiPublicDataDeletionRequestRouteImport } from './routes/api/public/data-deletion-request'
+import { Route as ApiPublicOtpHealthRouteImport } from './routes/api/public/otp-health'
+import { Route as ApiPublicSheetOcrRouteImport } from './routes/api/public/sheet-ocr'
 import { Route as AdminCandidatesIdDetailsRouteImport } from './routes/admin.candidates.$id.details'
+import { Route as AdminFieldSenseOfficerIdRouteImport } from './routes/admin.field-sense.officer.$id'
+import { Route as ApiPublicHooksDailyPeoplePingsRouteImport } from './routes/api/public/hooks/daily-people-pings'
+import { Route as ApiPublicNativePushRouteImport } from './routes/api/public/native/push'
 
-const WelcomeRoute = WelcomeRouteImport.update({
-  id: '/welcome',
-  path: '/welcome',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RequestDataDeletionRoute = RequestDataDeletionRouteImport.update({
-  id: '/request-data-deletion',
-  path: '/request-data-deletion',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacypolicyRoute = PrivacypolicyRouteImport.update({
-  id: '/privacypolicy',
-  path: '/privacypolicy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
-  id: '/privacy-policy',
-  path: '/privacy-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -155,267 +135,60 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DigilockerCallbackRoute = DigilockerCallbackRouteImport.update({
-  id: '/digilocker/callback',
-  path: '/digilocker/callback',
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminWorkflowManagerRoute = AdminWorkflowManagerRouteImport.update({
-  id: '/workflow-manager',
-  path: '/workflow-manager',
-  getParentRoute: () => AdminRoute,
+const PrivacypolicyRoute = PrivacypolicyRouteImport.update({
+  id: '/privacypolicy',
+  path: '/privacypolicy',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
-  id: '/vehicles',
-  path: '/vehicles',
-  getParentRoute: () => AdminRoute,
+const RequestDataDeletionRoute = RequestDataDeletionRouteImport.update({
+  id: '/request-data-deletion',
+  path: '/request-data-deletion',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminSystemLogsRoute = AdminSystemLogsRouteImport.update({
-  id: '/system-logs',
-  path: '/system-logs',
-  getParentRoute: () => AdminRoute,
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminServiceTypeManagerRoute = AdminServiceTypeManagerRouteImport.update({
-  id: '/service-type-manager',
-  path: '/service-type-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRolesManagerRoute = AdminRolesManagerRouteImport.update({
-  id: '/roles-manager',
-  path: '/roles-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminRbacRoute = AdminRbacRouteImport.update({
-  id: '/rbac',
-  path: '/rbac',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPublicHolidayManagerRoute =
-  AdminPublicHolidayManagerRouteImport.update({
-    id: '/public-holiday-manager',
-    path: '/public-holiday-manager',
+const AdminAdditionTypeManagerRoute =
+  AdminAdditionTypeManagerRouteImport.update({
+    id: '/addition-type-manager',
+    path: '/addition-type-manager',
     getParentRoute: () => AdminRoute,
   } as any)
-const AdminProfileRoute = AdminProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+const AdminAdditionsRoute = AdminAdditionsRouteImport.update({
+  id: '/additions',
+  path: '/additions',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminProfessionalTaxManagerRoute =
-  AdminProfessionalTaxManagerRouteImport.update({
-    id: '/professional-tax-manager',
-    path: '/professional-tax-manager',
-    getParentRoute: () => AdminRoute,
-  } as any)
-const AdminPolicyManagerRoute = AdminPolicyManagerRouteImport.update({
-  id: '/policy-manager',
-  path: '/policy-manager',
+const AdminAllowanceManagerRoute = AdminAllowanceManagerRouteImport.update({
+  id: '/allowance-manager',
+  path: '/allowance-manager',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminPlatformSettingsRoute = AdminPlatformSettingsRouteImport.update({
-  id: '/platform-settings',
-  path: '/platform-settings',
+const AdminAssetManagerRoute = AdminAssetManagerRouteImport.update({
+  id: '/asset-manager',
+  path: '/asset-manager',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminPayrollManagerRoute = AdminPayrollManagerRouteImport.update({
-  id: '/payroll-manager',
-  path: '/payroll-manager',
+const AdminAssetsRoute = AdminAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminPayrollDaysManagerRoute = AdminPayrollDaysManagerRouteImport.update({
-  id: '/payroll-days-manager',
-  path: '/payroll-days-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPayrollRoute = AdminPayrollRouteImport.update({
-  id: '/payroll',
-  path: '/payroll',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminOrgSettingsRoute = AdminOrgSettingsRouteImport.update({
-  id: '/org-settings',
-  path: '/org-settings',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminOffboardingReasonManagerRoute =
-  AdminOffboardingReasonManagerRouteImport.update({
-    id: '/offboarding-reason-manager',
-    path: '/offboarding-reason-manager',
-    getParentRoute: () => AdminRoute,
-  } as any)
-const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMyReporteesRoute = AdminMyReporteesRouteImport.update({
-  id: '/my-reportees',
-  path: '/my-reportees',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMyInventoryRoute = AdminMyInventoryRouteImport.update({
-  id: '/my-inventory',
-  path: '/my-inventory',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMyAttendanceRoute = AdminMyAttendanceRouteImport.update({
-  id: '/my-attendance',
-  path: '/my-attendance',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMisManagerRoute = AdminMisManagerRouteImport.update({
-  id: '/mis-manager',
-  path: '/mis-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminMigrationUtilityRoute = AdminMigrationUtilityRouteImport.update({
-  id: '/migration-utility',
-  path: '/migration-utility',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLwfManagerRoute = AdminLwfManagerRouteImport.update({
-  id: '/lwf-manager',
-  path: '/lwf-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminLanguageManagerRoute = AdminLanguageManagerRouteImport.update({
-  id: '/language-manager',
-  path: '/language-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminInvoiceNumberingRoute = AdminInvoiceNumberingRouteImport.update({
-  id: '/invoice-numbering',
-  path: '/invoice-numbering',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminInvoiceRoute = AdminInvoiceRouteImport.update({
-  id: '/invoice',
-  path: '/invoice',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminInventoryRoute = AdminInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminFieldDashboardRoute = AdminFieldDashboardRouteImport.update({
-  id: '/field-dashboard',
-  path: '/field-dashboard',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminExServiceManagerRoute = AdminExServiceManagerRouteImport.update({
-  id: '/ex-service-manager',
-  path: '/ex-service-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEsicBranchManagerRoute = AdminEsicBranchManagerRouteImport.update({
-  id: '/esic-branch-manager',
-  path: '/esic-branch-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEmployerContributionsRoute =
-  AdminEmployerContributionsRouteImport.update({
-    id: '/employer-contributions',
-    path: '/employer-contributions',
-    getParentRoute: () => AdminRoute,
-  } as any)
-const AdminEmployeesRoute = AdminEmployeesRouteImport.update({
-  id: '/employees',
-  path: '/employees',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEmployeeDashboardRoute = AdminEmployeeDashboardRouteImport.update({
-  id: '/employee-dashboard',
-  path: '/employee-dashboard',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDutyManagerRoute = AdminDutyManagerRouteImport.update({
-  id: '/duty-manager',
-  path: '/duty-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDesignationManagerRoute = AdminDesignationManagerRouteImport.update({
-  id: '/designation-manager',
-  path: '/designation-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDepartmentManagerRoute = AdminDepartmentManagerRouteImport.update({
-  id: '/department-manager',
-  path: '/department-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDeductionsRoute = AdminDeductionsRouteImport.update({
-  id: '/deductions',
-  path: '/deductions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminDeductionTypeManagerRoute =
-  AdminDeductionTypeManagerRouteImport.update({
-    id: '/deduction-type-manager',
-    path: '/deduction-type-manager',
-    getParentRoute: () => AdminRoute,
-  } as any)
-const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCustomersRoute = AdminCustomersRouteImport.update({
-  id: '/customers',
-  path: '/customers',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCostComponentManagerRoute =
-  AdminCostComponentManagerRouteImport.update({
-    id: '/cost-component-manager',
-    path: '/cost-component-manager',
-    getParentRoute: () => AdminRoute,
-  } as any)
-const AdminControlCenterRoute = AdminControlCenterRouteImport.update({
-  id: '/control-center',
-  path: '/control-center',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCompliancePtRoute = AdminCompliancePtRouteImport.update({
-  id: '/compliance-pt',
-  path: '/compliance-pt',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminComplianceLwfRoute = AdminComplianceLwfRouteImport.update({
-  id: '/compliance-lwf',
-  path: '/compliance-lwf',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminComplianceInsuranceRoute =
-  AdminComplianceInsuranceRouteImport.update({
-    id: '/compliance-insurance',
-    path: '/compliance-insurance',
-    getParentRoute: () => AdminRoute,
-  } as any)
-const AdminComplianceGpaipRegisterRoute =
-  AdminComplianceGpaipRegisterRouteImport.update({
-    id: '/compliance-gpaip-register',
-    path: '/compliance-gpaip-register',
-    getParentRoute: () => AdminRoute,
-  } as any)
-const AdminComplianceRoute = AdminComplianceRouteImport.update({
-  id: '/compliance',
-  path: '/compliance',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminCompanyDocumentsRoute = AdminCompanyDocumentsRouteImport.update({
-  id: '/company-documents',
-  path: '/company-documents',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminBillingTypeManagerRoute = AdminBillingTypeManagerRouteImport.update({
-  id: '/billing-type-manager',
-  path: '/billing-type-manager',
+const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAttendanceCodeManagerRoute =
@@ -424,236 +197,315 @@ const AdminAttendanceCodeManagerRoute =
     path: '/attendance-code-manager',
     getParentRoute: () => AdminRoute,
   } as any)
-const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
+const AdminBillingTypeManagerRoute = AdminBillingTypeManagerRouteImport.update({
+  id: '/billing-type-manager',
+  path: '/billing-type-manager',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAssetsRoute = AdminAssetsRouteImport.update({
-  id: '/assets',
-  path: '/assets',
+const AdminCompanyDocumentsRoute = AdminCompanyDocumentsRouteImport.update({
+  id: '/company-documents',
+  path: '/company-documents',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAssetManagerRoute = AdminAssetManagerRouteImport.update({
-  id: '/asset-manager',
-  path: '/asset-manager',
+const AdminComplianceRoute = AdminComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAllowanceManagerRoute = AdminAllowanceManagerRouteImport.update({
-  id: '/allowance-manager',
-  path: '/allowance-manager',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAdditionsRoute = AdminAdditionsRouteImport.update({
-  id: '/additions',
-  path: '/additions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminAdditionTypeManagerRoute =
-  AdminAdditionTypeManagerRouteImport.update({
-    id: '/addition-type-manager',
-    path: '/addition-type-manager',
+const AdminComplianceGpaipRegisterRoute =
+  AdminComplianceGpaipRegisterRouteImport.update({
+    id: '/compliance-gpaip-register',
+    path: '/compliance-gpaip-register',
     getParentRoute: () => AdminRoute,
   } as any)
-const AdminPayrollIndexRoute = AdminPayrollIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminPayrollRoute,
-} as any)
-const AdminInvoiceIndexRoute = AdminInvoiceIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminInvoiceRoute,
-} as any)
-const AdminFieldSenseIndexRoute = AdminFieldSenseIndexRouteImport.update({
-  id: '/field-sense/',
-  path: '/field-sense/',
+const AdminComplianceInsuranceRoute =
+  AdminComplianceInsuranceRouteImport.update({
+    id: '/compliance-insurance',
+    path: '/compliance-insurance',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminComplianceLwfRoute = AdminComplianceLwfRouteImport.update({
+  id: '/compliance-lwf',
+  path: '/compliance-lwf',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminCustomersIndexRoute = AdminCustomersIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminCustomersRoute,
+const AdminCompliancePtRoute = AdminCompliancePtRouteImport.update({
+  id: '/compliance-pt',
+  path: '/compliance-pt',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminControlCenterRoute = AdminControlCenterRouteImport.update({
+  id: '/control-center',
+  path: '/control-center',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCostComponentManagerRoute =
+  AdminCostComponentManagerRouteImport.update({
+    id: '/cost-component-manager',
+    path: '/cost-component-manager',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminCustomersRoute = AdminCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDeductionTypeManagerRoute =
+  AdminDeductionTypeManagerRouteImport.update({
+    id: '/deduction-type-manager',
+    path: '/deduction-type-manager',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminDeductionsRoute = AdminDeductionsRouteImport.update({
+  id: '/deductions',
+  path: '/deductions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDepartmentManagerRoute = AdminDepartmentManagerRouteImport.update({
+  id: '/department-manager',
+  path: '/department-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDesignationManagerRoute = AdminDesignationManagerRouteImport.update({
+  id: '/designation-manager',
+  path: '/designation-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDutyManagerRoute = AdminDutyManagerRouteImport.update({
+  id: '/duty-manager',
+  path: '/duty-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEmployeeDashboardRoute = AdminEmployeeDashboardRouteImport.update({
+  id: '/employee-dashboard',
+  path: '/employee-dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEmployeesRoute = AdminEmployeesRouteImport.update({
+  id: '/employees',
+  path: '/employees',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEmployerContributionsRoute =
+  AdminEmployerContributionsRouteImport.update({
+    id: '/employer-contributions',
+    path: '/employer-contributions',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminEsicBranchManagerRoute = AdminEsicBranchManagerRouteImport.update({
+  id: '/esic-branch-manager',
+  path: '/esic-branch-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminExServiceManagerRoute = AdminExServiceManagerRouteImport.update({
+  id: '/ex-service-manager',
+  path: '/ex-service-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFieldDashboardRoute = AdminFieldDashboardRouteImport.update({
+  id: '/field-dashboard',
+  path: '/field-dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInventoryRoute = AdminInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInvoiceRoute = AdminInvoiceRouteImport.update({
+  id: '/invoice',
+  path: '/invoice',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInvoiceNumberingRoute = AdminInvoiceNumberingRouteImport.update({
+  id: '/invoice-numbering',
+  path: '/invoice-numbering',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLanguageManagerRoute = AdminLanguageManagerRouteImport.update({
+  id: '/language-manager',
+  path: '/language-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLwfManagerRoute = AdminLwfManagerRouteImport.update({
+  id: '/lwf-manager',
+  path: '/lwf-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMigrationUtilityRoute = AdminMigrationUtilityRouteImport.update({
+  id: '/migration-utility',
+  path: '/migration-utility',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMisManagerRoute = AdminMisManagerRouteImport.update({
+  id: '/mis-manager',
+  path: '/mis-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMyAttendanceRoute = AdminMyAttendanceRouteImport.update({
+  id: '/my-attendance',
+  path: '/my-attendance',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMyInventoryRoute = AdminMyInventoryRouteImport.update({
+  id: '/my-inventory',
+  path: '/my-inventory',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMyReporteesRoute = AdminMyReporteesRouteImport.update({
+  id: '/my-reportees',
+  path: '/my-reportees',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminOffboardingReasonManagerRoute =
+  AdminOffboardingReasonManagerRouteImport.update({
+    id: '/offboarding-reason-manager',
+    path: '/offboarding-reason-manager',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminOrgSettingsRoute = AdminOrgSettingsRouteImport.update({
+  id: '/org-settings',
+  path: '/org-settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPayrollRoute = AdminPayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPayrollDaysManagerRoute = AdminPayrollDaysManagerRouteImport.update({
+  id: '/payroll-days-manager',
+  path: '/payroll-days-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPayrollManagerRoute = AdminPayrollManagerRouteImport.update({
+  id: '/payroll-manager',
+  path: '/payroll-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPlatformSettingsRoute = AdminPlatformSettingsRouteImport.update({
+  id: '/platform-settings',
+  path: '/platform-settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPolicyManagerRoute = AdminPolicyManagerRouteImport.update({
+  id: '/policy-manager',
+  path: '/policy-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProfessionalTaxManagerRoute =
+  AdminProfessionalTaxManagerRouteImport.update({
+    id: '/professional-tax-manager',
+    path: '/professional-tax-manager',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminProfileRoute = AdminProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPublicHolidayManagerRoute =
+  AdminPublicHolidayManagerRouteImport.update({
+    id: '/public-holiday-manager',
+    path: '/public-holiday-manager',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminRbacRoute = AdminRbacRouteImport.update({
+  id: '/rbac',
+  path: '/rbac',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRolesManagerRoute = AdminRolesManagerRouteImport.update({
+  id: '/roles-manager',
+  path: '/roles-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminServiceTypeManagerRoute = AdminServiceTypeManagerRouteImport.update({
+  id: '/service-type-manager',
+  path: '/service-type-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSystemLogsRoute = AdminSystemLogsRouteImport.update({
+  id: '/system-logs',
+  path: '/system-logs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
+  id: '/vehicles',
+  path: '/vehicles',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminWorkflowManagerRoute = AdminWorkflowManagerRouteImport.update({
+  id: '/workflow-manager',
+  path: '/workflow-manager',
+  getParentRoute: () => AdminRoute,
+} as any)
+const DigilockerCallbackRoute = DigilockerCallbackRouteImport.update({
+  id: '/digilocker/callback',
+  path: '/digilocker/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAssetsExpenseManagerRoute =
+  AdminAssetsExpenseManagerRouteImport.update({
+    id: '/expense-manager',
+    path: '/expense-manager',
+    getParentRoute: () => AdminAssetsRoute,
+  } as any)
+const AdminAssetsInventoryRoute = AdminAssetsInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AdminAssetsRoute,
+} as any)
+const AdminAssetsLoanManagerRoute = AdminAssetsLoanManagerRouteImport.update({
+  id: '/loan-manager',
+  path: '/loan-manager',
+  getParentRoute: () => AdminAssetsRoute,
 } as any)
 const AdminAttendanceIndexRoute = AdminAttendanceIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminAttendanceRoute,
 } as any)
-const ApiPublicSheetOcrRoute = ApiPublicSheetOcrRouteImport.update({
-  id: '/api/public/sheet-ocr',
-  path: '/api/public/sheet-ocr',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicOtpHealthRoute = ApiPublicOtpHealthRouteImport.update({
-  id: '/api/public/otp-health',
-  path: '/api/public/otp-health',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicDataDeletionRequestRoute =
-  ApiPublicDataDeletionRequestRouteImport.update({
-    id: '/api/public/data-deletion-request',
-    path: '/api/public/data-deletion-request',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AdminVehiclesServiceManagerRoute =
-  AdminVehiclesServiceManagerRouteImport.update({
-    id: '/service-manager',
-    path: '/service-manager',
-    getParentRoute: () => AdminVehiclesRoute,
-  } as any)
-const AdminVehiclesPucsRoute = AdminVehiclesPucsRouteImport.update({
-  id: '/pucs',
-  path: '/pucs',
-  getParentRoute: () => AdminVehiclesRoute,
-} as any)
-const AdminVehiclesInventoryRoute = AdminVehiclesInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
-  getParentRoute: () => AdminVehiclesRoute,
-} as any)
-const AdminVehiclesInsurancesRoute = AdminVehiclesInsurancesRouteImport.update({
-  id: '/insurances',
-  path: '/insurances',
-  getParentRoute: () => AdminVehiclesRoute,
-} as any)
-const AdminVehiclesInsightLabRoute = AdminVehiclesInsightLabRouteImport.update({
-  id: '/insight-lab',
-  path: '/insight-lab',
-  getParentRoute: () => AdminVehiclesRoute,
-} as any)
-const AdminVehiclesFastagsRoute = AdminVehiclesFastagsRouteImport.update({
-  id: '/fastags',
-  path: '/fastags',
-  getParentRoute: () => AdminVehiclesRoute,
-} as any)
-const AdminVehiclesExpenseManagerRoute =
-  AdminVehiclesExpenseManagerRouteImport.update({
-    id: '/expense-manager',
-    path: '/expense-manager',
-    getParentRoute: () => AdminVehiclesRoute,
-  } as any)
-const AdminPayrollUnitIdRoute = AdminPayrollUnitIdRouteImport.update({
+const AdminAttendanceUnitIdRoute = AdminAttendanceUnitIdRouteImport.update({
   id: '/$unitId',
   path: '/$unitId',
-  getParentRoute: () => AdminPayrollRoute,
+  getParentRoute: () => AdminAttendanceRoute,
 } as any)
-const AdminInvoiceUnitIdRoute = AdminInvoiceUnitIdRouteImport.update({
-  id: '/$unitId',
-  path: '/$unitId',
-  getParentRoute: () => AdminInvoiceRoute,
+const AdminAttendanceEmployeeRoute = AdminAttendanceEmployeeRouteImport.update({
+  id: '/employee',
+  path: '/employee',
+  getParentRoute: () => AdminAttendanceRoute,
 } as any)
-const AdminInventoryWorkflowsRoute = AdminInventoryWorkflowsRouteImport.update({
-  id: '/workflows',
-  path: '/workflows',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminInventoryWarehousesRoute =
-  AdminInventoryWarehousesRouteImport.update({
-    id: '/warehouses',
-    path: '/warehouses',
-    getParentRoute: () => AdminInventoryRoute,
-  } as any)
-const AdminInventoryVendorsRoute = AdminInventoryVendorsRouteImport.update({
-  id: '/vendors',
-  path: '/vendors',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminInventoryTransfersRoute = AdminInventoryTransfersRouteImport.update({
-  id: '/transfers',
-  path: '/transfers',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminInventoryStockLedgerRoute =
-  AdminInventoryStockLedgerRouteImport.update({
-    id: '/stock-ledger',
-    path: '/stock-ledger',
-    getParentRoute: () => AdminInventoryRoute,
-  } as any)
-const AdminInventoryStockRoute = AdminInventoryStockRouteImport.update({
-  id: '/stock',
-  path: '/stock',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminInventoryRateCardsRoute = AdminInventoryRateCardsRouteImport.update({
-  id: '/rate-cards',
-  path: '/rate-cards',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminInventoryPurchaseOrdersRoute =
-  AdminInventoryPurchaseOrdersRouteImport.update({
-    id: '/purchase-orders',
-    path: '/purchase-orders',
-    getParentRoute: () => AdminInventoryRoute,
-  } as any)
-const AdminInventoryItemsRoute = AdminInventoryItemsRouteImport.update({
-  id: '/items',
-  path: '/items',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminInventoryIssuancesRoute = AdminInventoryIssuancesRouteImport.update({
-  id: '/issuances',
-  path: '/issuances',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminInventoryGoodsReceiptsRoute =
-  AdminInventoryGoodsReceiptsRouteImport.update({
-    id: '/goods-receipts',
-    path: '/goods-receipts',
-    getParentRoute: () => AdminInventoryRoute,
-  } as any)
-const AdminInventoryDemandsRoute = AdminInventoryDemandsRouteImport.update({
-  id: '/demands',
-  path: '/demands',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminInventoryDashboardRoute = AdminInventoryDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminInventoryCollectionsRoute =
-  AdminInventoryCollectionsRouteImport.update({
-    id: '/collections',
-    path: '/collections',
-    getParentRoute: () => AdminInventoryRoute,
-  } as any)
-const AdminInventoryCapsRoute = AdminInventoryCapsRouteImport.update({
-  id: '/caps',
-  path: '/caps',
-  getParentRoute: () => AdminInventoryRoute,
-} as any)
-const AdminFieldSenseTeamRoute = AdminFieldSenseTeamRouteImport.update({
-  id: '/field-sense/team',
-  path: '/field-sense/team',
+const AdminCandidatesRehireRoute = AdminCandidatesRehireRouteImport.update({
+  id: '/candidates/rehire',
+  path: '/candidates/rehire',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminFieldSenseReportsRoute = AdminFieldSenseReportsRouteImport.update({
-  id: '/field-sense/reports',
-  path: '/field-sense/reports',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminFieldSenseExpensesRoute = AdminFieldSenseExpensesRouteImport.update({
-  id: '/field-sense/expenses',
-  path: '/field-sense/expenses',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminFieldSenseAttendanceRulesRoute =
-  AdminFieldSenseAttendanceRulesRouteImport.update({
-    id: '/field-sense/attendance-rules',
-    path: '/field-sense/attendance-rules',
+const AdminContractsClientContractsRoute =
+  AdminContractsClientContractsRouteImport.update({
+    id: '/contracts/client-contracts',
+    path: '/contracts/client-contracts',
     getParentRoute: () => AdminRoute,
   } as any)
-const AdminCustomersUnitManagerRoute =
-  AdminCustomersUnitManagerRouteImport.update({
-    id: '/unit-manager',
-    path: '/unit-manager',
-    getParentRoute: () => AdminCustomersRoute,
-  } as any)
-const AdminCustomersStateManagerRoute =
-  AdminCustomersStateManagerRouteImport.update({
-    id: '/state-manager',
-    path: '/state-manager',
+const AdminCustomersIndexRoute = AdminCustomersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminCustomersRoute,
+} as any)
+const AdminCustomersBranchManagerRoute =
+  AdminCustomersBranchManagerRouteImport.update({
+    id: '/branch-manager',
+    path: '/branch-manager',
     getParentRoute: () => AdminCustomersRoute,
   } as any)
 const AdminCustomersCustomerManagerRoute =
@@ -662,59 +514,202 @@ const AdminCustomersCustomerManagerRoute =
     path: '/customer-manager',
     getParentRoute: () => AdminCustomersRoute,
   } as any)
-const AdminCustomersBranchManagerRoute =
-  AdminCustomersBranchManagerRouteImport.update({
-    id: '/branch-manager',
-    path: '/branch-manager',
+const AdminCustomersStateManagerRoute =
+  AdminCustomersStateManagerRouteImport.update({
+    id: '/state-manager',
+    path: '/state-manager',
     getParentRoute: () => AdminCustomersRoute,
   } as any)
-const AdminContractsClientContractsRoute =
-  AdminContractsClientContractsRouteImport.update({
-    id: '/contracts/client-contracts',
-    path: '/contracts/client-contracts',
-    getParentRoute: () => AdminRoute,
+const AdminCustomersUnitManagerRoute =
+  AdminCustomersUnitManagerRouteImport.update({
+    id: '/unit-manager',
+    path: '/unit-manager',
+    getParentRoute: () => AdminCustomersRoute,
   } as any)
-const AdminCandidatesRehireRoute = AdminCandidatesRehireRouteImport.update({
-  id: '/candidates/rehire',
-  path: '/candidates/rehire',
+const AdminFieldSenseIndexRoute = AdminFieldSenseIndexRouteImport.update({
+  id: '/field-sense/',
+  path: '/field-sense/',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAttendanceEmployeeRoute = AdminAttendanceEmployeeRouteImport.update({
-  id: '/employee',
-  path: '/employee',
-  getParentRoute: () => AdminAttendanceRoute,
+const AdminFieldSenseAttendanceRulesRoute =
+  AdminFieldSenseAttendanceRulesRouteImport.update({
+    id: '/field-sense/attendance-rules',
+    path: '/field-sense/attendance-rules',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminFieldSenseExpensesRoute = AdminFieldSenseExpensesRouteImport.update({
+  id: '/field-sense/expenses',
+  path: '/field-sense/expenses',
+  getParentRoute: () => AdminRoute,
 } as any)
-const AdminAttendanceUnitIdRoute = AdminAttendanceUnitIdRouteImport.update({
+const AdminFieldSenseReportsRoute = AdminFieldSenseReportsRouteImport.update({
+  id: '/field-sense/reports',
+  path: '/field-sense/reports',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFieldSenseTeamRoute = AdminFieldSenseTeamRouteImport.update({
+  id: '/field-sense/team',
+  path: '/field-sense/team',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInventoryCapsRoute = AdminInventoryCapsRouteImport.update({
+  id: '/caps',
+  path: '/caps',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInventoryCollectionsRoute =
+  AdminInventoryCollectionsRouteImport.update({
+    id: '/collections',
+    path: '/collections',
+    getParentRoute: () => AdminInventoryRoute,
+  } as any)
+const AdminInventoryDashboardRoute = AdminInventoryDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInventoryDemandsRoute = AdminInventoryDemandsRouteImport.update({
+  id: '/demands',
+  path: '/demands',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInventoryGoodsReceiptsRoute =
+  AdminInventoryGoodsReceiptsRouteImport.update({
+    id: '/goods-receipts',
+    path: '/goods-receipts',
+    getParentRoute: () => AdminInventoryRoute,
+  } as any)
+const AdminInventoryIssuancesRoute = AdminInventoryIssuancesRouteImport.update({
+  id: '/issuances',
+  path: '/issuances',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInventoryItemsRoute = AdminInventoryItemsRouteImport.update({
+  id: '/items',
+  path: '/items',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInventoryPurchaseOrdersRoute =
+  AdminInventoryPurchaseOrdersRouteImport.update({
+    id: '/purchase-orders',
+    path: '/purchase-orders',
+    getParentRoute: () => AdminInventoryRoute,
+  } as any)
+const AdminInventoryRateCardsRoute = AdminInventoryRateCardsRouteImport.update({
+  id: '/rate-cards',
+  path: '/rate-cards',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInventoryStockRoute = AdminInventoryStockRouteImport.update({
+  id: '/stock',
+  path: '/stock',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInventoryStockLedgerRoute =
+  AdminInventoryStockLedgerRouteImport.update({
+    id: '/stock-ledger',
+    path: '/stock-ledger',
+    getParentRoute: () => AdminInventoryRoute,
+  } as any)
+const AdminInventoryTransfersRoute = AdminInventoryTransfersRouteImport.update({
+  id: '/transfers',
+  path: '/transfers',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInventoryVendorsRoute = AdminInventoryVendorsRouteImport.update({
+  id: '/vendors',
+  path: '/vendors',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInventoryWarehousesRoute =
+  AdminInventoryWarehousesRouteImport.update({
+    id: '/warehouses',
+    path: '/warehouses',
+    getParentRoute: () => AdminInventoryRoute,
+  } as any)
+const AdminInventoryWorkflowsRoute = AdminInventoryWorkflowsRouteImport.update({
+  id: '/workflows',
+  path: '/workflows',
+  getParentRoute: () => AdminInventoryRoute,
+} as any)
+const AdminInvoiceIndexRoute = AdminInvoiceIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminInvoiceRoute,
+} as any)
+const AdminInvoiceUnitIdRoute = AdminInvoiceUnitIdRouteImport.update({
   id: '/$unitId',
   path: '/$unitId',
-  getParentRoute: () => AdminAttendanceRoute,
+  getParentRoute: () => AdminInvoiceRoute,
 } as any)
-const AdminAssetsLoanManagerRoute = AdminAssetsLoanManagerRouteImport.update({
-  id: '/loan-manager',
-  path: '/loan-manager',
-  getParentRoute: () => AdminAssetsRoute,
+const AdminPayrollIndexRoute = AdminPayrollIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminPayrollRoute,
 } as any)
-const AdminAssetsInventoryRoute = AdminAssetsInventoryRouteImport.update({
-  id: '/inventory',
-  path: '/inventory',
-  getParentRoute: () => AdminAssetsRoute,
+const AdminPayrollUnitIdRoute = AdminPayrollUnitIdRouteImport.update({
+  id: '/$unitId',
+  path: '/$unitId',
+  getParentRoute: () => AdminPayrollRoute,
 } as any)
-const AdminAssetsExpenseManagerRoute =
-  AdminAssetsExpenseManagerRouteImport.update({
+const AdminVehiclesExpenseManagerRoute =
+  AdminVehiclesExpenseManagerRouteImport.update({
     id: '/expense-manager',
     path: '/expense-manager',
-    getParentRoute: () => AdminAssetsRoute,
+    getParentRoute: () => AdminVehiclesRoute,
   } as any)
-const ApiPublicNativePushRoute = ApiPublicNativePushRouteImport.update({
-  id: '/api/public/native/push',
-  path: '/api/public/native/push',
+const AdminVehiclesFastagsRoute = AdminVehiclesFastagsRouteImport.update({
+  id: '/fastags',
+  path: '/fastags',
+  getParentRoute: () => AdminVehiclesRoute,
+} as any)
+const AdminVehiclesInsightLabRoute = AdminVehiclesInsightLabRouteImport.update({
+  id: '/insight-lab',
+  path: '/insight-lab',
+  getParentRoute: () => AdminVehiclesRoute,
+} as any)
+const AdminVehiclesInsurancesRoute = AdminVehiclesInsurancesRouteImport.update({
+  id: '/insurances',
+  path: '/insurances',
+  getParentRoute: () => AdminVehiclesRoute,
+} as any)
+const AdminVehiclesInventoryRoute = AdminVehiclesInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AdminVehiclesRoute,
+} as any)
+const AdminVehiclesPucsRoute = AdminVehiclesPucsRouteImport.update({
+  id: '/pucs',
+  path: '/pucs',
+  getParentRoute: () => AdminVehiclesRoute,
+} as any)
+const AdminVehiclesServiceManagerRoute =
+  AdminVehiclesServiceManagerRouteImport.update({
+    id: '/service-manager',
+    path: '/service-manager',
+    getParentRoute: () => AdminVehiclesRoute,
+  } as any)
+const ApiPublicDataDeletionRequestRoute =
+  ApiPublicDataDeletionRequestRouteImport.update({
+    id: '/api/public/data-deletion-request',
+    path: '/api/public/data-deletion-request',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicOtpHealthRoute = ApiPublicOtpHealthRouteImport.update({
+  id: '/api/public/otp-health',
+  path: '/api/public/otp-health',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicHooksDailyPeoplePingsRoute =
-  ApiPublicHooksDailyPeoplePingsRouteImport.update({
-    id: '/api/public/hooks/daily-people-pings',
-    path: '/api/public/hooks/daily-people-pings',
-    getParentRoute: () => rootRouteImport,
+const ApiPublicSheetOcrRoute = ApiPublicSheetOcrRouteImport.update({
+  id: '/api/public/sheet-ocr',
+  path: '/api/public/sheet-ocr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminCandidatesIdDetailsRoute =
+  AdminCandidatesIdDetailsRouteImport.update({
+    id: '/candidates/$id/details',
+    path: '/candidates/$id/details',
+    getParentRoute: () => AdminRoute,
   } as any)
 const AdminFieldSenseOfficerIdRoute =
   AdminFieldSenseOfficerIdRouteImport.update({
@@ -722,12 +717,17 @@ const AdminFieldSenseOfficerIdRoute =
     path: '/field-sense/officer/$id',
     getParentRoute: () => AdminRoute,
   } as any)
-const AdminCandidatesIdDetailsRoute =
-  AdminCandidatesIdDetailsRouteImport.update({
-    id: '/candidates/$id/details',
-    path: '/candidates/$id/details',
-    getParentRoute: () => AdminRoute,
+const ApiPublicHooksDailyPeoplePingsRoute =
+  ApiPublicHooksDailyPeoplePingsRouteImport.update({
+    id: '/api/public/hooks/daily-people-pings',
+    path: '/api/public/hooks/daily-people-pings',
+    getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicNativePushRoute = ApiPublicNativePushRouteImport.update({
+  id: '/api/public/native/push',
+  path: '/api/public/native/push',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -1445,39 +1445,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/welcome': {
-      id: '/welcome'
-      path: '/welcome'
-      fullPath: '/welcome'
-      preLoaderRoute: typeof WelcomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/request-data-deletion': {
-      id: '/request-data-deletion'
-      path: '/request-data-deletion'
-      fullPath: '/request-data-deletion'
-      preLoaderRoute: typeof RequestDataDeletionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacypolicy': {
-      id: '/privacypolicy'
-      path: '/privacypolicy'
-      fullPath: '/privacypolicy'
-      preLoaderRoute: typeof PrivacypolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy-policy': {
-      id: '/privacy-policy'
-      path: '/privacy-policy'
-      fullPath: '/privacy-policy'
-      preLoaderRoute: typeof PrivacyPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -1487,396 +1459,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/digilocker/callback': {
-      id: '/digilocker/callback'
-      path: '/digilocker/callback'
-      fullPath: '/digilocker/callback'
-      preLoaderRoute: typeof DigilockerCallbackRouteImport
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/workflow-manager': {
-      id: '/admin/workflow-manager'
-      path: '/workflow-manager'
-      fullPath: '/admin/workflow-manager'
-      preLoaderRoute: typeof AdminWorkflowManagerRouteImport
-      parentRoute: typeof AdminRoute
+    '/privacypolicy': {
+      id: '/privacypolicy'
+      path: '/privacypolicy'
+      fullPath: '/privacypolicy'
+      preLoaderRoute: typeof PrivacypolicyRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/vehicles': {
-      id: '/admin/vehicles'
-      path: '/vehicles'
-      fullPath: '/admin/vehicles'
-      preLoaderRoute: typeof AdminVehiclesRouteImport
-      parentRoute: typeof AdminRoute
+    '/request-data-deletion': {
+      id: '/request-data-deletion'
+      path: '/request-data-deletion'
+      fullPath: '/request-data-deletion'
+      preLoaderRoute: typeof RequestDataDeletionRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/system-logs': {
-      id: '/admin/system-logs'
-      path: '/system-logs'
-      fullPath: '/admin/system-logs'
-      preLoaderRoute: typeof AdminSystemLogsRouteImport
-      parentRoute: typeof AdminRoute
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/service-type-manager': {
-      id: '/admin/service-type-manager'
-      path: '/service-type-manager'
-      fullPath: '/admin/service-type-manager'
-      preLoaderRoute: typeof AdminServiceTypeManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/roles-manager': {
-      id: '/admin/roles-manager'
-      path: '/roles-manager'
-      fullPath: '/admin/roles-manager'
-      preLoaderRoute: typeof AdminRolesManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/rbac': {
-      id: '/admin/rbac'
-      path: '/rbac'
-      fullPath: '/admin/rbac'
-      preLoaderRoute: typeof AdminRbacRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/public-holiday-manager': {
-      id: '/admin/public-holiday-manager'
-      path: '/public-holiday-manager'
-      fullPath: '/admin/public-holiday-manager'
-      preLoaderRoute: typeof AdminPublicHolidayManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/profile': {
-      id: '/admin/profile'
-      path: '/profile'
-      fullPath: '/admin/profile'
-      preLoaderRoute: typeof AdminProfileRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/professional-tax-manager': {
-      id: '/admin/professional-tax-manager'
-      path: '/professional-tax-manager'
-      fullPath: '/admin/professional-tax-manager'
-      preLoaderRoute: typeof AdminProfessionalTaxManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/policy-manager': {
-      id: '/admin/policy-manager'
-      path: '/policy-manager'
-      fullPath: '/admin/policy-manager'
-      preLoaderRoute: typeof AdminPolicyManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/platform-settings': {
-      id: '/admin/platform-settings'
-      path: '/platform-settings'
-      fullPath: '/admin/platform-settings'
-      preLoaderRoute: typeof AdminPlatformSettingsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/payroll-manager': {
-      id: '/admin/payroll-manager'
-      path: '/payroll-manager'
-      fullPath: '/admin/payroll-manager'
-      preLoaderRoute: typeof AdminPayrollManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/payroll-days-manager': {
-      id: '/admin/payroll-days-manager'
-      path: '/payroll-days-manager'
-      fullPath: '/admin/payroll-days-manager'
-      preLoaderRoute: typeof AdminPayrollDaysManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/payroll': {
-      id: '/admin/payroll'
-      path: '/payroll'
-      fullPath: '/admin/payroll'
-      preLoaderRoute: typeof AdminPayrollRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/org-settings': {
-      id: '/admin/org-settings'
-      path: '/org-settings'
-      fullPath: '/admin/org-settings'
-      preLoaderRoute: typeof AdminOrgSettingsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/offboarding-reason-manager': {
-      id: '/admin/offboarding-reason-manager'
-      path: '/offboarding-reason-manager'
-      fullPath: '/admin/offboarding-reason-manager'
-      preLoaderRoute: typeof AdminOffboardingReasonManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/notifications': {
-      id: '/admin/notifications'
-      path: '/notifications'
-      fullPath: '/admin/notifications'
-      preLoaderRoute: typeof AdminNotificationsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/my-reportees': {
-      id: '/admin/my-reportees'
-      path: '/my-reportees'
-      fullPath: '/admin/my-reportees'
-      preLoaderRoute: typeof AdminMyReporteesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/my-inventory': {
-      id: '/admin/my-inventory'
-      path: '/my-inventory'
-      fullPath: '/admin/my-inventory'
-      preLoaderRoute: typeof AdminMyInventoryRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/my-attendance': {
-      id: '/admin/my-attendance'
-      path: '/my-attendance'
-      fullPath: '/admin/my-attendance'
-      preLoaderRoute: typeof AdminMyAttendanceRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/mis-manager': {
-      id: '/admin/mis-manager'
-      path: '/mis-manager'
-      fullPath: '/admin/mis-manager'
-      preLoaderRoute: typeof AdminMisManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/migration-utility': {
-      id: '/admin/migration-utility'
-      path: '/migration-utility'
-      fullPath: '/admin/migration-utility'
-      preLoaderRoute: typeof AdminMigrationUtilityRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/lwf-manager': {
-      id: '/admin/lwf-manager'
-      path: '/lwf-manager'
-      fullPath: '/admin/lwf-manager'
-      preLoaderRoute: typeof AdminLwfManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/language-manager': {
-      id: '/admin/language-manager'
-      path: '/language-manager'
-      fullPath: '/admin/language-manager'
-      preLoaderRoute: typeof AdminLanguageManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/invoice-numbering': {
-      id: '/admin/invoice-numbering'
-      path: '/invoice-numbering'
-      fullPath: '/admin/invoice-numbering'
-      preLoaderRoute: typeof AdminInvoiceNumberingRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/invoice': {
-      id: '/admin/invoice'
-      path: '/invoice'
-      fullPath: '/admin/invoice'
-      preLoaderRoute: typeof AdminInvoiceRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/inventory': {
-      id: '/admin/inventory'
-      path: '/inventory'
-      fullPath: '/admin/inventory'
-      preLoaderRoute: typeof AdminInventoryRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/field-dashboard': {
-      id: '/admin/field-dashboard'
-      path: '/field-dashboard'
-      fullPath: '/admin/field-dashboard'
-      preLoaderRoute: typeof AdminFieldDashboardRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/ex-service-manager': {
-      id: '/admin/ex-service-manager'
-      path: '/ex-service-manager'
-      fullPath: '/admin/ex-service-manager'
-      preLoaderRoute: typeof AdminExServiceManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/esic-branch-manager': {
-      id: '/admin/esic-branch-manager'
-      path: '/esic-branch-manager'
-      fullPath: '/admin/esic-branch-manager'
-      preLoaderRoute: typeof AdminEsicBranchManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/employer-contributions': {
-      id: '/admin/employer-contributions'
-      path: '/employer-contributions'
-      fullPath: '/admin/employer-contributions'
-      preLoaderRoute: typeof AdminEmployerContributionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/employees': {
-      id: '/admin/employees'
-      path: '/employees'
-      fullPath: '/admin/employees'
-      preLoaderRoute: typeof AdminEmployeesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/employee-dashboard': {
-      id: '/admin/employee-dashboard'
-      path: '/employee-dashboard'
-      fullPath: '/admin/employee-dashboard'
-      preLoaderRoute: typeof AdminEmployeeDashboardRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/duty-manager': {
-      id: '/admin/duty-manager'
-      path: '/duty-manager'
-      fullPath: '/admin/duty-manager'
-      preLoaderRoute: typeof AdminDutyManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/designation-manager': {
-      id: '/admin/designation-manager'
-      path: '/designation-manager'
-      fullPath: '/admin/designation-manager'
-      preLoaderRoute: typeof AdminDesignationManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/department-manager': {
-      id: '/admin/department-manager'
-      path: '/department-manager'
-      fullPath: '/admin/department-manager'
-      preLoaderRoute: typeof AdminDepartmentManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/deductions': {
-      id: '/admin/deductions'
-      path: '/deductions'
-      fullPath: '/admin/deductions'
-      preLoaderRoute: typeof AdminDeductionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/deduction-type-manager': {
-      id: '/admin/deduction-type-manager'
-      path: '/deduction-type-manager'
-      fullPath: '/admin/deduction-type-manager'
-      preLoaderRoute: typeof AdminDeductionTypeManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/dashboard': {
-      id: '/admin/dashboard'
-      path: '/dashboard'
-      fullPath: '/admin/dashboard'
-      preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/customers': {
-      id: '/admin/customers'
-      path: '/customers'
-      fullPath: '/admin/customers'
-      preLoaderRoute: typeof AdminCustomersRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/cost-component-manager': {
-      id: '/admin/cost-component-manager'
-      path: '/cost-component-manager'
-      fullPath: '/admin/cost-component-manager'
-      preLoaderRoute: typeof AdminCostComponentManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/control-center': {
-      id: '/admin/control-center'
-      path: '/control-center'
-      fullPath: '/admin/control-center'
-      preLoaderRoute: typeof AdminControlCenterRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/compliance-pt': {
-      id: '/admin/compliance-pt'
-      path: '/compliance-pt'
-      fullPath: '/admin/compliance-pt'
-      preLoaderRoute: typeof AdminCompliancePtRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/compliance-lwf': {
-      id: '/admin/compliance-lwf'
-      path: '/compliance-lwf'
-      fullPath: '/admin/compliance-lwf'
-      preLoaderRoute: typeof AdminComplianceLwfRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/compliance-insurance': {
-      id: '/admin/compliance-insurance'
-      path: '/compliance-insurance'
-      fullPath: '/admin/compliance-insurance'
-      preLoaderRoute: typeof AdminComplianceInsuranceRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/compliance-gpaip-register': {
-      id: '/admin/compliance-gpaip-register'
-      path: '/compliance-gpaip-register'
-      fullPath: '/admin/compliance-gpaip-register'
-      preLoaderRoute: typeof AdminComplianceGpaipRegisterRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/compliance': {
-      id: '/admin/compliance'
-      path: '/compliance'
-      fullPath: '/admin/compliance'
-      preLoaderRoute: typeof AdminComplianceRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/company-documents': {
-      id: '/admin/company-documents'
-      path: '/company-documents'
-      fullPath: '/admin/company-documents'
-      preLoaderRoute: typeof AdminCompanyDocumentsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/billing-type-manager': {
-      id: '/admin/billing-type-manager'
-      path: '/billing-type-manager'
-      fullPath: '/admin/billing-type-manager'
-      preLoaderRoute: typeof AdminBillingTypeManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/attendance-code-manager': {
-      id: '/admin/attendance-code-manager'
-      path: '/attendance-code-manager'
-      fullPath: '/admin/attendance-code-manager'
-      preLoaderRoute: typeof AdminAttendanceCodeManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/attendance': {
-      id: '/admin/attendance'
-      path: '/attendance'
-      fullPath: '/admin/attendance'
-      preLoaderRoute: typeof AdminAttendanceRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/assets': {
-      id: '/admin/assets'
-      path: '/assets'
-      fullPath: '/admin/assets'
-      preLoaderRoute: typeof AdminAssetsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/asset-manager': {
-      id: '/admin/asset-manager'
-      path: '/asset-manager'
-      fullPath: '/admin/asset-manager'
-      preLoaderRoute: typeof AdminAssetManagerRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/allowance-manager': {
-      id: '/admin/allowance-manager'
-      path: '/allowance-manager'
-      fullPath: '/admin/allowance-manager'
-      preLoaderRoute: typeof AdminAllowanceManagerRouteImport
+    '/admin/addition-type-manager': {
+      id: '/admin/addition-type-manager'
+      path: '/addition-type-manager'
+      fullPath: '/admin/addition-type-manager'
+      preLoaderRoute: typeof AdminAdditionTypeManagerRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/additions': {
@@ -1886,326 +1508,396 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdditionsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/addition-type-manager': {
-      id: '/admin/addition-type-manager'
-      path: '/addition-type-manager'
-      fullPath: '/admin/addition-type-manager'
-      preLoaderRoute: typeof AdminAdditionTypeManagerRouteImport
+    '/admin/allowance-manager': {
+      id: '/admin/allowance-manager'
+      path: '/allowance-manager'
+      fullPath: '/admin/allowance-manager'
+      preLoaderRoute: typeof AdminAllowanceManagerRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/payroll/': {
-      id: '/admin/payroll/'
-      path: '/'
-      fullPath: '/admin/payroll/'
-      preLoaderRoute: typeof AdminPayrollIndexRouteImport
-      parentRoute: typeof AdminPayrollRoute
-    }
-    '/admin/invoice/': {
-      id: '/admin/invoice/'
-      path: '/'
-      fullPath: '/admin/invoice/'
-      preLoaderRoute: typeof AdminInvoiceIndexRouteImport
-      parentRoute: typeof AdminInvoiceRoute
-    }
-    '/admin/field-sense/': {
-      id: '/admin/field-sense/'
-      path: '/field-sense'
-      fullPath: '/admin/field-sense/'
-      preLoaderRoute: typeof AdminFieldSenseIndexRouteImport
+    '/admin/asset-manager': {
+      id: '/admin/asset-manager'
+      path: '/asset-manager'
+      fullPath: '/admin/asset-manager'
+      preLoaderRoute: typeof AdminAssetManagerRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/customers/': {
-      id: '/admin/customers/'
-      path: '/'
-      fullPath: '/admin/customers/'
-      preLoaderRoute: typeof AdminCustomersIndexRouteImport
-      parentRoute: typeof AdminCustomersRoute
+    '/admin/assets': {
+      id: '/admin/assets'
+      path: '/assets'
+      fullPath: '/admin/assets'
+      preLoaderRoute: typeof AdminAssetsRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/attendance/': {
-      id: '/admin/attendance/'
-      path: '/'
-      fullPath: '/admin/attendance/'
-      preLoaderRoute: typeof AdminAttendanceIndexRouteImport
-      parentRoute: typeof AdminAttendanceRoute
+    '/admin/attendance': {
+      id: '/admin/attendance'
+      path: '/attendance'
+      fullPath: '/admin/attendance'
+      preLoaderRoute: typeof AdminAttendanceRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/api/public/sheet-ocr': {
-      id: '/api/public/sheet-ocr'
-      path: '/api/public/sheet-ocr'
-      fullPath: '/api/public/sheet-ocr'
-      preLoaderRoute: typeof ApiPublicSheetOcrRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/attendance-code-manager': {
+      id: '/admin/attendance-code-manager'
+      path: '/attendance-code-manager'
+      fullPath: '/admin/attendance-code-manager'
+      preLoaderRoute: typeof AdminAttendanceCodeManagerRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/api/public/otp-health': {
-      id: '/api/public/otp-health'
-      path: '/api/public/otp-health'
-      fullPath: '/api/public/otp-health'
-      preLoaderRoute: typeof ApiPublicOtpHealthRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/billing-type-manager': {
+      id: '/admin/billing-type-manager'
+      path: '/billing-type-manager'
+      fullPath: '/admin/billing-type-manager'
+      preLoaderRoute: typeof AdminBillingTypeManagerRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/api/public/data-deletion-request': {
-      id: '/api/public/data-deletion-request'
-      path: '/api/public/data-deletion-request'
-      fullPath: '/api/public/data-deletion-request'
-      preLoaderRoute: typeof ApiPublicDataDeletionRequestRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/company-documents': {
+      id: '/admin/company-documents'
+      path: '/company-documents'
+      fullPath: '/admin/company-documents'
+      preLoaderRoute: typeof AdminCompanyDocumentsRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/vehicles/service-manager': {
-      id: '/admin/vehicles/service-manager'
-      path: '/service-manager'
-      fullPath: '/admin/vehicles/service-manager'
-      preLoaderRoute: typeof AdminVehiclesServiceManagerRouteImport
-      parentRoute: typeof AdminVehiclesRoute
+    '/admin/compliance': {
+      id: '/admin/compliance'
+      path: '/compliance'
+      fullPath: '/admin/compliance'
+      preLoaderRoute: typeof AdminComplianceRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/vehicles/pucs': {
-      id: '/admin/vehicles/pucs'
-      path: '/pucs'
-      fullPath: '/admin/vehicles/pucs'
-      preLoaderRoute: typeof AdminVehiclesPucsRouteImport
-      parentRoute: typeof AdminVehiclesRoute
+    '/admin/compliance-gpaip-register': {
+      id: '/admin/compliance-gpaip-register'
+      path: '/compliance-gpaip-register'
+      fullPath: '/admin/compliance-gpaip-register'
+      preLoaderRoute: typeof AdminComplianceGpaipRegisterRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/vehicles/inventory': {
-      id: '/admin/vehicles/inventory'
-      path: '/inventory'
-      fullPath: '/admin/vehicles/inventory'
-      preLoaderRoute: typeof AdminVehiclesInventoryRouteImport
-      parentRoute: typeof AdminVehiclesRoute
+    '/admin/compliance-insurance': {
+      id: '/admin/compliance-insurance'
+      path: '/compliance-insurance'
+      fullPath: '/admin/compliance-insurance'
+      preLoaderRoute: typeof AdminComplianceInsuranceRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/vehicles/insurances': {
-      id: '/admin/vehicles/insurances'
-      path: '/insurances'
-      fullPath: '/admin/vehicles/insurances'
-      preLoaderRoute: typeof AdminVehiclesInsurancesRouteImport
-      parentRoute: typeof AdminVehiclesRoute
+    '/admin/compliance-lwf': {
+      id: '/admin/compliance-lwf'
+      path: '/compliance-lwf'
+      fullPath: '/admin/compliance-lwf'
+      preLoaderRoute: typeof AdminComplianceLwfRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/vehicles/insight-lab': {
-      id: '/admin/vehicles/insight-lab'
-      path: '/insight-lab'
-      fullPath: '/admin/vehicles/insight-lab'
-      preLoaderRoute: typeof AdminVehiclesInsightLabRouteImport
-      parentRoute: typeof AdminVehiclesRoute
+    '/admin/compliance-pt': {
+      id: '/admin/compliance-pt'
+      path: '/compliance-pt'
+      fullPath: '/admin/compliance-pt'
+      preLoaderRoute: typeof AdminCompliancePtRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/vehicles/fastags': {
-      id: '/admin/vehicles/fastags'
-      path: '/fastags'
-      fullPath: '/admin/vehicles/fastags'
-      preLoaderRoute: typeof AdminVehiclesFastagsRouteImport
-      parentRoute: typeof AdminVehiclesRoute
+    '/admin/control-center': {
+      id: '/admin/control-center'
+      path: '/control-center'
+      fullPath: '/admin/control-center'
+      preLoaderRoute: typeof AdminControlCenterRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/vehicles/expense-manager': {
-      id: '/admin/vehicles/expense-manager'
-      path: '/expense-manager'
-      fullPath: '/admin/vehicles/expense-manager'
-      preLoaderRoute: typeof AdminVehiclesExpenseManagerRouteImport
-      parentRoute: typeof AdminVehiclesRoute
+    '/admin/cost-component-manager': {
+      id: '/admin/cost-component-manager'
+      path: '/cost-component-manager'
+      fullPath: '/admin/cost-component-manager'
+      preLoaderRoute: typeof AdminCostComponentManagerRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/payroll/$unitId': {
-      id: '/admin/payroll/$unitId'
-      path: '/$unitId'
-      fullPath: '/admin/payroll/$unitId'
-      preLoaderRoute: typeof AdminPayrollUnitIdRouteImport
-      parentRoute: typeof AdminPayrollRoute
+    '/admin/customers': {
+      id: '/admin/customers'
+      path: '/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminCustomersRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/invoice/$unitId': {
-      id: '/admin/invoice/$unitId'
-      path: '/$unitId'
-      fullPath: '/admin/invoice/$unitId'
-      preLoaderRoute: typeof AdminInvoiceUnitIdRouteImport
-      parentRoute: typeof AdminInvoiceRoute
-    }
-    '/admin/inventory/workflows': {
-      id: '/admin/inventory/workflows'
-      path: '/workflows'
-      fullPath: '/admin/inventory/workflows'
-      preLoaderRoute: typeof AdminInventoryWorkflowsRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/warehouses': {
-      id: '/admin/inventory/warehouses'
-      path: '/warehouses'
-      fullPath: '/admin/inventory/warehouses'
-      preLoaderRoute: typeof AdminInventoryWarehousesRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/vendors': {
-      id: '/admin/inventory/vendors'
-      path: '/vendors'
-      fullPath: '/admin/inventory/vendors'
-      preLoaderRoute: typeof AdminInventoryVendorsRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/transfers': {
-      id: '/admin/inventory/transfers'
-      path: '/transfers'
-      fullPath: '/admin/inventory/transfers'
-      preLoaderRoute: typeof AdminInventoryTransfersRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/stock-ledger': {
-      id: '/admin/inventory/stock-ledger'
-      path: '/stock-ledger'
-      fullPath: '/admin/inventory/stock-ledger'
-      preLoaderRoute: typeof AdminInventoryStockLedgerRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/stock': {
-      id: '/admin/inventory/stock'
-      path: '/stock'
-      fullPath: '/admin/inventory/stock'
-      preLoaderRoute: typeof AdminInventoryStockRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/rate-cards': {
-      id: '/admin/inventory/rate-cards'
-      path: '/rate-cards'
-      fullPath: '/admin/inventory/rate-cards'
-      preLoaderRoute: typeof AdminInventoryRateCardsRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/purchase-orders': {
-      id: '/admin/inventory/purchase-orders'
-      path: '/purchase-orders'
-      fullPath: '/admin/inventory/purchase-orders'
-      preLoaderRoute: typeof AdminInventoryPurchaseOrdersRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/items': {
-      id: '/admin/inventory/items'
-      path: '/items'
-      fullPath: '/admin/inventory/items'
-      preLoaderRoute: typeof AdminInventoryItemsRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/issuances': {
-      id: '/admin/inventory/issuances'
-      path: '/issuances'
-      fullPath: '/admin/inventory/issuances'
-      preLoaderRoute: typeof AdminInventoryIssuancesRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/goods-receipts': {
-      id: '/admin/inventory/goods-receipts'
-      path: '/goods-receipts'
-      fullPath: '/admin/inventory/goods-receipts'
-      preLoaderRoute: typeof AdminInventoryGoodsReceiptsRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/demands': {
-      id: '/admin/inventory/demands'
-      path: '/demands'
-      fullPath: '/admin/inventory/demands'
-      preLoaderRoute: typeof AdminInventoryDemandsRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/dashboard': {
-      id: '/admin/inventory/dashboard'
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
       path: '/dashboard'
-      fullPath: '/admin/inventory/dashboard'
-      preLoaderRoute: typeof AdminInventoryDashboardRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/collections': {
-      id: '/admin/inventory/collections'
-      path: '/collections'
-      fullPath: '/admin/inventory/collections'
-      preLoaderRoute: typeof AdminInventoryCollectionsRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/inventory/caps': {
-      id: '/admin/inventory/caps'
-      path: '/caps'
-      fullPath: '/admin/inventory/caps'
-      preLoaderRoute: typeof AdminInventoryCapsRouteImport
-      parentRoute: typeof AdminInventoryRoute
-    }
-    '/admin/field-sense/team': {
-      id: '/admin/field-sense/team'
-      path: '/field-sense/team'
-      fullPath: '/admin/field-sense/team'
-      preLoaderRoute: typeof AdminFieldSenseTeamRouteImport
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/field-sense/reports': {
-      id: '/admin/field-sense/reports'
-      path: '/field-sense/reports'
-      fullPath: '/admin/field-sense/reports'
-      preLoaderRoute: typeof AdminFieldSenseReportsRouteImport
+    '/admin/deduction-type-manager': {
+      id: '/admin/deduction-type-manager'
+      path: '/deduction-type-manager'
+      fullPath: '/admin/deduction-type-manager'
+      preLoaderRoute: typeof AdminDeductionTypeManagerRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/field-sense/expenses': {
-      id: '/admin/field-sense/expenses'
-      path: '/field-sense/expenses'
-      fullPath: '/admin/field-sense/expenses'
-      preLoaderRoute: typeof AdminFieldSenseExpensesRouteImport
+    '/admin/deductions': {
+      id: '/admin/deductions'
+      path: '/deductions'
+      fullPath: '/admin/deductions'
+      preLoaderRoute: typeof AdminDeductionsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/field-sense/attendance-rules': {
-      id: '/admin/field-sense/attendance-rules'
-      path: '/field-sense/attendance-rules'
-      fullPath: '/admin/field-sense/attendance-rules'
-      preLoaderRoute: typeof AdminFieldSenseAttendanceRulesRouteImport
+    '/admin/department-manager': {
+      id: '/admin/department-manager'
+      path: '/department-manager'
+      fullPath: '/admin/department-manager'
+      preLoaderRoute: typeof AdminDepartmentManagerRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/customers/unit-manager': {
-      id: '/admin/customers/unit-manager'
-      path: '/unit-manager'
-      fullPath: '/admin/customers/unit-manager'
-      preLoaderRoute: typeof AdminCustomersUnitManagerRouteImport
-      parentRoute: typeof AdminCustomersRoute
-    }
-    '/admin/customers/state-manager': {
-      id: '/admin/customers/state-manager'
-      path: '/state-manager'
-      fullPath: '/admin/customers/state-manager'
-      preLoaderRoute: typeof AdminCustomersStateManagerRouteImport
-      parentRoute: typeof AdminCustomersRoute
-    }
-    '/admin/customers/customer-manager': {
-      id: '/admin/customers/customer-manager'
-      path: '/customer-manager'
-      fullPath: '/admin/customers/customer-manager'
-      preLoaderRoute: typeof AdminCustomersCustomerManagerRouteImport
-      parentRoute: typeof AdminCustomersRoute
-    }
-    '/admin/customers/branch-manager': {
-      id: '/admin/customers/branch-manager'
-      path: '/branch-manager'
-      fullPath: '/admin/customers/branch-manager'
-      preLoaderRoute: typeof AdminCustomersBranchManagerRouteImport
-      parentRoute: typeof AdminCustomersRoute
-    }
-    '/admin/contracts/client-contracts': {
-      id: '/admin/contracts/client-contracts'
-      path: '/contracts/client-contracts'
-      fullPath: '/admin/contracts/client-contracts'
-      preLoaderRoute: typeof AdminContractsClientContractsRouteImport
+    '/admin/designation-manager': {
+      id: '/admin/designation-manager'
+      path: '/designation-manager'
+      fullPath: '/admin/designation-manager'
+      preLoaderRoute: typeof AdminDesignationManagerRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/candidates/rehire': {
-      id: '/admin/candidates/rehire'
-      path: '/candidates/rehire'
-      fullPath: '/admin/candidates/rehire'
-      preLoaderRoute: typeof AdminCandidatesRehireRouteImport
+    '/admin/duty-manager': {
+      id: '/admin/duty-manager'
+      path: '/duty-manager'
+      fullPath: '/admin/duty-manager'
+      preLoaderRoute: typeof AdminDutyManagerRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/attendance/employee': {
-      id: '/admin/attendance/employee'
-      path: '/employee'
-      fullPath: '/admin/attendance/employee'
-      preLoaderRoute: typeof AdminAttendanceEmployeeRouteImport
-      parentRoute: typeof AdminAttendanceRoute
+    '/admin/employee-dashboard': {
+      id: '/admin/employee-dashboard'
+      path: '/employee-dashboard'
+      fullPath: '/admin/employee-dashboard'
+      preLoaderRoute: typeof AdminEmployeeDashboardRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/attendance/$unitId': {
-      id: '/admin/attendance/$unitId'
-      path: '/$unitId'
-      fullPath: '/admin/attendance/$unitId'
-      preLoaderRoute: typeof AdminAttendanceUnitIdRouteImport
-      parentRoute: typeof AdminAttendanceRoute
+    '/admin/employees': {
+      id: '/admin/employees'
+      path: '/employees'
+      fullPath: '/admin/employees'
+      preLoaderRoute: typeof AdminEmployeesRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/admin/assets/loan-manager': {
-      id: '/admin/assets/loan-manager'
-      path: '/loan-manager'
-      fullPath: '/admin/assets/loan-manager'
-      preLoaderRoute: typeof AdminAssetsLoanManagerRouteImport
+    '/admin/employer-contributions': {
+      id: '/admin/employer-contributions'
+      path: '/employer-contributions'
+      fullPath: '/admin/employer-contributions'
+      preLoaderRoute: typeof AdminEmployerContributionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/esic-branch-manager': {
+      id: '/admin/esic-branch-manager'
+      path: '/esic-branch-manager'
+      fullPath: '/admin/esic-branch-manager'
+      preLoaderRoute: typeof AdminEsicBranchManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/ex-service-manager': {
+      id: '/admin/ex-service-manager'
+      path: '/ex-service-manager'
+      fullPath: '/admin/ex-service-manager'
+      preLoaderRoute: typeof AdminExServiceManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/field-dashboard': {
+      id: '/admin/field-dashboard'
+      path: '/field-dashboard'
+      fullPath: '/admin/field-dashboard'
+      preLoaderRoute: typeof AdminFieldDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/inventory': {
+      id: '/admin/inventory'
+      path: '/inventory'
+      fullPath: '/admin/inventory'
+      preLoaderRoute: typeof AdminInventoryRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/invoice': {
+      id: '/admin/invoice'
+      path: '/invoice'
+      fullPath: '/admin/invoice'
+      preLoaderRoute: typeof AdminInvoiceRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/invoice-numbering': {
+      id: '/admin/invoice-numbering'
+      path: '/invoice-numbering'
+      fullPath: '/admin/invoice-numbering'
+      preLoaderRoute: typeof AdminInvoiceNumberingRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/language-manager': {
+      id: '/admin/language-manager'
+      path: '/language-manager'
+      fullPath: '/admin/language-manager'
+      preLoaderRoute: typeof AdminLanguageManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/lwf-manager': {
+      id: '/admin/lwf-manager'
+      path: '/lwf-manager'
+      fullPath: '/admin/lwf-manager'
+      preLoaderRoute: typeof AdminLwfManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/migration-utility': {
+      id: '/admin/migration-utility'
+      path: '/migration-utility'
+      fullPath: '/admin/migration-utility'
+      preLoaderRoute: typeof AdminMigrationUtilityRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/mis-manager': {
+      id: '/admin/mis-manager'
+      path: '/mis-manager'
+      fullPath: '/admin/mis-manager'
+      preLoaderRoute: typeof AdminMisManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/my-attendance': {
+      id: '/admin/my-attendance'
+      path: '/my-attendance'
+      fullPath: '/admin/my-attendance'
+      preLoaderRoute: typeof AdminMyAttendanceRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/my-inventory': {
+      id: '/admin/my-inventory'
+      path: '/my-inventory'
+      fullPath: '/admin/my-inventory'
+      preLoaderRoute: typeof AdminMyInventoryRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/my-reportees': {
+      id: '/admin/my-reportees'
+      path: '/my-reportees'
+      fullPath: '/admin/my-reportees'
+      preLoaderRoute: typeof AdminMyReporteesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/offboarding-reason-manager': {
+      id: '/admin/offboarding-reason-manager'
+      path: '/offboarding-reason-manager'
+      fullPath: '/admin/offboarding-reason-manager'
+      preLoaderRoute: typeof AdminOffboardingReasonManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/org-settings': {
+      id: '/admin/org-settings'
+      path: '/org-settings'
+      fullPath: '/admin/org-settings'
+      preLoaderRoute: typeof AdminOrgSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/payroll': {
+      id: '/admin/payroll'
+      path: '/payroll'
+      fullPath: '/admin/payroll'
+      preLoaderRoute: typeof AdminPayrollRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/payroll-days-manager': {
+      id: '/admin/payroll-days-manager'
+      path: '/payroll-days-manager'
+      fullPath: '/admin/payroll-days-manager'
+      preLoaderRoute: typeof AdminPayrollDaysManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/payroll-manager': {
+      id: '/admin/payroll-manager'
+      path: '/payroll-manager'
+      fullPath: '/admin/payroll-manager'
+      preLoaderRoute: typeof AdminPayrollManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/platform-settings': {
+      id: '/admin/platform-settings'
+      path: '/platform-settings'
+      fullPath: '/admin/platform-settings'
+      preLoaderRoute: typeof AdminPlatformSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/policy-manager': {
+      id: '/admin/policy-manager'
+      path: '/policy-manager'
+      fullPath: '/admin/policy-manager'
+      preLoaderRoute: typeof AdminPolicyManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/professional-tax-manager': {
+      id: '/admin/professional-tax-manager'
+      path: '/professional-tax-manager'
+      fullPath: '/admin/professional-tax-manager'
+      preLoaderRoute: typeof AdminProfessionalTaxManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/profile': {
+      id: '/admin/profile'
+      path: '/profile'
+      fullPath: '/admin/profile'
+      preLoaderRoute: typeof AdminProfileRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/public-holiday-manager': {
+      id: '/admin/public-holiday-manager'
+      path: '/public-holiday-manager'
+      fullPath: '/admin/public-holiday-manager'
+      preLoaderRoute: typeof AdminPublicHolidayManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/rbac': {
+      id: '/admin/rbac'
+      path: '/rbac'
+      fullPath: '/admin/rbac'
+      preLoaderRoute: typeof AdminRbacRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/roles-manager': {
+      id: '/admin/roles-manager'
+      path: '/roles-manager'
+      fullPath: '/admin/roles-manager'
+      preLoaderRoute: typeof AdminRolesManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/service-type-manager': {
+      id: '/admin/service-type-manager'
+      path: '/service-type-manager'
+      fullPath: '/admin/service-type-manager'
+      preLoaderRoute: typeof AdminServiceTypeManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/system-logs': {
+      id: '/admin/system-logs'
+      path: '/system-logs'
+      fullPath: '/admin/system-logs'
+      preLoaderRoute: typeof AdminSystemLogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/vehicles': {
+      id: '/admin/vehicles'
+      path: '/vehicles'
+      fullPath: '/admin/vehicles'
+      preLoaderRoute: typeof AdminVehiclesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/workflow-manager': {
+      id: '/admin/workflow-manager'
+      path: '/workflow-manager'
+      fullPath: '/admin/workflow-manager'
+      preLoaderRoute: typeof AdminWorkflowManagerRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/digilocker/callback': {
+      id: '/digilocker/callback'
+      path: '/digilocker/callback'
+      fullPath: '/digilocker/callback'
+      preLoaderRoute: typeof DigilockerCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/assets/expense-manager': {
+      id: '/admin/assets/expense-manager'
+      path: '/expense-manager'
+      fullPath: '/admin/assets/expense-manager'
+      preLoaderRoute: typeof AdminAssetsExpenseManagerRouteImport
       parentRoute: typeof AdminAssetsRoute
     }
     '/admin/assets/inventory': {
@@ -2215,26 +1907,327 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAssetsInventoryRouteImport
       parentRoute: typeof AdminAssetsRoute
     }
-    '/admin/assets/expense-manager': {
-      id: '/admin/assets/expense-manager'
-      path: '/expense-manager'
-      fullPath: '/admin/assets/expense-manager'
-      preLoaderRoute: typeof AdminAssetsExpenseManagerRouteImport
+    '/admin/assets/loan-manager': {
+      id: '/admin/assets/loan-manager'
+      path: '/loan-manager'
+      fullPath: '/admin/assets/loan-manager'
+      preLoaderRoute: typeof AdminAssetsLoanManagerRouteImport
       parentRoute: typeof AdminAssetsRoute
     }
-    '/api/public/native/push': {
-      id: '/api/public/native/push'
-      path: '/api/public/native/push'
-      fullPath: '/api/public/native/push'
-      preLoaderRoute: typeof ApiPublicNativePushRouteImport
+    '/admin/attendance/': {
+      id: '/admin/attendance/'
+      path: '/'
+      fullPath: '/admin/attendance/'
+      preLoaderRoute: typeof AdminAttendanceIndexRouteImport
+      parentRoute: typeof AdminAttendanceRoute
+    }
+    '/admin/attendance/$unitId': {
+      id: '/admin/attendance/$unitId'
+      path: '/$unitId'
+      fullPath: '/admin/attendance/$unitId'
+      preLoaderRoute: typeof AdminAttendanceUnitIdRouteImport
+      parentRoute: typeof AdminAttendanceRoute
+    }
+    '/admin/attendance/employee': {
+      id: '/admin/attendance/employee'
+      path: '/employee'
+      fullPath: '/admin/attendance/employee'
+      preLoaderRoute: typeof AdminAttendanceEmployeeRouteImport
+      parentRoute: typeof AdminAttendanceRoute
+    }
+    '/admin/candidates/rehire': {
+      id: '/admin/candidates/rehire'
+      path: '/candidates/rehire'
+      fullPath: '/admin/candidates/rehire'
+      preLoaderRoute: typeof AdminCandidatesRehireRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/contracts/client-contracts': {
+      id: '/admin/contracts/client-contracts'
+      path: '/contracts/client-contracts'
+      fullPath: '/admin/contracts/client-contracts'
+      preLoaderRoute: typeof AdminContractsClientContractsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/customers/': {
+      id: '/admin/customers/'
+      path: '/'
+      fullPath: '/admin/customers/'
+      preLoaderRoute: typeof AdminCustomersIndexRouteImport
+      parentRoute: typeof AdminCustomersRoute
+    }
+    '/admin/customers/branch-manager': {
+      id: '/admin/customers/branch-manager'
+      path: '/branch-manager'
+      fullPath: '/admin/customers/branch-manager'
+      preLoaderRoute: typeof AdminCustomersBranchManagerRouteImport
+      parentRoute: typeof AdminCustomersRoute
+    }
+    '/admin/customers/customer-manager': {
+      id: '/admin/customers/customer-manager'
+      path: '/customer-manager'
+      fullPath: '/admin/customers/customer-manager'
+      preLoaderRoute: typeof AdminCustomersCustomerManagerRouteImport
+      parentRoute: typeof AdminCustomersRoute
+    }
+    '/admin/customers/state-manager': {
+      id: '/admin/customers/state-manager'
+      path: '/state-manager'
+      fullPath: '/admin/customers/state-manager'
+      preLoaderRoute: typeof AdminCustomersStateManagerRouteImport
+      parentRoute: typeof AdminCustomersRoute
+    }
+    '/admin/customers/unit-manager': {
+      id: '/admin/customers/unit-manager'
+      path: '/unit-manager'
+      fullPath: '/admin/customers/unit-manager'
+      preLoaderRoute: typeof AdminCustomersUnitManagerRouteImport
+      parentRoute: typeof AdminCustomersRoute
+    }
+    '/admin/field-sense/': {
+      id: '/admin/field-sense/'
+      path: '/field-sense'
+      fullPath: '/admin/field-sense/'
+      preLoaderRoute: typeof AdminFieldSenseIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/field-sense/attendance-rules': {
+      id: '/admin/field-sense/attendance-rules'
+      path: '/field-sense/attendance-rules'
+      fullPath: '/admin/field-sense/attendance-rules'
+      preLoaderRoute: typeof AdminFieldSenseAttendanceRulesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/field-sense/expenses': {
+      id: '/admin/field-sense/expenses'
+      path: '/field-sense/expenses'
+      fullPath: '/admin/field-sense/expenses'
+      preLoaderRoute: typeof AdminFieldSenseExpensesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/field-sense/reports': {
+      id: '/admin/field-sense/reports'
+      path: '/field-sense/reports'
+      fullPath: '/admin/field-sense/reports'
+      preLoaderRoute: typeof AdminFieldSenseReportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/field-sense/team': {
+      id: '/admin/field-sense/team'
+      path: '/field-sense/team'
+      fullPath: '/admin/field-sense/team'
+      preLoaderRoute: typeof AdminFieldSenseTeamRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/inventory/caps': {
+      id: '/admin/inventory/caps'
+      path: '/caps'
+      fullPath: '/admin/inventory/caps'
+      preLoaderRoute: typeof AdminInventoryCapsRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/collections': {
+      id: '/admin/inventory/collections'
+      path: '/collections'
+      fullPath: '/admin/inventory/collections'
+      preLoaderRoute: typeof AdminInventoryCollectionsRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/dashboard': {
+      id: '/admin/inventory/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/inventory/dashboard'
+      preLoaderRoute: typeof AdminInventoryDashboardRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/demands': {
+      id: '/admin/inventory/demands'
+      path: '/demands'
+      fullPath: '/admin/inventory/demands'
+      preLoaderRoute: typeof AdminInventoryDemandsRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/goods-receipts': {
+      id: '/admin/inventory/goods-receipts'
+      path: '/goods-receipts'
+      fullPath: '/admin/inventory/goods-receipts'
+      preLoaderRoute: typeof AdminInventoryGoodsReceiptsRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/issuances': {
+      id: '/admin/inventory/issuances'
+      path: '/issuances'
+      fullPath: '/admin/inventory/issuances'
+      preLoaderRoute: typeof AdminInventoryIssuancesRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/items': {
+      id: '/admin/inventory/items'
+      path: '/items'
+      fullPath: '/admin/inventory/items'
+      preLoaderRoute: typeof AdminInventoryItemsRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/purchase-orders': {
+      id: '/admin/inventory/purchase-orders'
+      path: '/purchase-orders'
+      fullPath: '/admin/inventory/purchase-orders'
+      preLoaderRoute: typeof AdminInventoryPurchaseOrdersRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/rate-cards': {
+      id: '/admin/inventory/rate-cards'
+      path: '/rate-cards'
+      fullPath: '/admin/inventory/rate-cards'
+      preLoaderRoute: typeof AdminInventoryRateCardsRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/stock': {
+      id: '/admin/inventory/stock'
+      path: '/stock'
+      fullPath: '/admin/inventory/stock'
+      preLoaderRoute: typeof AdminInventoryStockRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/stock-ledger': {
+      id: '/admin/inventory/stock-ledger'
+      path: '/stock-ledger'
+      fullPath: '/admin/inventory/stock-ledger'
+      preLoaderRoute: typeof AdminInventoryStockLedgerRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/transfers': {
+      id: '/admin/inventory/transfers'
+      path: '/transfers'
+      fullPath: '/admin/inventory/transfers'
+      preLoaderRoute: typeof AdminInventoryTransfersRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/vendors': {
+      id: '/admin/inventory/vendors'
+      path: '/vendors'
+      fullPath: '/admin/inventory/vendors'
+      preLoaderRoute: typeof AdminInventoryVendorsRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/warehouses': {
+      id: '/admin/inventory/warehouses'
+      path: '/warehouses'
+      fullPath: '/admin/inventory/warehouses'
+      preLoaderRoute: typeof AdminInventoryWarehousesRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/inventory/workflows': {
+      id: '/admin/inventory/workflows'
+      path: '/workflows'
+      fullPath: '/admin/inventory/workflows'
+      preLoaderRoute: typeof AdminInventoryWorkflowsRouteImport
+      parentRoute: typeof AdminInventoryRoute
+    }
+    '/admin/invoice/': {
+      id: '/admin/invoice/'
+      path: '/'
+      fullPath: '/admin/invoice/'
+      preLoaderRoute: typeof AdminInvoiceIndexRouteImport
+      parentRoute: typeof AdminInvoiceRoute
+    }
+    '/admin/invoice/$unitId': {
+      id: '/admin/invoice/$unitId'
+      path: '/$unitId'
+      fullPath: '/admin/invoice/$unitId'
+      preLoaderRoute: typeof AdminInvoiceUnitIdRouteImport
+      parentRoute: typeof AdminInvoiceRoute
+    }
+    '/admin/payroll/': {
+      id: '/admin/payroll/'
+      path: '/'
+      fullPath: '/admin/payroll/'
+      preLoaderRoute: typeof AdminPayrollIndexRouteImport
+      parentRoute: typeof AdminPayrollRoute
+    }
+    '/admin/payroll/$unitId': {
+      id: '/admin/payroll/$unitId'
+      path: '/$unitId'
+      fullPath: '/admin/payroll/$unitId'
+      preLoaderRoute: typeof AdminPayrollUnitIdRouteImport
+      parentRoute: typeof AdminPayrollRoute
+    }
+    '/admin/vehicles/expense-manager': {
+      id: '/admin/vehicles/expense-manager'
+      path: '/expense-manager'
+      fullPath: '/admin/vehicles/expense-manager'
+      preLoaderRoute: typeof AdminVehiclesExpenseManagerRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/admin/vehicles/fastags': {
+      id: '/admin/vehicles/fastags'
+      path: '/fastags'
+      fullPath: '/admin/vehicles/fastags'
+      preLoaderRoute: typeof AdminVehiclesFastagsRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/admin/vehicles/insight-lab': {
+      id: '/admin/vehicles/insight-lab'
+      path: '/insight-lab'
+      fullPath: '/admin/vehicles/insight-lab'
+      preLoaderRoute: typeof AdminVehiclesInsightLabRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/admin/vehicles/insurances': {
+      id: '/admin/vehicles/insurances'
+      path: '/insurances'
+      fullPath: '/admin/vehicles/insurances'
+      preLoaderRoute: typeof AdminVehiclesInsurancesRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/admin/vehicles/inventory': {
+      id: '/admin/vehicles/inventory'
+      path: '/inventory'
+      fullPath: '/admin/vehicles/inventory'
+      preLoaderRoute: typeof AdminVehiclesInventoryRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/admin/vehicles/pucs': {
+      id: '/admin/vehicles/pucs'
+      path: '/pucs'
+      fullPath: '/admin/vehicles/pucs'
+      preLoaderRoute: typeof AdminVehiclesPucsRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/admin/vehicles/service-manager': {
+      id: '/admin/vehicles/service-manager'
+      path: '/service-manager'
+      fullPath: '/admin/vehicles/service-manager'
+      preLoaderRoute: typeof AdminVehiclesServiceManagerRouteImport
+      parentRoute: typeof AdminVehiclesRoute
+    }
+    '/api/public/data-deletion-request': {
+      id: '/api/public/data-deletion-request'
+      path: '/api/public/data-deletion-request'
+      fullPath: '/api/public/data-deletion-request'
+      preLoaderRoute: typeof ApiPublicDataDeletionRequestRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/daily-people-pings': {
-      id: '/api/public/hooks/daily-people-pings'
-      path: '/api/public/hooks/daily-people-pings'
-      fullPath: '/api/public/hooks/daily-people-pings'
-      preLoaderRoute: typeof ApiPublicHooksDailyPeoplePingsRouteImport
+    '/api/public/otp-health': {
+      id: '/api/public/otp-health'
+      path: '/api/public/otp-health'
+      fullPath: '/api/public/otp-health'
+      preLoaderRoute: typeof ApiPublicOtpHealthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/public/sheet-ocr': {
+      id: '/api/public/sheet-ocr'
+      path: '/api/public/sheet-ocr'
+      fullPath: '/api/public/sheet-ocr'
+      preLoaderRoute: typeof ApiPublicSheetOcrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/candidates/$id/details': {
+      id: '/admin/candidates/$id/details'
+      path: '/candidates/$id/details'
+      fullPath: '/admin/candidates/$id/details'
+      preLoaderRoute: typeof AdminCandidatesIdDetailsRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/field-sense/officer/$id': {
       id: '/admin/field-sense/officer/$id'
@@ -2243,12 +2236,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFieldSenseOfficerIdRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/candidates/$id/details': {
-      id: '/admin/candidates/$id/details'
-      path: '/candidates/$id/details'
-      fullPath: '/admin/candidates/$id/details'
-      preLoaderRoute: typeof AdminCandidatesIdDetailsRouteImport
-      parentRoute: typeof AdminRoute
+    '/api/public/hooks/daily-people-pings': {
+      id: '/api/public/hooks/daily-people-pings'
+      path: '/api/public/hooks/daily-people-pings'
+      fullPath: '/api/public/hooks/daily-people-pings'
+      preLoaderRoute: typeof ApiPublicHooksDailyPeoplePingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/native/push': {
+      id: '/api/public/native/push'
+      path: '/api/public/native/push'
+      fullPath: '/api/public/native/push'
+      preLoaderRoute: typeof ApiPublicNativePushRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
