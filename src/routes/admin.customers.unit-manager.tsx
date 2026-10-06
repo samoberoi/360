@@ -62,6 +62,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useOperationalUnitScope } from "@/lib/use-manager-scope";
 import { GuidedForm, useGuidedFormCloseGuard, useGuidedFormDraft, type GuidedFormStep } from "@/components/GuidedForm";
+import { UnitMappingFields, loadUnitMapping, saveUnitMapping, type UnitMappingValue } from "@/components/UnitMappingFields";
 import { resolvePt, usePincodeRanges, usePtSlabs } from "@/lib/pt-lookup";
 import { pickEsicBranchId } from "@/lib/esic-auto-map";
 import { MONTH_NAMES, resolveLwf, useLwfRows } from "@/lib/lwf-lookup";
@@ -706,6 +707,14 @@ function UnitFormDialog({
   const [form, setForm] = useState<Omit<Unit, "id">>(() => emptyUnit(nextUnitCode(units)));
   const [error, setError] = useState<string | null>(null);
   const [assignedFoIds, setAssignedFoIds] = useState<string[]>([]);
+  const [mapping, setMapping] = useState<UnitMappingValue>({ fieldOfficerId: null, reportingManagerId: null });
+  useEffect(() => {
+    if (!open) return;
+    if (!editing?.id) { setMapping({ fieldOfficerId: null, reportingManagerId: null }); return; }
+    let live = true;
+    void loadUnitMapping(editing.id).then((m) => { if (live) setMapping(m); }).catch(() => {});
+    return () => { live = false; };
+  }, [open, editing?.id]);
   const [clientAttrValues, setClientAttrValues] = useState<Record<string, string>>({});
   const [selectedFoToAdd, setSelectedFoToAdd] = useState("");
   const [, setFoSyncing] = useState(false);
@@ -1016,6 +1025,10 @@ function UnitFormDialog({
         void syncFieldOfficerAssignments(result.id).then((syncErr) => {
           if (syncErr) toast.error(`Client saved, but field officer assignments could not be updated: ${syncErr}`);
         });
+        const unitId = result.id;
+        void saveUnitMapping(unitId, `${form.code} – ${form.name}`, mapping)
+          .then(() => qc.invalidateQueries({ queryKey: ["ops-deployments"] }))
+          .catch((e) => toast.error(`Client saved, but mapping could not be updated: ${e instanceof Error ? e.message : String(e)}`));
       }
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : "Could not save the client. Please try again.";
@@ -1033,6 +1046,7 @@ function UnitFormDialog({
     { key: "deployment", label: "Deployment", caption: "Deployment address and map location" },
     { key: "statutory", label: "Statutory", caption: "Tax and welfare settings" },
     { key: "inclusions", label: "Inclusions", caption: "Contract charges and benefits" },
+    { key: "mapping", label: "Mapping", caption: "Field officer and reporting manager" },
     { key: "review", label: "Review", caption: "Contacts, deployment and final check" },
   ];
   const validateStep = (key: string) => {
@@ -1047,6 +1061,7 @@ function UnitFormDialog({
     if (["organization", "details", "billing", "inclusions"].includes(key)) return !validateStep(key);
     if (key === "deployment") return form.shippingSameAsBilling || form.shippingSameAsOrg || Boolean(form.shippingAddress1.trim());
     if (key === "statutory") return true;
+    if (key === "mapping") return Boolean(mapping.fieldOfficerId && mapping.reportingManagerId);
     return steps.slice(0, 6).every((step) => isStepComplete(step.key));
   };
   const requestStep = (key: string) => {
@@ -1676,6 +1691,11 @@ function UnitFormDialog({
 
 
           {/* OTHER */}
+          <div className={stepKey === "mapping" ? "block" : "hidden"}>
+            <Section title="Mapping">
+              <UnitMappingFields value={mapping} onChange={setMapping} />
+            </Section>
+          </div>
           <div className={stepKey === "review" ? "space-y-5" : "hidden"}>
           <Section title="Other details">
             <div className="grid gap-3 sm:grid-cols-2">
