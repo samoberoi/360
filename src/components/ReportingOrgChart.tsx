@@ -29,12 +29,10 @@ async function load() {
   ]);
   const roleRows = ((roles ?? []) as unknown) as Array<{ key: string; name: string }>;
   const roleName = new Map(roleRows.map((r) => [r.key, r.name]));
-  const keys = [...roleRows.map((r) => r.key), ...GUARD_ROLES];
   const people = await fetchAllPages<P>((from, to) =>
     supabase
       .from("candidates")
       .select("id, full_name, employee_code, role_key, reports_to, designation_id")
-      .in("role_key", keys)
       .in("status", ["active", "approved"])
       .order("full_name")
       .range(from, to),
@@ -83,43 +81,85 @@ function count(id: string, kids: Map<string, P[]>): number {
   return (kids.get(id) ?? []).reduce((n, k) => n + 1 + count(k.id, kids), 0);
 }
 
-function Node({ p, depth, kids, label, open, toggle, match }: {
-  p: P; depth: number; kids: Map<string, P[]>; label: (p: P) => string;
+function Card({ p, label, total, isOpen, hasKids, onClick }: { p: P; label: string; total: number; isOpen: boolean; hasKids: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="relative mx-auto flex w-44 flex-col items-center rounded-xl border border-border/70 bg-card px-3 py-2 text-center shadow-sm transition hover:border-primary/60 hover:shadow-md"
+    >
+      <span className="w-full truncate text-[12px] font-bold text-foreground">{p.full_name}</span>
+      <span className="mt-0.5 w-full truncate rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{label}</span>
+      <span className="mt-0.5 font-mono text-[9px] text-muted-foreground">{p.employee_code ?? "\u00a0"}</span>
+      {hasKids && (
+        <span className="absolute -bottom-2.5 left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-full border border-border bg-background px-1.5 text-[9px] font-bold text-muted-foreground">
+          {isOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}{total}
+        </span>
+      )}
+    </button>
+  );
+}
+
+function Node({ p, kids, label, open, toggle, match }: {
+  p: P; kids: Map<string, P[]>; label: (p: P) => string;
   open: Set<string>; toggle: (id: string) => void; match: (p: P) => boolean;
 }) {
   const children = (kids.get(p.id) ?? []).filter(match);
   const isOpen = open.has(p.id);
   const total = count(p.id, kids);
+  const allLeaves = children.every((c) => (kids.get(c.id) ?? []).length === 0);
   return (
-    <li>
-      <button
-        type="button"
-        onClick={() => children.length && toggle(p.id)}
-        className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left hover:bg-muted/60"
-        style={{ paddingLeft: 8 + depth * 20 }}
-      >
-        {children.length ? (isOpen ? <ChevronDown className="h-3.5 w-3.5 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 shrink-0" />) : <span className="w-3.5" />}
-        <span className="truncate text-[13px] font-semibold text-foreground">{p.full_name}</span>
-        <span className="truncate font-mono text-[10px] text-muted-foreground">{p.employee_code ?? ""}</span>
-        <span className="ml-auto shrink-0 rounded-full border border-border/60 bg-muted/50 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">{label(p)}</span>
-        {total > 0 && <span className="shrink-0 text-[10px] font-semibold text-primary">{total} below</span>}
-      </button>
-      {isOpen && children.length > 0 && (
-        <ul className="border-l border-border/50" style={{ marginLeft: 15 + depth * 20 }}>
+    <li className="org-node">
+      <Card p={p} label={label(p)} total={total} isOpen={isOpen} hasKids={children.length > 0} onClick={() => children.length && toggle(p.id)} />
+      {isOpen && children.length > 0 && (allLeaves ? (
+        <div className="org-leaves">
+          <div className="mx-auto w-48 rounded-xl border border-dashed border-border/70 bg-muted/30 p-1.5">
+            {children.map((c) => (
+              <div key={c.id} className="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-left hover:bg-muted/60">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary/60" />
+                <span className="truncate text-[11px] font-semibold text-foreground">{c.full_name}</span>
+                <span className="ml-auto shrink-0 truncate text-[9px] text-muted-foreground">{label(c)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <ul className="org-children">
           {children.map((c) => (
-            <Node key={c.id} p={c} depth={0} kids={kids} label={label} open={open} toggle={toggle} match={match} />
+            <Node key={c.id} p={c} kids={kids} label={label} open={open} toggle={toggle} match={match} />
           ))}
         </ul>
-      )}
+      ))}
     </li>
   );
 }
+
+const ORG_CSS = `
+.org-tree, .org-tree ul { display:flex; justify-content:center; padding-top:20px; position:relative; margin:0; }
+.org-tree { padding-top:0; }
+.org-tree li.org-node { list-style:none; position:relative; padding:20px 6px 0; display:flex; flex-direction:column; align-items:center; }
+.org-tree > li.org-node { padding-top:0; }
+.org-children > li.org-node::before, .org-children > li.org-node::after { content:''; position:absolute; top:0; right:50%; width:50%; height:20px; border-top:1.5px solid hsl(var(--border)); border-color: var(--border); }
+.org-children > li.org-node::after { right:auto; left:50%; border-left:1.5px solid var(--border); }
+.org-children > li.org-node:only-child::before, .org-children > li.org-node:only-child::after { display:none; }
+.org-children > li.org-node:only-child { padding-top:20px; }
+.org-children > li.org-node:first-child::before, .org-children > li.org-node:last-child::after { border:0 none; }
+.org-children > li.org-node:last-child::before { border-right:1.5px solid var(--border); border-radius:0 6px 0 0; }
+.org-children > li.org-node:first-child::after { border-radius:6px 0 0 0; }
+.org-children::before { content:''; position:absolute; top:0; left:50%; height:20px; border-left:1.5px solid var(--border); }
+.org-children > li.org-node:only-child { padding-top:20px; }
+.org-children:has(> li.org-node:only-child) > li::before { display:block; border:0; border-left:0; }
+.org-leaves { position:relative; padding-top:20px; }
+.org-leaves::before { content:''; position:absolute; top:0; left:50%; height:20px; border-left:1.5px solid var(--border); }
+`;
 
 export function ReportingOrgChart() {
   const q = useQuery({ queryKey: ["reporting-org-chart"], staleTime: 60_000, queryFn: load });
   const [open, setOpen] = useState<Set<string>>(new Set());
   const [term, setTerm] = useState("");
   const data = q.data;
+  const [seeded, setSeeded] = useState(false);
+  if (data && !seeded) { setSeeded(true); setOpen(new Set([...data.kids.keys()])); }
 
   const { roots, unassigned, match } = useMemo(() => {
     if (!data) return { roots: [] as P[], unassigned: [] as P[], match: (_: P) => true };
@@ -159,13 +199,14 @@ export function ReportingOrgChart() {
           <Button size="sm" variant="ghost" onClick={() => setOpen(new Set())}>Collapse</Button>
         </div>
       </header>
-      <div className="max-h-[640px] overflow-auto p-2">
+      <style>{ORG_CSS}</style>
+      <div className="max-h-[820px] overflow-auto p-2">
         {q.isLoading && <div className="p-4 text-sm text-muted-foreground">Loading org chart…</div>}
         {q.error && <div className="p-4 text-sm text-destructive">Couldn't load the org chart.</div>}
         {data && (
-          <ul>
+          <ul className="org-tree min-w-max px-4 pb-4 pt-2">
             {roots.map((r) => (
-              <Node key={r.id} p={r} depth={0} kids={data.kids} label={data.label} open={open} toggle={toggle} match={match} />
+              <Node key={r.id} p={r} kids={data.kids} label={data.label} open={open} toggle={toggle} match={match} />
             ))}
           </ul>
         )}
