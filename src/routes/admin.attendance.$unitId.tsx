@@ -114,6 +114,9 @@ const searchSchema = z.object({
     .optional(),
 });
 
+// Home units where non-billable staff (field officers etc.) keep their attendance.
+const HOME_UNIT_IDS = new Set(["92541381-14d3-4be6-ae8c-078b79c2e0f1", "87f16953-2bfe-477b-80b4-22b8f3626459"]);
+
 export const Route = createFileRoute("/admin/attendance/$unitId")({
   validateSearch: (s) => searchSchema.parse(s),
   head: () => ({
@@ -541,7 +544,7 @@ function MusterRollPage() {
         // Muster rolls are billable-only for client units. Non-billable staff
         // (field officers, branch managers, HR, etc.) only appear on the
         // Radiant home-unit muster (UN-RGS-PUNE), where their payroll lives.
-        .filter((c) => !c.is_non_billable || unitId === "92541381-14d3-4be6-ae8c-078b79c2e0f1")
+        .filter((c) => !c.is_non_billable || HOME_UNIT_IDS.has(unitId))
         .sort((a, b) =>
           (a.employee_code || a.full_name).localeCompare(b.employee_code || b.full_name),
         );
