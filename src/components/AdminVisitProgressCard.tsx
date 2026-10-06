@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useManagerFieldOfficerScope } from "@/lib/use-manager-scope";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, Clock, MapPin, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +40,7 @@ function fmtHm(from: string, to?: string | null) {
 }
 
 export function AdminVisitProgressCard() {
+  const mgrScope = useManagerFieldOfficerScope();
   const [preset, setPreset] = useState<RangePreset>("today");
   const [customStart, setCustomStart] = useState("");
   const [customEnd, setCustomEnd] = useState("");
@@ -66,7 +68,7 @@ export function AdminVisitProgressCard() {
     },
   });
 
-  const rows = q.data ?? [];
+  const rows = (q.data ?? []).filter((r) => !mgrScope.isScoped || mgrScope.fieldOfficerIds.has(r.candidate_id));
   const inProgress = rows.filter((r) => !r.check_out_at);
   const completed = rows.filter((r) => r.check_out_at);
   const officers = new Set(inProgress.map((r) => r.candidate_id)).size;

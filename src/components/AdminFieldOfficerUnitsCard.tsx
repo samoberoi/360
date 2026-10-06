@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useManagerFieldOfficerScope } from "@/lib/use-manager-scope";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AlertTriangle, ChevronDown, ChevronRight, MapPin, Radio, Send, Shield } from "lucide-react";
@@ -116,6 +117,7 @@ function priorityBadge(p: FieldVisitRequestPriority) {
 }
 
 export function AdminFieldOfficerUnitsCard() {
+  const mgrScope = useManagerFieldOfficerScope();
   const qc = useQueryClient();
   const dir = useQuery({
     queryKey: ["admin-fo-directory"],
@@ -153,7 +155,7 @@ export function AdminFieldOfficerUnitsCard() {
       return s;
     });
 
-  const fos = dir.data?.fos ?? [];
+  const fos = (dir.data?.fos ?? []).filter((f) => !mgrScope.isScoped || mgrScope.fieldOfficerIds.has(f.id));
   const unitsByFo = dir.data?.unitsByFo ?? new Map<string, UnitForFo[]>();
 
   return (
