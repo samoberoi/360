@@ -118,7 +118,7 @@ function MyTeamPage() {
     refetchInterval: selectedDate === todayIso() ? 15_000 : false,
     staleTime: selectedDate === todayIso() ? 15_000 : 5 * 60_000,
     placeholderData: (prev) => prev,
-    queryFn: async (): Promise<{ rows: Row[]; total: number }> => {
+    queryFn: async (): Promise<{ rows: Row[]; total: number; geoByCand: Record<string, Array<{ state: string; city: string }>> }> => {
       const [foRes, punchRes, visitsRes, tracksRes, unitsRes] = await Promise.all([
         supabase
           .from("candidates" as never)
