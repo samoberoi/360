@@ -202,9 +202,7 @@ export function ReportingOrgChart() {
       memo.set(p.id, ok);
       return ok;
     };
-    const withTeam = data.roots.filter((r) => (data.kids.get(r.id) ?? []).length > 0);
-    const lone = data.roots.filter((r) => (data.kids.get(r.id) ?? []).length === 0);
-    return { roots: withTeam.filter(match), unassigned: lone.filter(match), match };
+    return { roots: data.roots.filter(match), unassigned: data.unmapped.filter(selfMatch), match };
   }, [data, term]);
 
   const toggle = (id: string) => setOpen((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
@@ -241,18 +239,22 @@ export function ReportingOrgChart() {
           </ul>
         )}
         {unassigned.length > 0 && (
-          <details className="mt-3 rounded-lg border border-dashed border-border/60 p-2">
-            <summary className="cursor-pointer text-[12px] font-semibold text-muted-foreground">No reporting manager ({unassigned.length})</summary>
-            <ul className="mt-1">
+          <div className="mt-4 rounded-xl border border-dashed border-destructive/40 bg-destructive/5 p-3">
+            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-destructive">Not mapped to anybody ({unassigned.length})</div>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">These people don't report to someone one level above them. Map them to place them in the tree.</p>
+            <ul className="mt-2 divide-y divide-border/50">
               {unassigned.map((p) => (
-                <li key={p.id} className="flex items-center gap-2 px-2 py-1 text-[12px]">
-                  <span className="font-semibold">{p.full_name}</span>
+                <li key={p.id} className="flex flex-wrap items-center gap-2 px-1 py-1.5 text-[12px]">
+                  <span className="font-semibold text-foreground">{p.full_name}</span>
                   <span className="font-mono text-[10px] text-muted-foreground">{p.employee_code}</span>
-                  <span className="ml-auto text-[10px] text-muted-foreground">{data?.label(p)}</span>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{data?.label(p)}</span>
+                  <span className="ml-auto text-[10px] text-muted-foreground">
+                    {data?.managerName(p) ? `Currently reports to ${data.managerName(p)}` : "No manager set"}
+                  </span>
                 </li>
               ))}
             </ul>
-          </details>
+          </div>
         )}
       </div>
     </section>
