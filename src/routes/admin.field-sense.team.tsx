@@ -106,7 +106,7 @@ function MyTeamPage() {
   const [selectedDate, setSelectedDate] = useState<string>(search.date || todayIso());
 
   // Live: refresh the moment any officer's telemetry changes.
-  useEffect(() => subscribeLivePunches(() => {
+  useEffect(() => selectedDate !== todayIso() ? undefined : subscribeLivePunches(() => {
     void qc.invalidateQueries({ queryKey: ["field-sense-team", selectedDate] });
   }), [qc, selectedDate]);
 
