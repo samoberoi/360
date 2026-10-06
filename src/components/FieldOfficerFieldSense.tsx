@@ -1002,18 +1002,54 @@ function CheckInDialog({
             </div>
           )}
           <label className="block text-[11px] font-semibold text-muted-foreground">Client</label>
-          <select
-            value={selectedId}
-            onChange={(e) => setSelectedId(e.target.value)}
-            className="h-10 w-full rounded-lg border border-border bg-background px-2 text-sm"
-          >
-            {units.map((u) => (
-              <option key={u.unit_id} value={u.unit_id}>
-                {u.unit_name}
-                {u.customer_name ? ` — ${u.customer_name}` : ""}
-              </option>
-            ))}
-          </select>
+          <Popover open={sitePickerOpen} onOpenChange={setSitePickerOpen}>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="flex h-10 w-full items-center justify-between rounded-lg border border-border bg-background px-2 text-sm"
+              >
+                <span className={cn("truncate", !selectedUnit && "text-muted-foreground")}>
+                  {selectedUnit
+                    ? `${selectedUnit.unit_name}${selectedUnit.customer_name ? ` — ${selectedUnit.customer_name}` : ""}`
+                    : "Search and select a site…"}
+                </span>
+                <Search className="ml-2 h-4 w-4 shrink-0 text-muted-foreground" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Search site or client…" />
+                <CommandList>
+                  <CommandEmpty>No site found.</CommandEmpty>
+                  <CommandGroup>
+                    {units.map((u) => (
+                      <CommandItem
+                        key={u.unit_id}
+                        value={`${u.unit_name} ${u.customer_name ?? ""}`}
+                        onSelect={() => {
+                          setSelectedId(u.unit_id);
+                          setSitePickerOpen(false);
+                        }}
+                      >
+                        <CheckCircle2
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            u.unit_id === selectedId ? "opacity-100 text-emerald-600" : "opacity-0",
+                          )}
+                        />
+                        <span className="truncate">
+                          {u.unit_name}
+                          {u.customer_name ? (
+                            <span className="text-muted-foreground"> — {u.customer_name}</span>
+                          ) : null}
+                        </span>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
           {blocked && (
             <div className="rounded-xl border border-rose-300/60 bg-rose-50 p-3 text-xs text-rose-900 dark:border-rose-500/40 dark:bg-rose-500/10 dark:text-rose-200">
               You are {distanceToSelected != null ? formatDistance(distanceToSelected) : ""} away from{" "}
