@@ -20,7 +20,6 @@ type P = {
   designation_id: string | null;
 };
 
-const GUARD_ROLES = ["guard", "security_guard"];
 
 async function load() {
   const [{ data: roles }, { data: desigs }] = await Promise.all([
@@ -61,30 +60,49 @@ async function load() {
       cur = mgr.get(cur);
     }
   }
-  // Tree stops at Field Officer: keep FOs, management roles, and everyone above an FO.
-  const MGMT = new Set(["field_officer", "operations_manager", "branch_manager", "dgm"]);
-  const keep = new Set<string>();
-  for (const p of people) {
-    if (!p.role_key || !MGMT.has(p.role_key)) continue;
-    let cur: string | undefined = p.id;
-    while (cur && !keep.has(cur)) { keep.add(cur); cur = mgr.get(cur); }
-  }
-  const shown = people.filter((p) => keep.has(p.id));
+  // Strict hierarchy, stopping at Field Officer: DGM → Branch Manager →
+  // Operations Manager (incl. Assistant) → Field Officer. A person hangs under
+  // their manager only when the manager sits exactly one level above; anyone
+  // else is listed once under "Not mapped to anybody".
+  const RANK: Record<string, number> = { dgm: 0, branch_manager: 1, operations_manager: 2, field_officer: 3 };
+  const shown = people.filter((p) => p.role_key != null && p.role_key in RANK);
+  const byId = new Map(shown.map((p) => [p.id, p]));
+  const rank = (p: P) => RANK[p.role_key as string];
   const kids = new Map<string, P[]>();
   const roots: P[] = [];
+  const parentOf = new Map<string, string>();
   for (const p of shown) {
     const m = mgr.get(p.id);
-    if (m && keep.has(m)) kids.set(m, [...(kids.get(m) ?? []), p]);
-    else roots.push(p);
+    const mp = m ? byId.get(m) : undefined;
+    if (mp && rank(mp) === rank(p) - 1) parentOf.set(p.id, mp.id);
+    else if (rank(p) === 0) roots.push(p);
   }
+  // Only people whose chain reaches a DGM are placed in the tree.
+  const placed = new Set<string>(roots.map((r) => r.id));
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const [c, m] of parentOf) {
+      if (!placed.has(c) && placed.has(m)) { placed.add(c); grew = true; }
+    }
+  }
+  for (const p of shown) {
+    const m = parentOf.get(p.id);
+    if (m && placed.has(p.id)) kids.set(m, [...(kids.get(m) ?? []), p]);
+  }
+  const unmapped = shown
+    .filter((p) => !placed.has(p.id))
+    .sort((a, b) => rank(a) - rank(b) || (a.full_name ?? "").localeCompare(b.full_name ?? ""));
+  const managerName = (p: P) => {
+    const m = mgr.get(p.id);
+    return m ? people.find((x) => x.id === m)?.full_name ?? null : null;
+  };
   const label = (p: P) =>
-    (p.designation_id && p.role_key !== "field_officer" && desig.get(p.designation_id) !== "Field Officer" && desig.get(p.designation_id)) ||
-    (p.role_key && !["field_officer", ...GUARD_ROLES].includes(p.role_key) && roleName.get(p.role_key)) ||
     (p.designation_id && desig.get(p.designation_id)) ||
     (p.role_key && roleName.get(p.role_key)) ||
-    (p.role_key && GUARD_ROLES.includes(p.role_key) ? "Security Guard" : p.role_key) ||
+    p.role_key ||
     "";
-  return { roots, kids, label, total: shown.length };
+  return { roots, kids, unmapped, managerName, label, total: shown.length };
 }
 
 function count(id: string, kids: Map<string, P[]>): number {
@@ -183,9 +201,7 @@ export function ReportingOrgChart() {
       memo.set(p.id, ok);
       return ok;
     };
-    const withTeam = data.roots.filter((r) => (data.kids.get(r.id) ?? []).length > 0);
-    const lone = data.roots.filter((r) => (data.kids.get(r.id) ?? []).length === 0);
-    return { roots: withTeam.filter(match), unassigned: lone.filter(match), match };
+    return { roots: data.roots.filter(match), unassigned: data.unmapped.filter(selfMatch), match };
   }, [data, term]);
 
   const toggle = (id: string) => setOpen((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
@@ -222,18 +238,22 @@ export function ReportingOrgChart() {
           </ul>
         )}
         {unassigned.length > 0 && (
-          <details className="mt-3 rounded-lg border border-dashed border-border/60 p-2">
-            <summary className="cursor-pointer text-[12px] font-semibold text-muted-foreground">No reporting manager ({unassigned.length})</summary>
-            <ul className="mt-1">
+          <div className="mt-4 rounded-xl border border-dashed border-destructive/40 bg-destructive/5 p-3">
+            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-destructive">Not mapped to anybody ({unassigned.length})</div>
+            <p className="mt-0.5 text-[11px] text-muted-foreground">These people don't report to someone one level above them. Map them to place them in the tree.</p>
+            <ul className="mt-2 divide-y divide-border/50">
               {unassigned.map((p) => (
-                <li key={p.id} className="flex items-center gap-2 px-2 py-1 text-[12px]">
-                  <span className="font-semibold">{p.full_name}</span>
+                <li key={p.id} className="flex flex-wrap items-center gap-2 px-1 py-1.5 text-[12px]">
+                  <span className="font-semibold text-foreground">{p.full_name}</span>
                   <span className="font-mono text-[10px] text-muted-foreground">{p.employee_code}</span>
-                  <span className="ml-auto text-[10px] text-muted-foreground">{data?.label(p)}</span>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{data?.label(p)}</span>
+                  <span className="ml-auto text-[10px] text-muted-foreground">
+                    {data?.managerName(p) ? `Currently reports to ${data.managerName(p)}` : "No manager set"}
+                  </span>
                 </li>
               ))}
             </ul>
-          </details>
+          </div>
         )}
       </div>
     </section>
