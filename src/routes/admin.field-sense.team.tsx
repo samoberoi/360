@@ -135,8 +135,12 @@ function MyTeamPage() {
           .select("candidate_id, unit_id, check_in_at, check_out_at")
           .eq("visit_date", selectedDate),
         Promise.resolve({ data: [] as unknown[] }),
-        supabase.from("units" as never).select("id, name").limit(5000),
+        supabase.from("units" as never).select("id, name, shipping_state, shipping_city, billing_state, billing_city").limit(5000),
       ]);
+      const foIds = (((foRes.data ?? []) as unknown) as Array<{ id: string }>).map((f) => f.id);
+      const cuRes = foIds.length
+        ? await supabase.from("candidate_units" as never).select("candidate_id, unit_id").in("candidate_id", foIds)
+        : { data: [] as unknown[] };
 
       const fos = ((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>;
       const punches = ((punchRes.data ?? []) as unknown) as Array<{
