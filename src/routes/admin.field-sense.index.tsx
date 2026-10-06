@@ -100,7 +100,7 @@ function popupHtml(r: LivePunch): string {
 }
 
 function FieldSensePage() {
-  const { isFieldOfficer, candidateId, isLoading } = useCurrentUserRole();
+  const { isFieldOfficer, roleKey, candidateId, isLoading } = useCurrentUserRole();
   if (isLoading) {
     return <div className="p-6 text-sm text-muted-foreground">Loading…</div>;
   }
@@ -113,6 +113,21 @@ function FieldSensePage() {
           crumbs={[{ label: "Admin", to: "/admin/field-dashboard" }, { label: "Site Visits" }]}
         />
         <FieldOfficerFieldSense candidateId={candidateId} />
+      </div>
+    );
+  }
+  // Operations manager: own site check-in (union of his officers' sites) on top
+  // of a Radar view scoped to just his team.
+  if (roleKey === ROLE_KEYS.OPERATIONS_MANAGER && candidateId) {
+    return (
+      <div className="space-y-6">
+        <PageHeader
+          title="My Team Radar"
+          description="Your field officers' live status, plus your own site check-ins across all their sites."
+          crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Radar" }]}
+        />
+        <FieldOfficerFieldSense candidateId={candidateId} />
+        <AdminFieldSense />
       </div>
     );
   }
