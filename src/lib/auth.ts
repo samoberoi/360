@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { logActivity, getClientIp } from "@/lib/activity-log";
 import { restorePhoneSession } from "@/lib/phone-session.functions";
+import { ensureFreshNativeInstall } from "@/lib/native-install-guard";
 
 const STORAGE_KEY = "radiant.auth";
 const AUTH_TIMEOUT_MS = 12_000;
@@ -112,6 +113,8 @@ function resolveClientIpQuickly() {
 }
 
 async function authUserFromSession(): Promise<AuthUser | null> {
+  // A fresh install or new app version always starts signed out.
+  await ensureFreshNativeInstall();
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -245,6 +248,16 @@ export function useAuth() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
+      void ensureFreshNativeInstall().then((wiped) => {
+        // A session restored from before this install is never honoured.
+        if (wiped && event === "INITIAL_SESSION") return;
+        handleAuthEvent(event, session);
+      });
+    });
+    function handleAuthEvent(
+      event: Parameters<Parameters<typeof supabase.auth.onAuthStateChange>[0]>[0],
+      session: Parameters<Parameters<typeof supabase.auth.onAuthStateChange>[0]>[1],
+    ) {
       if (!active) return;
 
       if (!session?.user) {
@@ -295,7 +308,7 @@ export function useAuth() {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextUser));
       setUser(nextUser);
       setIsReady(true);
-    });
+    }
 
     // Keep the session warm: phones suspend timers while the app is in the
     // background, so refresh on resume, on reconnect, and periodically.
