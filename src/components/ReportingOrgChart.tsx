@@ -61,11 +61,20 @@ async function load() {
       cur = mgr.get(cur);
     }
   }
+  // Tree stops at Field Officer: keep FOs, management roles, and everyone above an FO.
+  const MGMT = new Set(["field_officer", "operations_manager", "branch_manager", "dgm"]);
+  const keep = new Set<string>();
+  for (const p of people) {
+    if (!p.role_key || !MGMT.has(p.role_key)) continue;
+    let cur: string | undefined = p.id;
+    while (cur && !keep.has(cur)) { keep.add(cur); cur = mgr.get(cur); }
+  }
+  const shown = people.filter((p) => keep.has(p.id));
   const kids = new Map<string, P[]>();
   const roots: P[] = [];
-  for (const p of people) {
+  for (const p of shown) {
     const m = mgr.get(p.id);
-    if (m) kids.set(m, [...(kids.get(m) ?? []), p]);
+    if (m && keep.has(m)) kids.set(m, [...(kids.get(m) ?? []), p]);
     else roots.push(p);
   }
   const label = (p: P) =>
@@ -74,8 +83,7 @@ async function load() {
     (p.role_key && roleName.get(p.role_key)) ||
     (p.role_key && GUARD_ROLES.includes(p.role_key) ? "Security Guard" : p.role_key) ||
     "";
-  // Roots: people with reports; lone guards collapse into "Unassigned".
-  return { roots, kids, label, total: people.length };
+  return { roots, kids, label, total: shown.length };
 }
 
 function count(id: string, kids: Map<string, P[]>): number {
