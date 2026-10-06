@@ -7,6 +7,35 @@ export type DayMapVisit = { id: string; seq: number; lat: number; lng: number; l
 const STREET = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const SAT = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
+/** Snap a GPS trail onto real roads (OSRM map-matching), chunked; falls back to raw points. */
+async function snapToRoads(path: [number, number][], signal: AbortSignal): Promise<[number, number][]> {
+  if (path.length < 2) return path;
+  const out: [number, number][] = [];
+  const CH = 80;
+  for (let i = 0; i < path.length - 1; i += CH - 1) {
+    const chunk = path.slice(i, i + CH);
+    if (chunk.length < 2) break;
+    const coords = chunk.map(([la, ln]) => `${ln.toFixed(6)},${la.toFixed(6)}`).join(";");
+    const rad = chunk.map(() => "35").join(";");
+    try {
+      const r = await fetch(
+        `https://router.project-osrm.org/match/v1/driving/${coords}?geometries=geojson&overview=full&radiuses=${rad}&gaps=ignore&tidy=true`,
+        { signal },
+      );
+      const j = r.ok ? await r.json() : null;
+      const ms = (j?.matchings ?? []) as Array<{ geometry: { coordinates: [number, number][] } }>;
+      if (j?.code === "Ok" && ms.length) {
+        for (const m of ms) for (const [ln, la] of m.geometry.coordinates) out.push([la, ln]);
+        continue;
+      }
+    } catch (e) {
+      if (signal.aborted) throw e;
+    }
+    out.push(...chunk);
+  }
+  return out.length > 1 ? out : path;
+}
+
 /** Day trail map: login, visits (numbered), logout, and the GPS trail / live position. */
 export function OfficerDayMap({
   login,
@@ -33,6 +62,21 @@ export function OfficerDayMap({
   clickRef.current = onVisitClick;
   const [ready, setReady] = useState(false);
   const [sat, setSat] = useState(false);
+  const [roadPath, setRoadPath] = useState<[number, number][] | null>(null);
+  const rawKey = `${login?.lat},${login?.lng}|${trail.length}|${trail[trail.length - 1]?.lat}|${logout?.lat}`;
+  useEffect(() => {
+    const path: [number, number][] = [];
+    if (login) path.push([login.lat, login.lng]);
+    for (const p of trail) path.push([p.lat, p.lng]);
+    if (logout) path.push([logout.lat, logout.lng]);
+    if (path.length < 2) { setRoadPath(null); return; }
+    const ac = new AbortController();
+    const t = window.setTimeout(() => {
+      snapToRoads(path, ac.signal).then(setRoadPath).catch(() => {});
+    }, 400);
+    return () => { ac.abort(); window.clearTimeout(t); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawKey]);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,7 +118,9 @@ export function OfficerDayMap({
     for (const p of trail) path.push([p.lat, p.lng]);
     if (live && !logout) path.push([live.lat, live.lng]);
     if (logout) path.push([logout.lat, logout.lng]);
-    if (path.length > 1) L.polyline(path, { color: "#3b82f6", weight: 4, opacity: 0.85 }).addTo(layer);
+    const drawn: [number, number][] = roadPath ? [...roadPath] : path;
+    if (roadPath && live && !logout) drawn.push([live.lat, live.lng]);
+    if (drawn.length > 1) L.polyline(drawn, { color: "#3b82f6", weight: 4, opacity: 0.85 }).addTo(layer);
     bounds.push(...path);
 
     const dot = (p: DayMapPoint, color: string, title: string) => {
@@ -110,7 +156,7 @@ export function OfficerDayMap({
       if (bounds.length === 1) map.setView(bounds[0], 15);
       else map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
     }
-  }, [ready, login, logout, live, trail, visits]);
+  }, [ready, login, logout, live, trail, visits, roadPath]);
 
   return (
     <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
