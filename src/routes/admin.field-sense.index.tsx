@@ -11,6 +11,8 @@ import { FieldSenseRangeFilter } from "@/components/FieldSenseRangeFilter";
 import { AdminVisitProgressCard } from "@/components/AdminVisitProgressCard";
 import { AdminFieldOfficerUnitsCard } from "@/components/AdminFieldOfficerUnitsCard";
 import { OperationsDeployments } from "@/components/OperationsDeployments";
+import { ReportingOrgChart } from "@/components/ReportingOrgChart";
+import { useCurrentPermissions } from "@/lib/rbac";
 import { AdminEscalationRequestsCard } from "@/components/AdminEscalationRequestsCard";
 import { useManagerFieldOfficerScope } from "@/lib/use-manager-scope";
 import { ROLE_KEYS } from "@/lib/role-keys";
@@ -393,8 +395,15 @@ function AdminFieldSense() {
       <AdminEscalationRequestsCard />
 
       <FieldSenseLeaderboards />
+
+      <SuperAdminOrgChart />
     </div>
   );
+}
+
+function SuperAdminOrgChart() {
+  const { isSuperAdmin } = useCurrentPermissions();
+  return isSuperAdmin ? <ReportingOrgChart /> : null;
 }
 
 // ------------------------ Leaderboards ------------------------
