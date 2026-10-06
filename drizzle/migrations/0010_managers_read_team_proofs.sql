@@ -1,0 +1,2 @@
+CREATE POLICY "Managers read team visit proofs" ON storage.objects FOR SELECT TO authenticated
+USING (bucket_id = 'field-visit-proofs' AND public.current_user_manages_candidate(((storage.foldername(name))[1])::uuid));
