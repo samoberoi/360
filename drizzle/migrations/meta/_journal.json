@@ -50,6 +50,13 @@
       "when": 1791266826005,
       "tag": "0006_unit_mapping_field_officer",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791279068384,
+      "tag": "0007_allow_operations_manager_field_punches",
+      "breakpoints": true
     }
   ]
 }
