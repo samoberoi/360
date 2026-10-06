@@ -64,6 +64,13 @@
       "when": 1791279125118,
       "tag": "0008_allow_operations_manager_punch_update",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791280193209,
+      "tag": "0009_manager_subtree_visibility",
+      "breakpoints": true
     }
   ]
 }

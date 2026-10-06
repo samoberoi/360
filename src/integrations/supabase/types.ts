@@ -6349,6 +6349,10 @@ export type Database = {
       current_user_is_inventory_manager: { Args: never; Returns: boolean }
       current_user_is_people_ops: { Args: never; Returns: boolean }
       current_user_is_rehire_participant: { Args: never; Returns: boolean }
+      current_user_manages_candidate: {
+        Args: { _candidate_id: string }
+        Returns: boolean
+      }
       current_user_mobile: { Args: never; Returns: string }
       current_user_owns_onboarding_candidate: {
         Args: { _candidate_id: string }
