@@ -36,6 +36,20 @@
       "when": 1791265301270,
       "tag": "0004_fo_home_unit_attendance",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791266652183,
+      "tag": "0005_unit_mapping_reporting_manager",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791266826005,
+      "tag": "0006_unit_mapping_field_officer",
+      "breakpoints": true
     }
   ]
 }
