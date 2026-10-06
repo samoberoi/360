@@ -8,6 +8,20 @@
       "when": 1790132291466,
       "tag": "0000_transport_assets_access",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791264840151,
+      "tag": "0001_accurate_fo_distance_backfill",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791264962603,
+      "tag": "0002_fo_distance_ignore_gap_jumps",
+      "breakpoints": true
     }
   ]
 }

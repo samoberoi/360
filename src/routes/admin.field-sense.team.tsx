@@ -106,14 +106,15 @@ function MyTeamPage() {
   const [selectedDate, setSelectedDate] = useState<string>(search.date || todayIso());
 
   // Live: refresh the moment any officer's telemetry changes.
-  useEffect(() => subscribeLivePunches(() => {
+  useEffect(() => selectedDate !== todayIso() ? undefined : subscribeLivePunches(() => {
     void qc.invalidateQueries({ queryKey: ["field-sense-team", selectedDate] });
   }), [qc, selectedDate]);
 
   const dataQ = useQuery({
     queryKey: ["field-sense-team", selectedDate],
-    refetchInterval: 15_000,
-    staleTime: 15_000,
+    refetchInterval: selectedDate === todayIso() ? 15_000 : false,
+    staleTime: selectedDate === todayIso() ? 15_000 : 5 * 60_000,
+    placeholderData: (prev) => prev,
     queryFn: async (): Promise<{ rows: Row[]; total: number }> => {
       const [foRes, punchRes, visitsRes, tracksRes, unitsRes] = await Promise.all([
         supabase
@@ -130,12 +131,8 @@ function MyTeamPage() {
           .from("field_visits" as never)
           .select("candidate_id, unit_id, check_in_at, check_out_at")
           .eq("visit_date", selectedDate),
-        supabase
-          .from("field_track_points" as never)
-          .select("candidate_id, lat, lng, recorded_at")
-          .eq("track_date", selectedDate)
-          .order("recorded_at", { ascending: true }),
-        supabase.from("units" as never).select("id, name"),
+        Promise.resolve({ data: [] as unknown[] }),
+        supabase.from("units" as never).select("id, name").limit(5000),
       ]);
 
       const fos = ((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>;
