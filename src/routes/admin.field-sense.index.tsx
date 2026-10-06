@@ -1,3 +1,4 @@
+import { TeamSummaryCard } from "@/components/TeamSummaryCard";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -130,12 +131,18 @@ function FieldSensePage() {
           description="Your field officers' live status, plus your own site check-ins across all their sites."
           crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Radar" }]}
         />
+        <TeamSummaryCard />
         <FieldOfficerFieldSense candidateId={candidateId} />
         <AdminFieldSense />
       </div>
     );
   }
-  return <AdminFieldSense />;
+  return (
+    <div className="space-y-6">
+      <TeamSummaryCard />
+      <AdminFieldSense />
+    </div>
+  );
 }
 
 function AdminFieldSense() {
