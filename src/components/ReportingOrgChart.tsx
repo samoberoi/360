@@ -139,7 +139,7 @@ const ORG_CSS = `
 .org-tree { padding-top:0; }
 .org-tree li.org-node { list-style:none; position:relative; padding:20px 6px 0; display:flex; flex-direction:column; align-items:center; }
 .org-tree > li.org-node { padding-top:0; }
-.org-children > li.org-node::before, .org-children > li.org-node::after { content:''; position:absolute; top:0; right:50%; width:50%; height:20px; border-top:1.5px solid hsl(var(--border)); border-color: var(--border); }
+.org-children > li.org-node::before, .org-children > li.org-node::after { content:''; position:absolute; top:0; right:50%; width:50%; height:20px; border-top:1.5px solid var(--border); }
 .org-children > li.org-node::after { right:auto; left:50%; border-left:1.5px solid var(--border); }
 .org-children > li.org-node:only-child::before, .org-children > li.org-node:only-child::after { display:none; }
 .org-children > li.org-node:only-child { padding-top:20px; }
