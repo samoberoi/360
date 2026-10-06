@@ -248,8 +248,39 @@ function MyTeamPage() {
   });
 
 
-  const rows = dataQ.data?.rows ?? [];
+  const allRows = dataQ.data?.rows ?? [];
+  const geoByCand = (dataQ.data?.geoByCand ?? {}) as Record<string, Array<{ state: string; city: string }>>;
   const total = dataQ.data?.total ?? 0;
+
+  const stateOptions = useMemo(() => {
+    const s = new Set<string>();
+    for (const arr of Object.values(geoByCand)) for (const g of arr) if (g.state) s.add(g.state);
+    return [...s].sort();
+  }, [geoByCand]);
+  const cityOptions = useMemo(() => {
+    const s = new Set<string>();
+    for (const arr of Object.values(geoByCand)) {
+      for (const g of arr) {
+        if (!g.city) continue;
+        if (stateFilter && g.state !== stateFilter) continue;
+        s.add(g.city);
+      }
+    }
+    return [...s].sort();
+  }, [geoByCand, stateFilter]);
+
+  const rows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return allRows.filter((r) => {
+      if (q && !r.full_name.toLowerCase().includes(q) && !(r.employee_code ?? "").toLowerCase().includes(q)) return false;
+      if (stateFilter || cityFilter) {
+        const geos = geoByCand[r.id] ?? [];
+        const match = geos.some((g) => (!stateFilter || g.state === stateFilter) && (!cityFilter || g.city === cityFilter));
+        if (!match) return false;
+      }
+      return true;
+    });
+  }, [allRows, query, stateFilter, cityFilter, geoByCand]);
   const isPast = selectedDate < todayIso();
   const punchedIn = rows.filter((r) => r.punch_in && !r.punch_out).length;
   const inMeeting = rows.filter((r) => r.status === "in_meeting").length;
