@@ -20,7 +20,6 @@ type P = {
   designation_id: string | null;
 };
 
-const GUARD_ROLES = ["guard", "security_guard"];
 
 async function load() {
   const [{ data: roles }, { data: desigs }] = await Promise.all([
