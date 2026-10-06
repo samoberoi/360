@@ -37,6 +37,7 @@ import {
   type Geo,
 } from "@/lib/self-attendance";
 import {
+  closeStaleVisits,
   completeVisit,
   createVisit,
   fetchLastVisitPerUnit,

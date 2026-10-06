@@ -21,6 +21,7 @@ import {
   DEVIATION_THRESHOLD_M,
   type SelfPunch,
 } from "@/lib/self-attendance";
+import { closeStaleVisits } from "@/lib/field-visits";
 
 import { isNativePlatform } from "@/lib/native";
 import { captureAndUploadSelfie, signedSelfieUrl } from "@/lib/selfie";
