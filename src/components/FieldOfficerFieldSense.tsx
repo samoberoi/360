@@ -37,6 +37,7 @@ import {
   type Geo,
 } from "@/lib/self-attendance";
 import {
+  closeStaleVisits,
   completeVisit,
   createVisit,
   fetchLastVisitPerUnit,
@@ -331,9 +332,26 @@ export function FieldOfficerFieldSense({ candidateId, viewDate }: { candidateId:
   });
   const visitsQ = useQuery({
     queryKey: ["fo-fs-visits", candidateId, effectiveDate],
-    queryFn: () => fetchTodayVisits(candidateId, effectiveDate),
+    queryFn: async () => {
+      // Sweep: any visit left open on an earlier day is auto-closed at
+      // 23:59 of its own date before we render the list.
+      try { await closeStaleVisits(candidateId); } catch { /* noop */ }
+      return fetchTodayVisits(candidateId, effectiveDate);
+    },
     refetchInterval: isHistorical ? false : 30_000,
   });
+  // At midnight, shut down any visit still open — no visit survives past 12 am.
+  useEffect(() => {
+    if (isHistorical) return;
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2);
+    const timer = window.setTimeout(async () => {
+      try { await closeStaleVisits(candidateId); } catch { /* noop */ }
+      qc.invalidateQueries({ queryKey: ["fo-fs-visits", candidateId] });
+      qc.invalidateQueries({ queryKey: ["fo-open-visit", candidateId] });
+    }, midnight.getTime() - now.getTime());
+    return () => window.clearTimeout(timer);
+  }, [candidateId, isHistorical, qc]);
   const monthCountsQ = useQuery({
     queryKey: ["fo-fs-month-counts", candidateId, effectiveDate.slice(0, 7)],
     queryFn: () => fetchMonthVisitCounts(candidateId),

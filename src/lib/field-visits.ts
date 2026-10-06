@@ -255,6 +255,36 @@ export async function createVisit(params: {
   return data as unknown as FieldVisit;
 }
 
+/**
+ * Auto-close any visit still open from a previous day. A visit must never
+ * survive past midnight — it would block logout and stay invisible in Radar.
+ * Check-out is stamped 23:59:59 (local) of the visit's own date.
+ * Returns the number of visits closed.
+ */
+export async function closeStaleVisits(candidateId: string): Promise<number> {
+  const todayIso = today();
+  const { data, error } = await supabase
+    .from("field_visits" as never)
+    .select("id, visit_date")
+    .eq("candidate_id", candidateId)
+    .is("check_out_at", null)
+    .lt("visit_date", todayIso);
+  if (error) throw error;
+  const rows = (data ?? []) as unknown as Array<{ id: string; visit_date: string }>;
+  for (const row of rows) {
+    const endOfDay = new Date(`${row.visit_date}T23:59:59`);
+    await supabase
+      .from("field_visits" as never)
+      .update({
+        check_out_at: endOfDay.toISOString(),
+        visit_notes: "Auto-closed at midnight (visit was left open).",
+      } as never)
+      .eq("id", row.id)
+      .is("check_out_at", null);
+  }
+  return rows.length;
+}
+
 /** Complete a visit (checkout). All 4 required fields must be present. */
 export async function completeVisit(params: {
   id: string;
