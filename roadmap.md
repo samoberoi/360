@@ -556,4 +556,5 @@
 - [x] Import SITE_WISE_DATA: Reliance Retail Ltd, 185 stores, field officer → operation manager → Sandip Raghav mapping
 - [x] Map Surender (9756891595) to 8 Bulandshahr/Khurja stores; Ashish Sharma (tech manager) on all 186 stores
 - [x] Officer map: no straight lines — trail always routed on roads (incl. live point and gaps)
-- [ ] Employee search matches designation, department and role (e.g. 'field officer')
+- [x] Employee search matches designation, department and role (e.g. 'field officer')
+- [ ] Rohit Joshi FO (8105391122) + HyperVamp org, 4 Janakpuri units (no coords), security guard contracts, mapped; verify check-in
