@@ -1063,8 +1063,11 @@ function CheckInDialog({
   });
 
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open modal={false} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent
+        className="sm:max-w-md"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Check in — visit #{nextSeq}</DialogTitle>
         </DialogHeader>
@@ -1093,10 +1096,14 @@ function CheckInDialog({
                 <Search className="ml-2 h-4 w-4 shrink-0 text-muted-foreground" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+            <PopoverContent
+              className="z-[200] w-[--radix-popover-trigger-width] p-0"
+              align="start"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <Command>
-                <CommandInput placeholder="Search site or client…" />
-                <CommandList>
+                <CommandInput placeholder="Search site or client…" autoFocus />
+                <CommandList className="max-h-64 overflow-y-auto">
                   <CommandEmpty>No site found.</CommandEmpty>
                   <CommandGroup>
                     {units.map((u) => (
