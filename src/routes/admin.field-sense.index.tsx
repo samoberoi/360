@@ -618,7 +618,7 @@ function FieldSenseLeaderboards() {
       for (const v of visits) {
         unitCount.set(v.unit_id, (unitCount.get(v.unit_id) ?? 0) + 1);
       }
-      const unitStats: UnitStats[] = units.map((u) => ({
+      const unitStats: UnitStats[] = units.filter((u) => !mgrScope.isScoped || mgrScope.unitIds.has(u.id)).map((u) => ({
         unit_id: u.id,
         unit_name: u.name ?? "—",
         customer_name: u.customer_id ? custById.get(u.customer_id) ?? null : null,
