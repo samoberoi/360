@@ -11,6 +11,7 @@ import {
   MapPin,
   Navigation,
   Route as RouteIcon,
+  Search,
   Star,
   X,
 } from "lucide-react";
