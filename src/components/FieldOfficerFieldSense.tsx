@@ -274,6 +274,38 @@ async function loadFoUnits(candidateId: string): Promise<FoUnit[]> {
       }
     }
   }
+  // Always include the officer's own home/base unit (e.g. head office) so
+  // office visits can be logged — driven by candidates.unit_id, not hardcoded.
+  try {
+    const { data: homeRow } = await supabase
+      .from("candidates" as never)
+      .select("unit_id")
+      .eq("id", candidateId)
+      .maybeSingle();
+    const homeId = ((homeRow as unknown) as { unit_id?: string | null } | null)?.unit_id;
+    if (homeId && !units.some((u) => u.unit_id === homeId)) {
+      const { data: hu } = await supabase
+        .from("units" as never)
+        .select("id, name, code, shipping_address1, latitude, longitude, customers(name)")
+        .eq("id", homeId)
+        .maybeSingle();
+      const u = (hu as unknown) as { id: string; name: string; code: string | null; shipping_address1: string | null; latitude: number | null; longitude: number | null; customers: { name: string } | null } | null;
+      if (u) {
+        units.unshift({
+          unit_id: u.id,
+          unit_name: u.name,
+          unit_code: u.code,
+          customer_name: u.customers?.name ?? null,
+          branch_name: null,
+          address: u.shipping_address1,
+          latitude: u.latitude,
+          longitude: u.longitude,
+        } as FoUnit);
+      }
+    }
+  } catch {
+    /* non-fatal */
+  }
   writeUnitsSnapshot(candidateId, units);
   return units;
 }
