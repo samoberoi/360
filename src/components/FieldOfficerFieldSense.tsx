@@ -1063,8 +1063,11 @@ function CheckInDialog({
   });
 
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open modal={false} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent
+        className="sm:max-w-md"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Check in — visit #{nextSeq}</DialogTitle>
         </DialogHeader>
