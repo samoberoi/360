@@ -800,7 +800,6 @@ function DashboardPage() {
     },
   });
 
-  if (countsQuery.error) return <DashboardErrorState error={countsQuery.error} />;
   const isLoading = countsQuery.isLoading;
   const data = useMemo(() => {
     if (!countsQuery.data) return undefined;
@@ -1117,6 +1116,7 @@ function DashboardPage() {
     actual_invoice: canSeeCommercial ? r.invoice_amount : 0,
   }));
 
+  if (countsQuery.error) return <DashboardErrorState error={countsQuery.error} />;
   return (
     <div data-mobile-dashboard className="w-full min-w-0 px-0 py-1 sm:p-6">
       <DashboardShell
