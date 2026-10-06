@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useManagerFieldOfficerScope } from "@/lib/use-manager-scope";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, ChevronLeft, ChevronRight, MapPin, Repeat, Search, Users } from "lucide-react";
 import { toast } from "sonner";
@@ -94,7 +95,23 @@ export function OperationsDeployments() {
 
 
   const dirQ = useQuery({ queryKey: ["ops-deployments"], staleTime: 2 * 60_000, queryFn: loadDirectory });
-  const dir = dirQ.data;
+  const mgrScope = useManagerFieldOfficerScope();
+  // Managers see only their reporting officers and the sites those officers cover.
+  const dir = useMemo(() => {
+    const d = dirQ.data;
+    if (!d || !mgrScope.isScoped) return d;
+    const fo = mgrScope.fieldOfficerIds;
+    const fos = d.fos.filter((f) => fo.has(f.id));
+    const unitIds = new Set<string>();
+    for (const f of fos) for (const u of d.unitsByFo.get(f.id) ?? []) unitIds.add(u);
+    return {
+      ...d,
+      fos,
+      units: d.units.filter((u) => unitIds.has(u.id)),
+      unitsByFo: new Map([...d.unitsByFo].filter(([k]) => fo.has(k))),
+      foByUnit: new Map([...d.foByUnit].filter(([k]) => unitIds.has(k)).map(([k, v]) => [k, v.filter((x) => fo.has(x))])),
+    };
+  }, [dirQ.data, mgrScope.isScoped, mgrScope.fieldOfficerIds]);
 
   const foName = (id: string) => {
     const f = dir?.fos.find((x) => x.id === id);

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useManagerFieldOfficerScope } from "@/lib/use-manager-scope";
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, CheckCircle2, Clock, Radio, Send, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -102,6 +103,7 @@ function Timeline({ req }: { req: FieldVisitRequest }) {
 }
 
 export function AdminEscalationRequestsCard() {
+  const mgrScope = useManagerFieldOfficerScope();
   const reqQ = useQuery({
     queryKey: ["admin-fvr-recent"],
     queryFn: () => listRecentRequestsAdmin(50),
@@ -110,7 +112,7 @@ export function AdminEscalationRequestsCard() {
   const metaQ = useQuery({ queryKey: ["admin-fvr-meta"], queryFn: loadMeta, staleTime: 60_000 });
 
   const rows = useMemo(() => {
-    const list = reqQ.data ?? [];
+    const list = (reqQ.data ?? []).filter((r) => !mgrScope.isScoped || mgrScope.fieldOfficerIds.has(r.candidate_id));
     // Sort: active first (pending/ack/in_progress), then most recent
     const rank = (r: FieldVisitRequest) =>
       r.status === "cancelled" ? 4 : r.status === "completed" ? 3 : r.status === "in_progress" ? 0 : r.status === "acknowledged" ? 1 : 2;
@@ -119,7 +121,7 @@ export function AdminEscalationRequestsCard() {
       if (d !== 0) return d;
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-  }, [reqQ.data]);
+  }, [reqQ.data, mgrScope.isScoped, mgrScope.fieldOfficerIds]);
 
   const counts = useMemo(() => {
     const c = { pending: 0, acknowledged: 0, in_progress: 0, completed: 0 };
