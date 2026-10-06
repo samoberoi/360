@@ -61,30 +61,49 @@ async function load() {
       cur = mgr.get(cur);
     }
   }
-  // Tree stops at Field Officer: keep FOs, management roles, and everyone above an FO.
-  const MGMT = new Set(["field_officer", "operations_manager", "branch_manager", "dgm"]);
-  const keep = new Set<string>();
-  for (const p of people) {
-    if (!p.role_key || !MGMT.has(p.role_key)) continue;
-    let cur: string | undefined = p.id;
-    while (cur && !keep.has(cur)) { keep.add(cur); cur = mgr.get(cur); }
-  }
-  const shown = people.filter((p) => keep.has(p.id));
+  // Strict hierarchy, stopping at Field Officer: DGM → Branch Manager →
+  // Operations Manager (incl. Assistant) → Field Officer. A person hangs under
+  // their manager only when the manager sits exactly one level above; anyone
+  // else is listed once under "Not mapped to anybody".
+  const RANK: Record<string, number> = { dgm: 0, branch_manager: 1, operations_manager: 2, field_officer: 3 };
+  const shown = people.filter((p) => p.role_key != null && p.role_key in RANK);
+  const byId = new Map(shown.map((p) => [p.id, p]));
+  const rank = (p: P) => RANK[p.role_key as string];
   const kids = new Map<string, P[]>();
   const roots: P[] = [];
+  const parentOf = new Map<string, string>();
   for (const p of shown) {
     const m = mgr.get(p.id);
-    if (m && keep.has(m)) kids.set(m, [...(kids.get(m) ?? []), p]);
-    else roots.push(p);
+    const mp = m ? byId.get(m) : undefined;
+    if (mp && rank(mp) === rank(p) - 1) parentOf.set(p.id, mp.id);
+    else if (rank(p) === 0) roots.push(p);
   }
+  // Only people whose chain reaches a DGM are placed in the tree.
+  const placed = new Set<string>(roots.map((r) => r.id));
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const [c, m] of parentOf) {
+      if (!placed.has(c) && placed.has(m)) { placed.add(c); grew = true; }
+    }
+  }
+  for (const p of shown) {
+    const m = parentOf.get(p.id);
+    if (m && placed.has(p.id)) kids.set(m, [...(kids.get(m) ?? []), p]);
+  }
+  const unmapped = shown
+    .filter((p) => !placed.has(p.id))
+    .sort((a, b) => rank(a) - rank(b) || (a.full_name ?? "").localeCompare(b.full_name ?? ""));
+  const managerName = (p: P) => {
+    const m = mgr.get(p.id);
+    return m ? people.find((x) => x.id === m)?.full_name ?? null : null;
+  };
   const label = (p: P) =>
-    (p.designation_id && p.role_key !== "field_officer" && desig.get(p.designation_id) !== "Field Officer" && desig.get(p.designation_id)) ||
-    (p.role_key && !["field_officer", ...GUARD_ROLES].includes(p.role_key) && roleName.get(p.role_key)) ||
     (p.designation_id && desig.get(p.designation_id)) ||
     (p.role_key && roleName.get(p.role_key)) ||
-    (p.role_key && GUARD_ROLES.includes(p.role_key) ? "Security Guard" : p.role_key) ||
+    p.role_key ||
     "";
-  return { roots, kids, label, total: shown.length };
+  return { roots, kids, unmapped, managerName, label, total: shown.length };
 }
 
 function count(id: string, kids: Map<string, P[]>): number {
