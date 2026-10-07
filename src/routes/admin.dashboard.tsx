@@ -27,6 +27,7 @@ import {
 
 import { PageHeader } from "@/components/PageHeader";
 import { DashboardShell } from "@/components/LiveFeed";
+import { SelfAttendanceSlot } from "@/components/SelfAttendanceSlot";
 import { Button } from "@/components/ui/button";
 import { useCountUp } from "@/hooks/useCountUp";
 import { supabase } from "@/integrations/supabase/client";
@@ -1119,6 +1120,7 @@ function DashboardPage() {
   if (countsQuery.error) return <DashboardErrorState error={countsQuery.error} />;
   return (
     <div data-mobile-dashboard className="w-full min-w-0 px-0 py-1 sm:p-6">
+      <SelfAttendanceSlot />
       <DashboardShell
         rightExtras={
           opsFocus ? (
