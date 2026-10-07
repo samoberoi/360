@@ -97,6 +97,17 @@ export async function verifyFaceForAttendance(
   photoFallback = false,
 ): Promise<boolean> {
   if (!isNativePlatform()) return false;
+  // Phones without a fingerprint/face sensor (or none enrolled) must still be
+  // able to mark attendance — GPS (and the selfie when required) is the proof.
+  try {
+    const { isBiometricAvailable } = await import("@/lib/biometric");
+    if (!(await isBiometricAvailable())) {
+      logNativeEvent("biometric", "self-attendance skipped: no biometric on device", {});
+      return false;
+    }
+  } catch {
+    return false;
+  }
   let lastError: unknown = null;
   for (let attempt = 0; attempt < 2; attempt++) {
     await new Promise((r) => setTimeout(r, attempt === 0 ? 350 : 600));
