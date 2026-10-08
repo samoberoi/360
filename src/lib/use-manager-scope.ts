@@ -24,6 +24,8 @@ export type ManagerFieldOfficerScope = {
   candidateId: string | null;
   /** Field officers anywhere below the signed-in user in the reporting chain. */
   fieldOfficerIds: Set<string>;
+  /** Active staff of every role below the signed-in manager. */
+  teamMemberIds: Set<string>;
   /** Billable client units those field officers cover. */
   unitIds: Set<string>;
   /** Organizations owning those units. */
@@ -38,6 +40,7 @@ function chunked<T>(items: T[]): T[][] {
 
 async function loadSubtree(managerId: string) {
   const fieldOfficerIds = new Set<string>();
+  const teamMemberIds = new Set<string>();
   const visited = new Set<string>([managerId]);
   let frontier = [managerId];
 
@@ -81,6 +84,7 @@ async function loadSubtree(managerId: string) {
     const usable = (p: PersonRow) =>
       p.is_enabled !== false && (p.status === "active" || p.status === "approved");
     for (const p of people) {
+      if (usable(p)) teamMemberIds.add(p.id);
       if (p.role_key === ROLE_KEYS.FIELD_OFFICER && usable(p)) fieldOfficerIds.add(p.id);
     }
     // Guards never manage anyone, so stopping there keeps the walk small.
@@ -89,7 +93,7 @@ async function loadSubtree(managerId: string) {
       .map((p) => p.id);
   }
 
-  return fieldOfficerIds;
+  return { fieldOfficerIds, teamMemberIds };
 }
 
 async function loadUnitsForOfficers(officerIds: string[]) {
@@ -149,13 +153,15 @@ export function useManagerFieldOfficerScope(): ManagerFieldOfficerScope {
     enabled,
     staleTime: 5 * 60_000,
     queryFn: async () => {
-      const fieldOfficerIds = await loadSubtree(candidateId!);
+      if (!candidateId) throw new Error("Employee profile unavailable.");
+      const { fieldOfficerIds, teamMemberIds } = await loadSubtree(candidateId);
       const { unitIds, customerIds } = await loadUnitsForOfficers([...fieldOfficerIds]);
-      return { fieldOfficerIds: [...fieldOfficerIds], unitIds, customerIds };
+      return { fieldOfficerIds: [...fieldOfficerIds], teamMemberIds: [...teamMemberIds], unitIds, customerIds };
     },
   });
 
   const fieldOfficerIds = useMemo(() => new Set(q.data?.fieldOfficerIds ?? []), [q.data]);
+  const teamMemberIds = useMemo(() => new Set(q.data?.teamMemberIds ?? []), [q.data]);
   const unitIds = useMemo(() => new Set(q.data?.unitIds ?? []), [q.data]);
   const customerIds = useMemo(() => new Set(q.data?.customerIds ?? []), [q.data]);
 
@@ -164,6 +170,7 @@ export function useManagerFieldOfficerScope(): ManagerFieldOfficerScope {
     isScoped: enabled && fieldOfficerIds.size > 0,
     candidateId,
     fieldOfficerIds,
+    teamMemberIds,
     unitIds,
     customerIds,
   };

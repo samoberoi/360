@@ -11,5 +11,6 @@
 - [x] RLS widened so operations_manager can punch in/out and log visits
 
 ## Open
+- [x] Day Patrol includes login-enabled staff with own/reporting-subtree visibility; browser-verified Sumit, Pushpendra and Sandip appear once with their actual attendance.
 - [ ] Publish all pending changes to the live site
 - [x] Push notifications targeted by role + reporting hierarchy (currently everyone gets everything)
