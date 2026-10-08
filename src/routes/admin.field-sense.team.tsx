@@ -44,7 +44,11 @@ export const Route = createFileRoute("/admin/field-sense/team")({
   head: () => ({
     meta: [
       { title: "Radar — Day Patrol" },
-      { name: "description", content: "Field officer roster with punch-in status, current location and travel distance." },
+      { name: "description", content: "PLUS 360 staff roster with attendance, current location and daily travel." },
+      { property: "og:title", content: "PLUS 360 Radar — Day Patrol" },
+      { property: "og:description", content: "Daily attendance, location and travel for field officers and staff." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });
@@ -108,10 +112,10 @@ function MyTeamPage() {
   const [query, setQuery] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
-  // Operations managers see only the field officers reporting to them.
+  // Keep reporting visibility, but include managers themselves and all staff roles.
   const mgrScope = useManagerFieldOfficerScope();
   const scopeKey = mgrScope.isScoped
-    ? [...mgrScope.fieldOfficerIds].sort().join(",")
+    ? [mgrScope.candidateId, ...mgrScope.teamMemberIds].sort().join(",")
     : "all";
 
   // Live: refresh the moment any officer's telemetry changes.
@@ -121,15 +125,15 @@ function MyTeamPage() {
 
   const dataQ = useQuery({
     queryKey: ["field-sense-team", selectedDate, scopeKey],
+    enabled: !mgrScope.isLoading,
     refetchInterval: selectedDate === todayIso() ? 15_000 : false,
     staleTime: selectedDate === todayIso() ? 15_000 : 5 * 60_000,
     placeholderData: (prev) => prev,
     queryFn: async (): Promise<{ rows: Row[]; total: number; geoByCand: Record<string, Array<{ state: string; city: string }>> }> => {
-      const [foRes, punchRes, visitsRes, tracksRes, unitsRes] = await Promise.all([
+      const [foRes, punchRes, visitsRes, tracksRes, unitsRes, rolesRes] = await Promise.all([
         supabase
           .from("candidates" as never)
-          .select("id, full_name, employee_code")
-          .eq("role_key", "field_officer")
+          .select("id, full_name, employee_code, role_key, is_enabled, is_disabled, unit_id")
           .in("status", ["approved", "active"])
           .order("full_name", { ascending: true }),
         supabase
@@ -142,16 +146,23 @@ function MyTeamPage() {
           .eq("visit_date", selectedDate),
         Promise.resolve({ data: [] as unknown[] }),
         supabase.from("units" as never).select("id, name, shipping_state, shipping_city, billing_state, billing_city").limit(5000),
+        supabase.from("roles").select("key"),
       ]);
+      for (const result of [foRes, punchRes, visitsRes, unitsRes, rolesRes]) {
+        if (result.error) throw result.error;
+      }
       const foIds = (((foRes.data ?? []) as unknown) as Array<{ id: string }>).map((f) => f.id);
       const cuRes = foIds.length
         ? await supabase.from("candidate_units" as never).select("candidate_id, unit_id").in("candidate_id", foIds)
         : { data: [] as unknown[] };
 
-      const allFos = ((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null }>;
-      // Operations managers: only their reporting field officers.
+      const loginRoles = new Set((rolesRes.data ?? []).map((role) => role.key));
+      const allFos = (((foRes.data ?? []) as unknown) as Array<{ id: string; full_name: string; employee_code: string | null; role_key: string | null; is_enabled: boolean | null; is_disabled: boolean | null; unit_id: string | null }>).filter(
+        (person) => person.is_enabled !== false && person.is_disabled !== true && !!person.role_key && loginRoles.has(person.role_key),
+      );
+      // Managers see themselves plus their reporting subtree, never unrelated staff.
       const fos = mgrScope.isScoped
-        ? allFos.filter((f) => mgrScope.fieldOfficerIds.has(f.id))
+        ? allFos.filter((f) => f.id === mgrScope.candidateId || mgrScope.teamMemberIds.has(f.id))
         : allFos;
       const punches = ((punchRes.data ?? []) as unknown) as Array<{
         candidate_id: string;
@@ -185,6 +196,10 @@ function MyTeamPage() {
         ]),
       );
       const geoByCand = new Map<string, Array<{ state: string; city: string }>>();
+      for (const person of fos) {
+        const homeGeo = person.unit_id ? unitGeo.get(person.unit_id) : undefined;
+        if (homeGeo?.state) geoByCand.set(person.id, [homeGeo]);
+      }
       for (const cu of ((cuRes.data ?? []) as unknown) as Array<{ candidate_id: string; unit_id: string }>) {
         const g = unitGeo.get(cu.unit_id);
         if (!g || !g.state) continue;
@@ -301,7 +316,7 @@ function MyTeamPage() {
     <div className="space-y-4">
       <PageHeader
         title="Day Patrol"
-        description="Live snapshot of field officers — punch-in, current location and travel today."
+        description="Staff attendance, current location and travel today."
         crumbs={[
           { label: "Admin", to: "/admin/dashboard" },
           { label: "Radar", to: "/admin/field-sense" },
@@ -379,8 +394,10 @@ function MyTeamPage() {
         </div>
         {dataQ.isLoading ? (
           <div className="p-6 text-center text-xs italic text-muted-foreground">Loading team…</div>
+        ) : dataQ.isError ? (
+          <div role="alert" className="p-6 text-center text-xs text-destructive">Staff attendance could not load. Please refresh and try again.</div>
         ) : rows.length === 0 ? (
-          <div className="p-6 text-center text-xs italic text-muted-foreground">No field officers found.</div>
+          <div className="p-6 text-center text-xs italic text-muted-foreground">No staff found.</div>
         ) : (
           <ul className="divide-y divide-border/50">
             {rows.map((r) => (
