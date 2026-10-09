@@ -403,14 +403,20 @@ function AdminFieldSense() {
 
       <FieldSenseLeaderboards />
 
-      <SuperAdminOrgChart />
+      <RadarOrgChart />
     </div>
   );
 }
 
-function SuperAdminOrgChart() {
+function RadarOrgChart() {
   const { isSuperAdmin } = useCurrentPermissions();
-  return isSuperAdmin ? <ReportingOrgChart /> : null;
+  const { candidateId, roleKey, isLoading } = useCurrentUserRole();
+  if (isLoading) return null;
+  if (isSuperAdmin) return <ReportingOrgChart />;
+  if (candidateId && ["dgm", "branch_manager", ROLE_KEYS.OPERATIONS_MANAGER].includes(roleKey ?? "")) {
+    return <ReportingOrgChart rootCandidateId={candidateId} />;
+  }
+  return null;
 }
 
 // ------------------------ Leaderboards ------------------------

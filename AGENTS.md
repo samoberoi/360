@@ -1,5 +1,7 @@
 # Project architecture
 
+- Radar reporting charts use one canonical manager per employee, render connected nodes only through field officers, and scope manager charts to their own subtree; site staff appear as aggregated counts so operational workers never share the management tier.
+
 - Day Patrol includes active login-enabled staff across roles, while manager views use their own identity and reporting subtree; field-officer-only unit scopes stay separate so expanding the roster does not broaden financial access.
 
 - Approved phone users are pre-provisioned in Lovable Cloud Auth; OTP verification must not require a privileged server client so externally hosted builds can sign in without private backend keys.
