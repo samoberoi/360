@@ -5,6 +5,16 @@ import { useCurrentPermissions } from "@/lib/rbac";
 
 export const Route = createFileRoute("/")({
   component: Index,
+  head: () => ({
+    meta: [
+      { title: "PLUS 360 — Staff workspace" },
+      { name: "description", content: "PLUS 360 staff attendance, site visits and operations workspace." },
+      { property: "og:title", content: "PLUS 360 — Staff workspace" },
+      { property: "og:description", content: "PLUS 360 staff attendance, site visits and operations workspace." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
 });
 
 const ORDER = ["organizations","contracts","employees","vehicles","assets","inventory","attendance","payroll","control_center","notification_center","rbac"] as const;
