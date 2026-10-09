@@ -325,7 +325,13 @@ export function MarkAttendanceCard({
 
   const showPunchError = (action: "in" | "out", error: unknown) => confirmAction({
     title: action === "in" ? "Unable to log in" : "Unable to log out",
-    description: error instanceof Error ? error.message : `${action === "in" ? "Login" : "Logout"} could not be completed.`,
+    description:
+      error instanceof Error
+        ? error.message
+        : ((error && typeof error === "object" && "message" in error
+            ? String((error as { message: unknown }).message)
+            : "") ||
+          `${action === "in" ? "Login" : "Logout"} could not be completed.`),
     confirmText: "Got it",
     hideCancel: true,
     tone: "warning",
