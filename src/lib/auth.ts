@@ -172,15 +172,11 @@ async function ensureSupabaseSession(
   );
   if (!signIn.error) return;
 
-  // Approved users are pre-provisioned, so a credential failure means this
-  // number is not registered/enabled. Never fall back to the privileged
-  // restore path — externally hosted builds have no server keys.
+  // Approved users are usually pre-provisioned. When an enabled employee has
+  // no sign-in account yet, the server provisions one (it re-checks access).
+  // If the server path is unavailable, show the not-registered message.
   const msg = signIn.error.message ?? "";
-  if (/invalid login credentials|email not confirmed|user not found/i.test(msg)) {
-    throw new Error(
-      "This mobile number is not registered for PLUS 360. Please contact your administrator.",
-    );
-  }
+  const notRegistered = /invalid login credentials|email not confirmed|user not found/i.test(msg);
 
   let tokens: { accessToken: string; refreshToken: string };
   try {
@@ -189,6 +185,11 @@ async function ensureSupabaseSession(
       "Account restoration is taking too long. Please try again.",
     );
   } catch (err) {
+    if (notRegistered) {
+      throw new Error(
+        "This mobile number is not registered for PLUS 360. Please contact your administrator.",
+      );
+    }
     const text = err instanceof Error ? err.message : String(err);
     if (/supabase|environment variable|service_role/i.test(text)) {
       throw new Error("Sign-in is temporarily unavailable. Please try again in a moment.");
