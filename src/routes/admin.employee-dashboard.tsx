@@ -284,6 +284,43 @@ function EmployeeDashboard() {
     [team],
   );
 
+  // Managers (anyone with reportees) see their reporting tree instead of unit guards.
+  const reporteesQ = useQuery({
+    queryKey: ["me-reportees", me?.id],
+    enabled: !!me?.id,
+    queryFn: async () => {
+      const [direct, extra] = await Promise.all([
+        supabase
+          .from("candidates")
+          .select("id,full_name,employee_code,photo_url,date_of_birth,approved_at,created_at,designation_id,role_key,unit_id")
+          .eq("reports_to", me!.id)
+          .in("status", ["active", "approved"])
+          .order("full_name"),
+        supabase
+          .from("candidate_reporting_managers" as never)
+          .select("candidate_id")
+          .eq("manager_id", me!.id),
+      ]);
+      if (direct.error) throw direct.error;
+      const map = new Map<string, Teammate>();
+      for (const r of (direct.data ?? []) as unknown as Teammate[]) map.set(r.id, r);
+      const extraIds = Array.from(
+        new Set(((extra.data as unknown as Array<{ candidate_id: string }>) ?? []).map((r) => r.candidate_id).filter((id) => id && !map.has(id))),
+      );
+      if (extraIds.length) {
+        const { data: ex } = await supabase
+          .from("candidates")
+          .select("id,full_name,employee_code,photo_url,date_of_birth,approved_at,created_at,designation_id,role_key,unit_id")
+          .in("id", extraIds)
+          .in("status", ["active", "approved"]);
+        for (const r of (ex ?? []) as unknown as Teammate[]) map.set(r.id, r);
+      }
+      return Array.from(map.values()).sort((a, b) => a.full_name.localeCompare(b.full_name));
+    },
+  });
+  const reportees = reporteesQ.data ?? [];
+  const teamList = reportees.length > 0 ? reportees : guardTeam;
+
   const myUnits = useMemo(() => {
     const byId = new Map<string, AssignedUnit>();
     if (unit) {
@@ -573,8 +610,8 @@ function EmployeeDashboard() {
           </div>
 
           <div className="overflow-hidden rounded-3xl border border-border/70 bg-card shadow-sm">
-            <header className="flex items-center gap-3 border-b border-border/60 px-5 py-4"><span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary"><Users className="h-5 w-5" /></span><div className="min-w-0 flex-1"><div className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">My unit</div><h2 className="text-base font-bold text-foreground">Team</h2></div><span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">{guardTeam.length}</span></header>
-            {guardTeam.length === 0 ? <div className="px-5 py-10 text-center text-sm text-muted-foreground">No teammates listed yet.</div> : <ul className="max-h-[320px] divide-y divide-border/60 overflow-y-auto">{guardTeam.map((t) => <li key={t.id} className="flex items-center gap-3 px-5 py-3"><div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-accent/15 text-xs font-bold text-accent">{t.photo_url ? <img src={t.photo_url} alt={`${t.full_name} profile`} className="h-full w-full object-cover" /> : initials(t.full_name)}</div><div className="min-w-0 flex-1"><div className="truncate text-sm font-semibold text-foreground">{t.full_name}</div><div className="truncate text-xs text-muted-foreground">{t.designation_id ? desigMap.get(t.designation_id) ?? "Team member" : "Team member"}</div></div>{t.employee_code && <span className="shrink-0 text-xs text-muted-foreground">{t.employee_code}</span>}</li>)}</ul>}
+            <header className="flex items-center gap-3 border-b border-border/60 px-5 py-4"><span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary"><Users className="h-5 w-5" /></span><div className="min-w-0 flex-1"><div className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{reportees.length > 0 ? "My reportees" : "My unit"}</div><h2 className="text-base font-bold text-foreground">Team</h2></div><span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">{teamList.length}</span></header>
+            {teamList.length === 0 ? <div className="px-5 py-10 text-center text-sm text-muted-foreground">No teammates listed yet.</div> : <ul className="max-h-[320px] divide-y divide-border/60 overflow-y-auto">{teamList.map((t) => <li key={t.id} className="flex items-center gap-3 px-5 py-3"><div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-accent/15 text-xs font-bold text-accent">{t.photo_url ? <img src={t.photo_url} alt={`${t.full_name} profile`} className="h-full w-full object-cover" /> : initials(t.full_name)}</div><div className="min-w-0 flex-1"><div className="truncate text-sm font-semibold text-foreground">{t.full_name}</div><div className="truncate text-xs text-muted-foreground">{t.designation_id ? desigMap.get(t.designation_id) ?? "Team member" : "Team member"}</div></div>{t.employee_code && <span className="shrink-0 text-xs text-muted-foreground">{t.employee_code}</span>}</li>)}</ul>}
           </div>
         </section>
       </div>
