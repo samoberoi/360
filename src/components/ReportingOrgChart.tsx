@@ -256,7 +256,7 @@ export function ReportingOrgChart({ rootCandidateId }: { rootCandidateId?: strin
             ))}
           </ul>
         )}
-        {unassigned.length > 0 && (
+        {!rootCandidateId && unassigned.length > 0 && (
           <div className="mt-4 rounded-xl border border-dashed border-destructive/40 bg-destructive/5 p-3">
             <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-destructive">Not mapped to anybody ({unassigned.length})</div>
             <p className="mt-0.5 text-[11px] text-muted-foreground">These people don't report to someone one level above them. Map them to place them in the tree.</p>
