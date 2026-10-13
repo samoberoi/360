@@ -27,6 +27,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 import { nextOccurrence, yearsBetween } from "@/lib/people-insights";
 import { DashboardSkeleton } from "@/components/Skeletons";
 import { MarkAttendanceCard } from "@/components/MarkAttendanceCard";
+import { ReportingOrgChart } from "@/components/ReportingOrgChart";
 import { DashboardShell } from "@/components/LiveFeed";
 
 
@@ -613,6 +614,7 @@ function EmployeeDashboard() {
             <header className="flex items-center gap-3 border-b border-border/60 px-5 py-4"><span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary"><Users className="h-5 w-5" /></span><div className="min-w-0 flex-1"><div className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{reportees.length > 0 ? "My reportees" : "My unit"}</div><h2 className="text-base font-bold text-foreground">Team</h2></div><span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">{teamList.length}</span></header>
             {teamList.length === 0 ? <div className="px-5 py-10 text-center text-sm text-muted-foreground">No teammates listed yet.</div> : <ul className="max-h-[320px] divide-y divide-border/60 overflow-y-auto">{teamList.map((t) => <li key={t.id} className="flex items-center gap-3 px-5 py-3"><div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-accent/15 text-xs font-bold text-accent">{t.photo_url ? <img src={t.photo_url} alt={`${t.full_name} profile`} className="h-full w-full object-cover" /> : initials(t.full_name)}</div><div className="min-w-0 flex-1"><div className="truncate text-sm font-semibold text-foreground">{t.full_name}</div><div className="truncate text-xs text-muted-foreground">{t.designation_id ? desigMap.get(t.designation_id) ?? "Team member" : "Team member"}</div></div>{t.employee_code && <span className="shrink-0 text-xs text-muted-foreground">{t.employee_code}</span>}</li>)}</ul>}
           </div>
+          {reportees.length > 0 && me?.id && <div className="lg:col-span-full"><ReportingOrgChart rootCandidateId={me.id} /></div>}
         </section>
       </div>
     </DashboardShell>
