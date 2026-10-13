@@ -284,6 +284,43 @@ function EmployeeDashboard() {
     [team],
   );
 
+  // Managers (anyone with reportees) see their reporting tree instead of unit guards.
+  const reporteesQ = useQuery({
+    queryKey: ["me-reportees", me?.id],
+    enabled: !!me?.id,
+    queryFn: async () => {
+      const [direct, extra] = await Promise.all([
+        supabase
+          .from("candidates")
+          .select("id,full_name,employee_code,photo_url,date_of_birth,approved_at,created_at,designation_id,role_key,unit_id")
+          .eq("reports_to", me!.id)
+          .in("status", ["active", "approved"])
+          .order("full_name"),
+        supabase
+          .from("candidate_reporting_managers" as never)
+          .select("candidate_id")
+          .eq("manager_id", me!.id),
+      ]);
+      if (direct.error) throw direct.error;
+      const map = new Map<string, Teammate>();
+      for (const r of (direct.data ?? []) as unknown as Teammate[]) map.set(r.id, r);
+      const extraIds = Array.from(
+        new Set(((extra.data as unknown as Array<{ candidate_id: string }>) ?? []).map((r) => r.candidate_id).filter((id) => id && !map.has(id))),
+      );
+      if (extraIds.length) {
+        const { data: ex } = await supabase
+          .from("candidates")
+          .select("id,full_name,employee_code,photo_url,date_of_birth,approved_at,created_at,designation_id,role_key,unit_id")
+          .in("id", extraIds)
+          .in("status", ["active", "approved"]);
+        for (const r of (ex ?? []) as unknown as Teammate[]) map.set(r.id, r);
+      }
+      return Array.from(map.values()).sort((a, b) => a.full_name.localeCompare(b.full_name));
+    },
+  });
+  const reportees = reporteesQ.data ?? [];
+  const teamList = reportees.length > 0 ? reportees : guardTeam;
+
   const myUnits = useMemo(() => {
     const byId = new Map<string, AssignedUnit>();
     if (unit) {
